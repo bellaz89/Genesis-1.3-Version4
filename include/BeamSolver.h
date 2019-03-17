@@ -5,20 +5,13 @@
 #include <iostream>
 #include <string>
 #include <complex>
-
-
-
-class Field;
-
-
 #include "Undulator.h"
 #include "EFieldSolver.h"
 #include "TrackBeam.h"
 
-
-
 using namespace std;
 
+class Field;
 
 class BeamSolver{
  public:
@@ -28,6 +21,7 @@ class BeamSolver{
    void initEField(double rmax, int ngrid, int nz, int nphi, double lambda);
 
    void advance(double, Beam *, vector< Field *> *, Undulator *);
+
    void track(double, Beam *, Undulator *,bool);
    void applyR56(Beam *, Undulator *, double);
 

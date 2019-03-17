@@ -80,8 +80,6 @@ inline double Field::getRHarm()
 }
 
 
-
-
 inline int Field::getHarm()
 {
   return harm;

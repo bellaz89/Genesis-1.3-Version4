@@ -5,8 +5,6 @@
 #include <vector>
 #include <math.h>
 
-#include "hdf5.h"
-
 #include "HDF5base.h"
 #include "BesselJ.h"
 
@@ -56,14 +54,13 @@ class Undulator: public HDF5Base{
    vector<double> chic_angle,chic_lb,chic_ld,chic_lt; 
    vector<double> paw,pkx,pky,pgradx,pgrady,pphase; // perpendicular undulator parameters
    vector<int> helical,marker;
-
+   int istepz,nstepz,nout;
 
  private: 
 
    vector<bool> out;
 
    double gammaref,zstop;  
-   int istepz,nstepz,nout;
 };
 
 inline int Undulator::getStep(){

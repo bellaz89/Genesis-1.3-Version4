@@ -1,8 +1,6 @@
 #ifndef __GENESIS_PARTICLE__
 #define __GENESIS_PARTICLE__
 
-using namespace std;
-
 typedef struct{
   double gamma;
   double theta;
