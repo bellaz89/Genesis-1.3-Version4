@@ -69,4 +69,8 @@ if(CMAKE_CUDA_COMPILER)
     target_link_directories(gencore-cuda PRIVATE ${MPI_LIBRARY_DIRS} ${HDF5_LIBRARY_DIRS})
     target_link_libraries(gencore-cuda PRIVATE genesis13-cuda ${MPI_LIBRARIES} ${HDF5_LIBRARIES}) 
     target_link_options(gencore-cuda PRIVATE ${MPI_LDFLAGS} ${HDF5_LDFLAGS})
+    install(TARGETS genesis13-cuda gencore-cuda)
+
 endif()    
+
+install(TARGETS genesis13 gencore)

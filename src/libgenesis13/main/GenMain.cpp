@@ -6,22 +6,15 @@
 #include <stdio.h>
 #include <cstring>
 #include <ctime>
-
-
+#include <sstream>
 #include <fenv.h>
 #include <signal.h>
-
-#include "mpi.h"
-
-
+#include <mpi.h>
 
 // genesis headerfiles & classes
-
-
 #include "Beam.h"
 #include "Field.h"
 #include "EField.h"
-
 #include "Parser.h"
 #include "Profile.h"
 #include "Setup.h"
@@ -35,15 +28,14 @@
 #include "Track.h"
 #include "SDDSBeam.h"
 #include "SponRad.h"
-#include "dump.h"
+#include "Dump.h"
 #include "ImportBeam.h"
 #include "ImportField.h"
-#include "writeBeamHDF5.h"
-#include "writeFieldHDF5.h"
+#include "WriteBeamHDF5.h"
+#include "WriteFieldHDF5.h"
 #include "Collective.h"
 #include "Wake.h"
 
-#include <sstream>
 
 using namespace std;
 

@@ -10,5 +10,4 @@ typedef struct{
   double py;
 } Particle;
 
-
 #endif
