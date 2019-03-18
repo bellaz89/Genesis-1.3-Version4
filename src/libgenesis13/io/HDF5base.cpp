@@ -1,4 +1,5 @@
 #include "HDF5base.h"
+#include<mpi.h>
 
 extern bool MPISingle;
 
