@@ -48,10 +48,10 @@ void BeamSolver::advance(double delz, Beam *beam, vector< Field *> *field, Undul
   // Runge Kutta solver to advance particle
 
   
-  printf("bsize: %d\n", beam->beam.size());
+  printf("bsize: %lu\n", beam->beam.size());
   for (int is=0; is<beam->beam.size(); is++){    
       
-      printf("        %d\n", beam->beam.at(is).size());
+      printf("        %lu\n", beam->beam.at(is).size());
 
       for (int ip=0; ip<beam->beam.at(is).size();ip++){
         gamma=beam->beam.at(is).at(ip).gamma;
