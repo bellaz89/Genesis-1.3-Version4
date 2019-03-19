@@ -38,4 +38,12 @@ For the standard C++ version:
     make gencore
 ```
 
+Ideas
+-----
 
+- Use [TOML](https://github.com/toml-lang/toml) or [YAML](https://yaml.org/) 
+  for input and lattice files?
+  A standard filetype will make it easier
+  to interoperate the program with external program and programming language.
+  An additional benefit of use an external library (ex [cpptoml](https://github.com/skystrife/cpptoml)) will make the codebase
+  easier to mantain.

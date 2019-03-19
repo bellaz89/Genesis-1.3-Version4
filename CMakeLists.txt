@@ -1,10 +1,29 @@
 # Compilation script for Genesis 1.3
 cmake_minimum_required (VERSION 3.13)
-project(Genesis13 LANGUAGES C CXX)
+
+set(VERSIONMAJOR 4)
+set(VERSIONMINOR 3)
+set(VERSIONREVISION 0)
+set(VERSIONBETA true)
+
+project(Genesis13 
+    VERSION "${VERSIONMAJOR}.${VERSIONMINOR}.${VERSIONREVISION}"
+    DESCRIPTION "Genesis 1.3 V4. Tool to simulate beam-field interaction \
+    in Free Electron Lasers"
+    HOMEPAGE_URL "https://github.com/bellaz89/Genesis-1.3-Version4"
+    LANGUAGES C CXX)
+
+add_compile_definitions(
+    VERSIONMAJOR=${VERSIONMAJOR}
+    VERSIONMINOR=${VERSIONMINOR}
+    VERSIONREVISION=${VERSIONREVISION}
+    VERSIONBETA=${VERSIONBETA})
+
+set (CMAKE_CXX_STANDARD 11)
 include(CheckLanguage)
 find_package(PkgConfig REQUIRED)
 
-set(default_build_type "Release")
+set(default_build_type "Debug")
 
 # openmpi and hdf5 libraries
 pkg_check_modules(MPI REQUIRED ompi-cxx)
@@ -51,12 +70,12 @@ if(FALSE)
     enable_language(CUDA)
 
     file(GLOB CUDA_SOURCES src/libgenesis13/*/cuda/*.cpp src/libgenesis13/*/cuda/*.cu)
-    
+
     add_library(genesis13-cuda ${COMMON_SOURCES} ${CUDA_SOURCES})
     set_target_properties(genesis13-cuda PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
     target_include_directories(genesis13-cuda PUBLIC include PRIVATE ${COMMON_INCLUDE_DIRS}) 
     target_compile_definitions(genesis13-cuda PUBLIC -DMPE)
-   
+
     if("-pthread" IN_LIST COMMON_CFLAGS) 
         # Delete -pthread because it is unsupported by nvcc
 

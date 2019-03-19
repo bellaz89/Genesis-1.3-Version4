@@ -21,7 +21,6 @@ void StringProcessing::chop(string str, vector<string> *list){
 
     list->clear();
 
-
     while((pos=str.find_first_of(","))!=string::npos){
         list->push_back(str.substr(0,pos));
         str.erase(0,pos+1);
@@ -31,7 +30,6 @@ void StringProcessing::chop(string str, vector<string> *list){
     for (int i=0; i<list->size();i++){
         this->trim(list->at(i));
     }
-
     return;
 }
 
@@ -53,7 +51,6 @@ bool StringProcessing::atob(string in){
     if ((in.compare("1")==0)||(in.compare("true")==0)||(in.compare("t")==0)) { ret=true; }
     return ret;
 }
-
 
 void StringProcessing::reference(string in , double *val, string *ref)
 {

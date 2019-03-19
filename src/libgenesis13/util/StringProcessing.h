@@ -25,7 +25,5 @@ class StringProcessing {
         bool atob(string);
         void reference(string, double *, string *);
         vector<string> slist;   // temporary working array
-
 };
-
 #endif

@@ -22,10 +22,8 @@ void Dump::usage(){
 
 bool Dump::init(int inrank, int insize, map<string,string>* arg, Setup* setup, Beam* beam, vector<Field* >* field)
 {
-
     rank=inrank;
     size=insize;
-
 
     map<string,string>::iterator end=arg->end();
 

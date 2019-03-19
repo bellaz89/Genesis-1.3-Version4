@@ -3,7 +3,6 @@
 #include <fstream>
 #include <unistd.h>
 #include <pwd.h>
-#include <libgenesis13/main/GenMain.h>
 
 using namespace std;
 
