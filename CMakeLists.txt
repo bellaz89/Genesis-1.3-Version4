@@ -46,7 +46,7 @@ install(TARGETS genesis13 gencore)
 #------------------------------------------------------------------------------
 
 check_language(CUDA)
-if(CMAKE_CUDA_COMPILER)
+if(FALSE)
 
     enable_language(CUDA)
 
