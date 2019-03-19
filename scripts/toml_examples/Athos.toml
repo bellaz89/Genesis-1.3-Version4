@@ -1,0 +1,141 @@
+[setup]
+rootname = "Benchmark"
+beamline = "ATHOS"
+lambda0 = 3.1e-9
+gamma0 = 6608.279265
+delz = 0.038
+shotnoise = 1
+seed = 100
+
+[lattice]
+zmatch = 5.5
+
+[profile_step]
+label = "current"
+c0 = 3000.0
+s_start = 0
+s_end = 2e-5
+
+[time]
+slen = 2.1e-5
+sample = 1.0
+
+[field]
+power = 0.0
+dgrid = 0.001
+ngrid = 301
+waist_size = 6e-5
+
+[beam]
+current = "@current"
+delgam = 1.0
+ex = 4e-7
+ey = 4e-7
+
+[track]
+
+[line]
+ATHOS = [ "U01", "C01", "QF", "D2", "U02", "C02", "QD", "D2", "U03", "C03", "QF", "D2", "U04", "C04", "QD", "D2", "U05", "C05", "QF", "D2", "U06", "C06", "QD", "D2", "U07", "C07", "QF", "D2", "U08", "C08", "QD", "D2",]
+
+[undulator.U01]
+lambdau = 0.038
+nwig = 52
+aw = 2.474874
+
+[undulator.U02]
+lambdau = 0.038
+nwig = 52
+aw = 2.474874
+
+[undulator.U03]
+lambdau = 0.038
+nwig = 52
+aw = 2.474874
+
+[undulator.U04]
+lambdau = 0.038
+nwig = 52
+aw = 2.474874
+
+[undulator.U05]
+lambdau = 0.038
+nwig = 52
+aw = 2.47347
+
+[undulator.U06]
+lambdau = 0.038
+nwig = 52
+aw = 2.469259
+
+[undulator.U07]
+lambdau = 0.038
+nwig = 52
+aw = 2.46224
+
+[undulator.U08]
+lambdau = 0.038
+nwig = 52
+aw = 2.452414
+
+[drift.D1]
+l = 0.2
+
+[drift.D2]
+l = 0.494
+
+[quadrupole.QF]
+l = 0.08
+k1 = 5.0
+
+[quadrupole.QD]
+l = 0.08
+k1 = -5.0
+
+[chicane.C01]
+l = 0.2
+lb = 0.025
+ld = 0.05
+delay = 5e-7
+
+[chicane.C02]
+l = 0.2
+lb = 0.025
+ld = 0.05
+delay = 5e-7
+
+[chicane.C03]
+l = 0.2
+lb = 0.025
+ld = 0.05
+delay = 5e-7
+
+[chicane.C04]
+l = 0.2
+lb = 0.025
+ld = 0.05
+delay = 0.0
+
+[chicane.C05]
+l = 0.2
+lb = 0.025
+ld = 0.05
+delay = 0.0
+
+[chicane.C06]
+l = 0.2
+lb = 0.025
+ld = 0.05
+delay = 0.0
+
+[chicane.C07]
+l = 0.2
+lb = 0.025
+ld = 0.05
+delay = 0.0
+
+[chicane.C08]
+l = 0.2
+lb = 0.025
+ld = 0.05
+delay = 0.0
+
