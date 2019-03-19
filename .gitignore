@@ -2,5 +2,4 @@ build
 benchmark/*/*.h5
 *.swp
 *.o
-gencore
 lib
