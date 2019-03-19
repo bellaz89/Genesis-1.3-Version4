@@ -2,8 +2,6 @@
 #define __GENESIS_BEAM__
 
 #include <vector>
-#include <iostream>
-#include <string>
 
 #include <libgenesis13/util/Sorting.h>
 #include "Particle.h"

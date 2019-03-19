@@ -1,14 +1,9 @@
 #ifndef __GENESIS_SDDSBEAM__
 #define __GENESIS_SDDSBEAM__
 
-#include <iostream>
 #include <vector>
-#include <cmath>
-#include <cstdlib>
 #include <string>
 #include <map>
-#include <fstream>
-#include <cctype>
 #include <libgenesis13/util/StringProcessing.h>
 #include <libgenesis13/core/Beam.h>
 #include <libgenesis13/core/Particle.h>

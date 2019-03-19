@@ -7,10 +7,6 @@
  *
  */
 
-#include <iostream>
-#include <complex>
-#include <cmath>
-
 #include <libgenesis13/core/Particle.h>
 #include <libgenesis13/util/RandomU.h>
 
@@ -20,12 +16,12 @@
 using namespace std;
 
 class ShotNoise  {
-public:
-	ShotNoise();
-	~ShotNoise();
+    public:
+        ShotNoise();
+        ~ShotNoise();
         void applyShotNoise(Particle *beam, int, int, double); 
         void init(int,int); 
-private:
+    private:
         RandomU *sran;
         double *work;
         int nwork;

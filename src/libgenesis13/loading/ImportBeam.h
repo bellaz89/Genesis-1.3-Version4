@@ -1,14 +1,8 @@
 #ifndef __GENESIS_IMPORTBEAM__
 #define __GENESIS_IMPORTBEAM__
 
-#include <iostream>
-#include <vector>
-#include <cmath>
-#include <cstdlib>
 #include <string>
 #include <map>
-#include <fstream>
-#include <complex>
 #include <libgenesis13/util/StringProcessing.h>
 #include <libgenesis13/core/Beam.h>
 #include <libgenesis13/main/Setup.h>

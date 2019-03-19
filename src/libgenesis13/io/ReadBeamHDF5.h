@@ -1,11 +1,7 @@
 #ifndef __GENESIS_READBEAMHDF5__
 #define __GENESIS_READBEAMHDF5__
 
-#include <iostream>
-#include <iomanip>
-#include <fstream>
 #include <string>
-#include <cmath>
 #include <vector>
 #include <hdf5.h>
 #include <libgenesis13/io/HDF5Base.h>

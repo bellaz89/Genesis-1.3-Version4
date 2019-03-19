@@ -8,7 +8,7 @@
  */
 
 #include "Inverfc.h"
-#include "math.h"
+#include <cmath>
 
 Inverfc::Inverfc(){}
 Inverfc::~Inverfc(){}

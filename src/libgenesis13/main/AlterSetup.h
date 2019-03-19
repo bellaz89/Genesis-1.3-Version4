@@ -1,14 +1,9 @@
 #ifndef __GENESIS_ALTERSETUP__
 #define __GENESIS_ALTERSETUP__
 
-#include <iostream>
 #include <vector>
-#include <cmath>
-#include <cstdlib>
 #include <string>
 #include <map>
-#include <fstream>
-#include <cctype>
 #include <libgenesis13/util/StringProcessing.h>
 #include <libgenesis13/lattice/Lattice.h>
 #include <libgenesis13/core/Field.h>

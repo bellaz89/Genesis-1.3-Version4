@@ -22,12 +22,12 @@ bool SponRad::init(int rank, int size, map<string,string> *arg,  Beam *beam)
         seed = atoi(arg->at("seed").c_str());
         arg->erase(arg->find("seed"));
     }
-    
+
     if (arg->find("doLoss")!=end){
         doLoss = atob(arg->at("doLoss").c_str());
         arg->erase(arg->find("doLoss"));
     }
-    
+
     if (arg->find("doSpread")!=end){
         doSpread  = atob(arg->at("doSpread").c_str());
         arg->erase(arg->find("doSpread"));

@@ -1,13 +1,8 @@
 #ifndef __GENESIS_LATTICEPARSER__
 #define __GENESIS_LATTICEPARSER__
 
-#include <iostream>
 #include <vector>
-#include <cmath>
-#include <stdlib.h>
 #include <string>
-#include <sstream>
-#include <fstream>
 #include <libgenesis13/util/StringProcessing.h>
 #include "LatticeElements.h"
 

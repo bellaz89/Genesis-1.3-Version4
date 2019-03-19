@@ -1,12 +1,8 @@
 #ifndef __GENESIS_ALTERLATTICE__
 #define __GENESIS_ALTERLATTICE__
 
-#include <iostream>
-#include <vector>
-#include <cmath>
 #include <string>
 #include <map>
-#include <stdlib.h>
 #include <libgenesis13/lattice/Lattice.h>
 #include <libgenesis13/main/Setup.h>
 

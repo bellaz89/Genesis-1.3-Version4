@@ -1,12 +1,8 @@
 #ifndef __GEN_WRITEFIELDHDF5__
 #define __GEN_WRITEFIELDHDF5__
 
-#include <iostream>
-#include <iomanip>
-#include <fstream>
 #include <string>
-#include <cmath>
-#include <complex>
+#include <vector>
 #include <hdf5.h>
 #include <libgenesis13/core/Field.h>
 #include "HDF5Base.h"

@@ -1,15 +1,8 @@
 #include "GenMain.h"
 #include <iostream>
-#include <fstream>
 #include <string>
 #include <vector>
-#include <iomanip>
-#include <stdio.h>
-#include <cstring>
-#include <ctime>
-#include <sstream>
-#include <fenv.h>
-#include <signal.h>
+#include <map>
 #include <mpi.h>
 #include <libgenesis13/core/Field.h>
 #include <libgenesis13/core/Beam.h>

@@ -1,14 +1,9 @@
 #ifndef __GENESIS_TIME__
 #define __GENESIS_TIME__
 
-#include <iostream>
-#include <vector>
 #include <cmath>
-#include <stdlib.h>
 #include <string>
 #include <map>
-#include <fstream>
-#include <cctype>
 #include <libgenesis13/util/StringProcessing.h>
 #include "Setup.h"
 

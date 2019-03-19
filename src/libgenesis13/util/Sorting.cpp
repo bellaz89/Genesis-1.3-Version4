@@ -1,6 +1,6 @@
 #include "Sorting.h"
 #include <mpi.h>
-#include <algorithm>
+#include <cmath>
 
 extern bool MPISingle;
 

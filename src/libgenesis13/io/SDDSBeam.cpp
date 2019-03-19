@@ -1,5 +1,9 @@
 #include "SDDSBeam.h"
-#include<libgenesis13/loading/ShotNoise.h>
+#include <algorithm>
+#include <iostream>
+#include <libgenesis13/loading/ShotNoise.h>
+
+using namespace std;
 
 SDDSBeam::SDDSBeam()
 {
@@ -216,7 +220,10 @@ bool SDDSBeam::init(int inrank, int insize, map<string,string> *arg, Beam *beam,
     H5Fclose(fid);
 
     if (error) {
-        if (rank==0) { cout << "*** Error: Missing dataset in distribution file " << file << endl;} 
+        if (rank==0) { 
+            cout << "*** Error: Missing dataset in distribution file " << file << endl;
+        } 
+        
         return false;
     }
 
@@ -224,7 +231,9 @@ bool SDDSBeam::init(int inrank, int insize, map<string,string> *arg, Beam *beam,
     // step 4 - analysing data file and setting up time window
 
 
-    if (rank==0) { cout << "Analysing external distribution... " << endl;}
+    if (rank==0) { 
+        cout << "Analysing external distribution... " << endl;
+    }
 
 
     for (int i=0; i<nsize; i++){
@@ -326,9 +335,7 @@ bool SDDSBeam::init(int inrank, int insize, map<string,string> *arg, Beam *beam,
         this->analyse(ttotal,nsize);
     }
 
-
     // step 6 - sort distribution
-
 
     vector<double> s;
     int nslice=time->getPosition(&s);
@@ -365,19 +372,15 @@ bool SDDSBeam::init(int inrank, int insize, map<string,string> *arg, Beam *beam,
     px.clear();
     py.clear();
 
-
-
     Sorting sort;
     sort.init(rank,size,false,true);  
     sort.configure(0,0,smin+0.5*dslen,smax-0.5*dslen,smin-0.5*dslen,smax+0.5*dslen,true); 
     sort.globalSort(&dist);
 
-
     // step 7 - populate internal distribution
 
     // now each node has all the particles, which is needed for the phase space reconstruction
     if (rank==0) {cout << "Generating internal particle distribution..." << endl; }
-
 
     this->initRandomSeq(setup->getSeed());
     ShotNoise sn;
@@ -449,28 +452,18 @@ bool SDDSBeam::init(int inrank, int insize, map<string,string> *arg, Beam *beam,
             for (int i=0;i<mpart*nbins;i++){
                 beam->beam.at(islice).at(i).theta=work[i].theta;  
             }
-
         }
-
     }
-
 
     dist[0].clear();
     delete ran;
     delete [] work;
 
-
-
-
     return true;
-
 
 }
 
-
 void SDDSBeam::addParticles(vector<Particle> *beam, int mpart){
-
-
     // check for error if there are only one or none particle to fill up distribution 
     int  ndist=beam->size();
     Particle par;
@@ -571,7 +564,6 @@ void SDDSBeam::addParticles(vector<Particle> *beam, int mpart){
         ndist++;
     }
 
-
     // step 5 - scale back
 
     for (int i=0; i<beam->size(); i++){
@@ -582,10 +574,8 @@ void SDDSBeam::addParticles(vector<Particle> *beam, int mpart){
         beam->at(i).py   =beam->at(i).py/py2 + py1;
     }
 
-
     return;
 }
-
 
 double  SDDSBeam::distance(Particle p1, Particle p2){
 
@@ -601,7 +591,6 @@ double  SDDSBeam::distance(Particle p1, Particle p2){
     r+=tmp*tmp*ran->getElement();
     return r;
 }
-
 
 void SDDSBeam::removeParticles(vector<Particle> *beam,int mpart)
 {
@@ -661,6 +650,7 @@ void SDDSBeam::analyse(double ttotal,int nsize)
         yvar=c2;
         pyvar=d2;
         ypy=cd;
+
     } else {
         MPI::COMM_WORLD.Allreduce(&ncount,&nmean,1,MPI::INT,MPI::SUM);
         MPI::COMM_WORLD.Allreduce(&e1,&gavg, 1,MPI::DOUBLE,MPI::SUM);
@@ -713,7 +703,6 @@ void SDDSBeam::analyse(double ttotal,int nsize)
         cout << "   Beam center in py            : " << pyavg << endl;
     }
     return;
-
 
 }
 

@@ -1,4 +1,5 @@
 #include "Field.h"
+#include<cmath>
 
 #ifdef VTRACE
 #include "vt_user.h"
@@ -20,13 +21,14 @@ void Field::init(int nsize, int ngrid_in, double dgrid_in, double xlambda0, doub
 
 
     harm=harm_in;   // harmonics
-    xlambda=xlambda0/static_cast<double>(harm);   // wavelength : xlambda0 is the reference wavelength of the fundamental
+    xlambda=xlambda0/static_cast<double>(harm); 
+    // wavelength : xlambda0 is the reference wavelength of the fundamental
     ngrid=ngrid_in;
 
     gridmax=dgrid_in;
     dgrid=2*gridmax/static_cast<double>(ngrid-1); // grid pointe separation
 
-    if (field.size()!=nsize){                  // allocate the memory in advance
+    if (field.size()!=nsize){ // allocate the memory in advance
         field.resize(nsize);
     }
 
@@ -37,21 +39,18 @@ void Field::init(int nsize, int ngrid_in, double dgrid_in, double xlambda0, doub
     } 
 
     xks=4.*asin(1)/xlambda;
-    first=0;                                // pointer to slice which correspond to first in the time window
+    first=0; // pointer to slice which correspond to first in the time window
     dz_save=0;
 
 
     return;
 }
 
-
 // at each run the buffer should be cleared.
-void Field::initDiagnostics(int nz)
-{
+void Field::initDiagnostics(int nz) {
     idx=0;
     accuslip=0;    
     int ns=field.size();
-
 
     power.resize(ns*nz);
     xavg.resize(ns*nz);
@@ -65,15 +64,11 @@ void Field::initDiagnostics(int nz)
 
 }
 
-
-void Field::setStepsize(double delz)
-{
-
+void Field::setStepsize(double delz) {
     if (delz!=dz_save){
         dz_save=delz;
         //getdiag_(&delz,&dgrid,&xks,&ngrid);
     }
-
 }
 
 bool Field::getLLGridpoint(double x, double y, double *wx, double *wy, int *idx){
@@ -92,7 +87,6 @@ bool Field::getLLGridpoint(double x, double y, double *wx, double *wy, int *idx)
     }
 }
 
-
 void Field::track(double delz, Beam *beam, Undulator *und)
 {
 
@@ -101,12 +95,12 @@ void Field::track(double delz, Beam *beam, Undulator *und)
 #endif  
 
 
-    solver.getDiag(delz,dgrid,xks,ngrid);  // check whether step size has changed and recalculate aux arrays
+    // check whether step size has changed and recalculate aux arrays
+    solver.getDiag(delz,dgrid,xks,ngrid);  
+
     solver.advance(delz,this,beam,und);
     return;
-
 }
-
 
 bool Field::subharmonicConversion(int harm_in, bool resample)
 {
@@ -131,7 +125,6 @@ bool Field::subharmonicConversion(int harm_in, bool resample)
         }
     }
 
-
     // step one - merge adjacent files into the first. 
     for (int i=0; i<nsize;i=i+harm_in){
         int is0= (i+first) % nsize; // loop over slices in the right order
@@ -141,7 +134,6 @@ bool Field::subharmonicConversion(int harm_in, bool resample)
                 field[is0].at(k)+=field[is1].at(k);  // add field to slice
             }
             pow[is0]+=pow[is1];                  // add up power
-
         }
     }
 
@@ -173,9 +165,6 @@ bool Field::subharmonicConversion(int harm_in, bool resample)
 
     }
 
-
-
-
     return true;
 }
 
@@ -206,17 +195,13 @@ bool Field::harmonicConversion(int harm_in, bool resample)
             }
         }
     }
+
     first*=harm_in; // adjust pointer of first slice
     return true;
 }
 
-
-
 //  diagnostic part
-
-
-void Field::diagnostics(bool output)
-{
+void Field::diagnostics(bool output) {
 
     if (!output) { return; }
 
@@ -291,9 +276,7 @@ void Field::diagnostics(bool output)
         nf_phi[ioff+is]=bphinf;
         ff_intensity[ioff+is]=bfarfield;
         ff_phi[ioff+is]=bphiff;
-
     }
 
     idx++;
-
 }

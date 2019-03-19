@@ -1,14 +1,9 @@
 #ifndef __GENESIS_IMPORTFIELD__
 #define __GENESIS_IMPORTFIELD__
 
-#include <iostream>
 #include <vector>
-#include <cmath>
-#include <cstdlib>
 #include <string>
 #include <map>
-#include <fstream>
-#include <complex>
 #include <libgenesis13/util/StringProcessing.h>
 #include <libgenesis13/main/Setup.h>
 #include <libgenesis13/main/Time.h>

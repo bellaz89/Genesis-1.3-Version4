@@ -7,23 +7,21 @@
  *
  */
 
-
-
 #ifndef __GENESIS_BESSELJ__
 #define __GENESIS_BESSELJ__
 
-#include <math.h>
+#include <cmath>
 
 using namespace std;
 
 class BesselJ  {
-public:
-	BesselJ();
-	~BesselJ();
-	double value(int, double);
-private:
-	double BesselJ0(double);
-	double BesselJ1(double);
+    public:
+        BesselJ();
+        ~BesselJ();
+        double value(int, double);
+    private:
+        double BesselJ0(double);
+        double BesselJ1(double);
 };
 
 #endif

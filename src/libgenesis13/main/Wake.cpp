@@ -1,4 +1,5 @@
 #include "Wake.h"
+#include <iostream>
 #include <libgenesis13/core/Beam.h>
 
 Wake::Wake()
@@ -46,6 +47,7 @@ bool Wake::init(int rank, int size, map<string,string> *arg,  Time *time, Setup 
   if (arg->find("conductivity")!=end) {conductivity= atof(arg->at("conductivity").c_str());  arg->erase(arg->find("conductivity"));}
   if (arg->find("relaxation")!=end) {relaxation = atof(arg->at("relaxation").c_str());  arg->erase(arg->find("relaxation"));}
   if (arg->find("roundpipe")!=end)    {roundpipe    = atob(arg->at("roundpipe").c_str());  arg->erase(arg->find("roundpipe"));}
+
   if (arg->find("material")!=end){material = arg->at("material"); arg->erase(arg->find("material"));}
   if (arg->find("transient")!=end)    {transient    = atob(arg->at("transient").c_str());  arg->erase(arg->find("transient"));}
   if (arg->find("ztrans")!=end) {ztrans = atof(arg->at("ztrans").c_str());  arg->erase(arg->find("ztrans"));}

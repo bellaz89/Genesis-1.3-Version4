@@ -3,8 +3,6 @@
 
 #include <iostream>
 #include <vector>
-#include <math.h>
-#include <stdlib.h>
 #include <string>
 #include <sstream>
 #include <map>
@@ -14,17 +12,17 @@
 using namespace std;
 
 class Parser : public StringProcessing {
- public:
-   Parser();
-   virtual ~Parser();
-   bool open(string, int,bool);
-   bool parse(string*, map<string, string>*);
+    public:
+        Parser();
+        virtual ~Parser();
+        bool open(string, int,bool);
+        bool parse(string*, map<string, string>*);
 
- private:
+    private:
 
-   int rank;
-   istringstream input;
-   bool fillMap(string*, map<string, string>*);
+        int rank;
+        istringstream input;
+        bool fillMap(string*, map<string, string>*);
 
 };
 

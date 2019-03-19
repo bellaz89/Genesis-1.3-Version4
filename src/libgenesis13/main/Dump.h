@@ -1,14 +1,9 @@
 #ifndef __GENESIS_DUMP__
 #define __GENESIS_DUMP__
 
-#include <iostream>
 #include <vector>
-#include <cmath>
-#include <cstdlib>
 #include <string>
 #include <map>
-#include <fstream>
-#include <cctype>
 #include <libgenesis13/util/StringProcessing.h>
 #include "Setup.h"
 

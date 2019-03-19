@@ -1,19 +1,15 @@
 #ifndef __GENESIS_CONTROL__
 #define __GENESIS_CONTROL__
 
-#include <iostream>
-#include <sstream>
 #include <vector>
-#include <math.h>
 #include <string>
-
 #include "Field.h"
 #include "Beam.h"
 #include "Undulator.h"
 
 using namespace std;
 
-class Control : public HDF5Base{
+class Control : public HDF5Base {
     public:
         Control();
         virtual ~Control();

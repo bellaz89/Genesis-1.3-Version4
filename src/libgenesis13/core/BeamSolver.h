@@ -2,8 +2,6 @@
 #define __GENESIS_BEAMSOLVER__
 
 #include <vector>
-#include <iostream>
-#include <string>
 #include <complex>
 #include "Undulator.h"
 #include "EFieldSolver.h"

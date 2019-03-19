@@ -1,12 +1,10 @@
 #ifndef __GENESIS_TRACK__
 #define __GENESIS_TRACK__
 
-#include <iostream>
 #include <vector>
 #include <cmath>
 #include <string>
 #include <map>
-#include <cstdlib>
 #include <libgenesis13/lattice/AlterLattice.h>
 #include <libgenesis13/lattice/Lattice.h>
 #include <libgenesis13/core/Beam.h>

@@ -1,19 +1,10 @@
 #ifndef __GENESIS_SORTING__
 #define __GENESIS_SORTING__
 
-#include <iostream>
 #include <vector>
-#include <math.h>
-#include <stdlib.h>
-#include <string>
-#include <map>
-#include <fstream>
-#include <cctype>
-
 #include <libgenesis13/core/Particle.h>
 
 using namespace std;
-
 
 class Sorting{
     public:
@@ -26,7 +17,6 @@ class Sorting{
 
         int sort(vector<vector<Particle>>*);
 
-
     private:
 
         void fillPushVectors(vector<vector<Particle>>*);
@@ -38,14 +28,8 @@ class Sorting{
         int rank,size;
 
         double s0,slen,sendmin,sendmax,keepmin,keepmax;
-
-
         double reflen;
         bool doshift,dosort,globalframe;
         vector<double> pushforward,pushbackward;
-
 };
-
-
-
 #endif

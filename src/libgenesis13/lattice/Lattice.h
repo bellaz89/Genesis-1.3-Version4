@@ -1,9 +1,7 @@
 #ifndef __GENESIS_LATTICE__
 #define __GENESIS_LATTICE__
 
-#include <iostream>
 #include <vector>
-#include <cmath>
 #include <string>
 #include <map>
 #include <libgenesis13/lattice/AlterLattice.h>

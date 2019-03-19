@@ -5,20 +5,15 @@
 
 Undulator::~Undulator(){}
 
-Undulator::Undulator()
-{
+Undulator::Undulator() {
     istepz=-1;
     zstop=1e9;
 }
 
 void Undulator::updateOutput(double zstop_in,int nzout)
 {
-
-
     // calculate the size of the output record
-
     zstop=zstop_in;
-
 
     istepz=-1;
     nstepz=aw.size();
@@ -34,8 +29,6 @@ void Undulator::updateOutput(double zstop_in,int nzout)
     }
     return;
 }
-
-
 
 void Undulator::updateMarker(int nfld, int npar, int nsort, double zstop)
 {
@@ -72,7 +65,8 @@ bool Undulator::advance(int rank)
 
     if ((marker[istepz]&8)>0){ // check for 3rd bit set in marker value for stoping calculation
         if (rank==0){
-            cout << "Calculation terminated due to requested stop. Missing output padded with zeros in output file" << endl;
+            cout << "Calculation terminated due to requested stop.";
+            cout << " Missing output padded with zeros in output file" << endl;
         }
         return false; 
     }
@@ -113,17 +107,18 @@ double Undulator::fc(int h)
     }
 }
 
-
-double Undulator::faw2(double x, double y){  // square of the transverse dependence of the undulator field.
+// square of the transverse dependence of the undulator field.
+double Undulator::faw2(double x, double y){  
     double dx=x-ax[istepz];
     double dy=y-ay[istepz]; 
-    return (1+kx[istepz]*dx*dx+ky[istepz]*dy*dy+2*(gradx[istepz]*dx+grady[istepz]*dy)); // note kx is scaled as XKX*ku*ku in Lattice.cpp, gradx as ku*GRADX.
+    // note kx is scaled as XKX*ku*ku in Lattice.cpp, gradx as ku*GRADX.
+    return (1+kx[istepz]*dx*dx+ky[istepz]*dy*dy+2*(gradx[istepz]*dx+grady[istepz]*dy));
 }
 
-
-
-double Undulator::faw(double x, double y){  // transverse dependence of the undulator field.
+// transverse dependence of the undulator field.
+double Undulator::faw(double x, double y){  
     double dx=x-ax[istepz];
     double dy=y-ay[istepz]; 
-    return (1+0.5*(kx[istepz]*dx*dx+ky[istepz]*dy*dy)+gradx[istepz]*dx+grady[istepz]*dy); // note kx is scaled as XKX*ku*ku in Lattice.cpp, gradx as ku*GRADX.
+    // note kx is scaled as XKX*ku*ku in Lattice.cpp, gradx as ku*GRADX.
+    return (1+0.5*(kx[istepz]*dx*dx+ky[istepz]*dy*dy)+gradx[istepz]*dx+grady[istepz]*dy);
 }

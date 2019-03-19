@@ -1,10 +1,7 @@
 #ifndef __GENESIS_OUTPUT__
 #define __GENESIS_OUTPUT__
 
-#include <vector>
-#include <iostream>
 #include <string>
-#include <cmath>
 #include <hdf5.h>
 #include <libgenesis13/core/Beam.h>
 #include <libgenesis13/core/Field.h>

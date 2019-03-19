@@ -1,9 +1,6 @@
 #ifndef __GENESIS_QUIETLOADING__
 #define __GENESIS_QUIETLOADING__
 
-#include <iostream>
-#include <complex>
-#include <cmath>
 #include <libgenesis13/core/Particle.h>
 #include <libgenesis13/util/Sequence.h>
 

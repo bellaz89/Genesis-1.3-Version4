@@ -7,46 +7,43 @@
  *
  */
 
-#include <iostream>
-#include <complex>
-#include <math.h>
-
-
 #ifndef __GENESIS_GAUSSHERMITE__
 #define __GENESIS_GAUSSHERMITE__
+
+#include <complex>
 
 extern const double vacimp;
 extern const double eev;
 
 typedef struct
 {
-  double lambda;
-  double power;
-  double z0;
-  double w0;
-  double phase;
-  double xcen;
-  double ycen;
-  double xangle;
-  double yangle;
-  int nx;
-  int ny;
-  int harm;
+    double lambda;
+    double power;
+    double z0;
+    double w0;
+    double phase;
+    double xcen;
+    double ycen;
+    double xangle;
+    double yangle;
+    int nx;
+    int ny;
+    int harm;
 } FieldSlice;
 
 
 using namespace std;
 
 class GaussHermite  {
-public:
-	GaussHermite();
-	~GaussHermite();
-	
-	void loadGauss(complex<double> *field, FieldSlice *, double, int);
-	
-private:
-	double Hn(double, int);
-	int fac(int);
+    public:
+        GaussHermite();
+        ~GaussHermite();
+
+        void loadGauss(complex<double> *field, FieldSlice *, double, int);
+
+    private:
+        double Hn(double, int);
+        int fac(int);
 };
 
 

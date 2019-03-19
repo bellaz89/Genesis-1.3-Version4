@@ -2,9 +2,7 @@
 #define __GENESIS_WAKE__
 
 #include <vector>
-#include <iostream>
 #include <string>
-#include <complex>
 #include <libgenesis13/util/StringProcessing.h>
 #include "Setup.h"
 #include "Time.h"
@@ -20,7 +18,7 @@ class Wake: public StringProcessing{
  public:
    Wake();
    virtual ~Wake();
-   bool init(int,int,map<string,string> *, Time *, Setup *, Beam *);
+   bool init(int,int,map<string, string> *, Time *, Setup *, Beam *);
 
 
  private:   

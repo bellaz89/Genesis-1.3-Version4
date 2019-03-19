@@ -3,11 +3,7 @@
 
 #include <string>
 #include <map>
-#include <iostream>
-#include <cmath>
-#include <cctype>
-#include <algorithm>
-#include <cstdlib>
+#include <vector>
 #include <libgenesis13/util/StringProcessing.h>
 #include <libgenesis13/io/HDF5Base.h>
 

@@ -7,20 +7,16 @@
  *
  */
 
-
-
 # ifndef __GENESIS_INVERFC__ 
 # define __GENESIS_INVERFC__
-
 
 using namespace std;
 
 class Inverfc {
-public:	
-	Inverfc();
-	~Inverfc();
-	double value(double);
+    public:	
+        Inverfc();
+        ~Inverfc();
+        double value(double);
 };
-
 
 # endif

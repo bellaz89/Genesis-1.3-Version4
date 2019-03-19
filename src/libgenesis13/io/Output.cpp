@@ -1,12 +1,11 @@
 #include "Output.h"
-#include <stdlib.h> 
+#include <iostream>
 #include <fstream>
-#include <streambuf>
-#include <ctime>
 #include <unistd.h>
-#include <sys/types.h>
 #include <pwd.h>
 #include <libgenesis13/main/GenMain.h>
+
+using namespace std;
 
 extern bool MPISingle;
 

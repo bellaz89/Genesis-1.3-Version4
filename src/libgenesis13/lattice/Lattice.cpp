@@ -1,6 +1,10 @@
 #include "Lattice.h"
+#include <iostream>
+#include <cmath>
 #include "LatticeParser.h"
 #include "Optics.h"
+
+using namespace std;
 
 Lattice::Lattice()
 {
@@ -30,7 +34,9 @@ bool Lattice::parse(string filename, string beamline, int rank, bool streaming)
     LatticeParser parser;
     matched=false;
 
-    if (rank == 0) { cout << "Parsing lattice file..." << endl; }
+    if (rank == 0) { 
+        cout << "Parsing lattice file..." << endl; 
+    }
     bool err=parser.parse(filename,beamline,rank, lat,streaming);
     if (err==false) { 
         return err; 
@@ -445,30 +451,4 @@ void Lattice::unrollLattice(double delz)
     return;  
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
