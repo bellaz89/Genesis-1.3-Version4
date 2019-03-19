@@ -1,25 +1,26 @@
 # Compilation script for Genesis 1.3
-cmake_minimum_required (VERSION 3.13)
+cmake_minimum_required(VERSION 3.10)
 
 project(Genesis13 
     VERSION 4.3.0
-    DESCRIPTION "Genesis 1.3 V4. Tool to simulate beam-field interaction \
-    in Free Electron Lasers"
-    HOMEPAGE_URL "https://github.com/bellaz89/Genesis-1.3-Version4"
     LANGUAGES C CXX)
 
 # pass the project version as compile time preprocessor flags
-add_compile_definitions(
-    VERSIONMAJOR=${PROJECT_VERSION_MAJOR}
-    VERSIONMINOR=${PROJECT_VERSION_MINOR}
-    VERSIONREVISION=${PROJECT_VERSION_PATCH}
-    VERSIONBETA=true)
+add_definitions(
+    -DVERSIONMAJOR=${PROJECT_VERSION_MAJOR}
+    -DVERSIONMINOR=${PROJECT_VERSION_MINOR}
+    -DVERSIONREVISION=${PROJECT_VERSION_PATCH}
+    -DVERSIONBETA=true)
 
 set (CMAKE_CXX_STANDARD 11)
 include(CheckLanguage)
 find_package(PkgConfig REQUIRED)
 
-set(default_build_type "Release")
+if (NOT EXISTS ${CMAKE_BINARY_DIR}/CMakeCache.txt)
+  if (NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
+  endif()
+endif()
 
 # openmpi and hdf5 libraries
 pkg_check_modules(MPI REQUIRED ompi-cxx)
@@ -33,6 +34,7 @@ set(COMMON_CFLAGS ${MPI_CFLAGS} ${HDF5_CFLAGS})
 set(COMMON_LIB_DIRS ${MPI_LIBRARY_DIRS} ${HDF5_LIBRARY_DIRS})
 set(COMMON_LIBRARIES ${MPI_LIBRARIES} ${HDF5_LIBRARIES})
 set(COMMON_LDFLAGS ${MPI_LDFLAGS} ${HDF5_LDFLAGS})
+link_directories(${COMMON_LIB_DIRS})
 
 #------------------------------------------------------------------------------
 # Genesis 1.3 C++ build rules
@@ -45,18 +47,17 @@ target_include_directories(genesis13 PUBLIC include PRIVATE ${COMMON_INCLUDE_DIR
 target_compile_definitions(genesis13 PUBLIC -DMPE)
 target_compile_options(genesis13 PUBLIC ${COMMON_CFLAGS})
 target_link_libraries(genesis13 PRIVATE ${COMMON_LIBRARIES}) 
-target_link_options(genesis13 PUBLIC ${COMMON_LDFLAGS})
 
 add_executable(gencore src/gencore/mainwrap.cpp)
 target_include_directories(gencore  PRIVATE include COMMON_INCLUDE_DIRS)
 target_compile_definitions(gencore PRIVATE -DMPE)
 target_compile_options(gencore PRIVATE ${COMMON_CFLAGS})
-target_link_directories(gencore PRIVATE ${COMMON_LIB_DIRS})
 target_link_libraries(gencore PUBLIC genesis13)
-target_link_options(gencore PRIVATE ${COMMON_LDFLAGS})
 
 install(TARGETS gencore DESTINATION bin)
-install(TARGETS genesis13 LIBRARY DESTINATION lib
+install(TARGETS genesis13 
+        ARCHIVE DESTINATION lib
+        LIBRARY DESTINATION lib
         PUBLIC_HEADER DESTINATION include)
 
 #------------------------------------------------------------------------------
@@ -87,18 +88,17 @@ if(FALSE)
 
     target_compile_options(genesis13-cuda PUBLIC ${COMMON_CFLAGS})
     target_link_libraries(genesis13-cuda PRIVATE ${COMMON_LIBRARIES}) 
-    target_link_options(genesis13-cuda PUBLIC ${COMMON_LDFLAGS})
 
     add_executable(gencore-cuda src/gencore/mainwrap.cpp)
     target_include_directories(gencore-cuda  PRIVATE include ${COMMON_INCLUDE_DIRS})
     target_compile_definitions(gencore-cuda PRIVATE -DMPE)
     target_compile_options(gencore-cuda PRIVATE ${COMMON_CFLAGS})
-    target_link_directories(gencore-cuda PRIVATE ${COMMON_LIB_DIRS})
     target_link_libraries(gencore-cuda PUBLIC genesis13-cuda)
-    target_link_options(gencore-cuda PRIVATE ${COMMON_LDFLAGS})
 
     install(TARGETS gencore-cuda DESTINATION bin)
-    install(TARGETS genesis13-cuda LIBRARY DESTINATION lib
+    install(TARGETS genesis13-cuda 
+            LIBRARY DESTINATION lib
+            ARCHIVE DESTINATION lib
             PUBLIC_HEADER DESTINATION include)
 endif()    
 
@@ -107,7 +107,8 @@ set(CPACK_PACKAGE_NAME "genesis13v4")
 set(CPACK_PACKAGE_VENDOR "Andrea Bellandi")
 set(CPACK_PACKAGE_CONTACT "bellaz89@gmail.com")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "FEL simulator")
-set(CPACK_PACKAGE_DESCRIPTION ${PROJECT_DESCRIPTION})
+set(CPACK_PACKAGE_DESCRIPTION "Genesis 1.3 V4. Tool to simulate beam-field interaction \
+                              in Free Electron Lasers")
 set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
 set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
 set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
