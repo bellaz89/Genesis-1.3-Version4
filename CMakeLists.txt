@@ -19,7 +19,7 @@ set (CMAKE_CXX_STANDARD 11)
 include(CheckLanguage)
 find_package(PkgConfig REQUIRED)
 
-set(default_build_type "Debug")
+set(default_build_type "Release")
 
 # openmpi and hdf5 libraries
 pkg_check_modules(MPI REQUIRED ompi-cxx)
