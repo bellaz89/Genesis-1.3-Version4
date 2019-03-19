@@ -40,7 +40,6 @@ class BeamSolver{
 
    bool onlyFundamental;
  
-
    void RungeKutta(double);
    void ODE(double,double);
 

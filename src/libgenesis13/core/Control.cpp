@@ -1,14 +1,14 @@
-#include <sstream>
-#include "Control.h"
-#include "writeFieldHDF5.h"
-#include "writeBeamHDF5.h"
 
+#include "Control.h"
+#include <sstream>
+#include <libgenesis13/io/HDF5Base.h>
+#include <libgenesis13/io/WriteFieldHDF5.h>
+#include <libgenesis13/io/WriteBeamHDF5.h>
+#include <libgenesis13/io/Output.h>
 
 #ifdef VTRACE
 #include "vt_user.h"
 #endif
-
-
 
 Control::Control()
 {

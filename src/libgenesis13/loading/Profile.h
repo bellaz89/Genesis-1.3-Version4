@@ -7,11 +7,9 @@
 #include <cmath>
 #include <cctype>
 #include <algorithm>
-#include <stdlib.h>
-
-#include "mpi.h"
-#include "StringProcessing.h"
-#include "HDF5base.h"
+#include <cstdlib>
+#include <libgenesis13/util/StringProcessing.h>
+#include <libgenesis13/io/HDF5Base.h>
 
 using namespace std;
 

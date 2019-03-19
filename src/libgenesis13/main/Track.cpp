@@ -1,5 +1,5 @@
 #include "Track.h"
-#include "Gencore.h"
+#include <libgenesis13/core/Gencore.h>
 
 Track::Track()
 {

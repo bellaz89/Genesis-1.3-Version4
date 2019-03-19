@@ -10,16 +10,12 @@
 #include <fstream>
 #include <complex>
 
-#include "StringProcessing.h"
-#include "Setup.h"
-#include "Time.h"
+#include <libgenesis13/util/StringProcessing.h>
+#include <libgenesis13/core/Beam.h>
+#include <libgenesis13/main/Setup.h>
+#include <libgenesis13/main/Time.h>
+#include <libgenesis13/lattice/Lattice.h>
 #include "Profile.h"
-#include "Lattice.h"
-#include "QuietLoading.h"
-#include "ShotNoise.h"
-#include "Beam.h"
-
-
 
 using namespace std;
 
@@ -29,16 +25,16 @@ class LoadBeam : public StringProcessing{
  public:
    LoadBeam();
    virtual ~LoadBeam();
-   bool init(int, int, map<string,string> *,Beam *,Setup *, Time *, Profile *, Lattice *);
+   bool init(int, int, map<string,string>*, Beam*, Setup*, Time*, Profile*, Lattice*);
 
  private:
    void usage();
-   double gamma,delgam,ex,ey,betax,betay,alphax,alphay;
-   double xcen,ycen,pxcen,pycen,current,bunch,bunchphase;
-   double emod,emodphase;
-   string gammaref,delgamref,exref,eyref,betaxref,betayref;
-   string alphaxref,alphayref,xcenref,ycenref,pxcenref,pycenref;
-   string currentref,bunchref,bunchphaseref,emodref,emodphaseref; 
+   double gamma, delgam, ex, ey, betax, betay, alphax, alphay;
+   double xcen, ycen, pxcen, pycen, current, bunch, bunchphase;
+   double emod, emodphase;
+   string gammaref, delgamref, exref, eyref, betaxref, betayref;
+   string alphaxref, alphayref, xcenref, ycenref, pxcenref, pycenref;
+   string currentref, bunchref, bunchphaseref, emodref, emodphaseref; 
 
 };
 

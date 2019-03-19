@@ -1,3 +1,5 @@
+
+#include <libgenesis13/util/Sequence.h>
 #include "Incoherent.h"
 #include "Beam.h"
 

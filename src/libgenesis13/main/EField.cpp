@@ -1,5 +1,5 @@
 #include "EField.h"
-#include "Beam.h"
+#include <libgenesis13/core/Beam.h>
 
 EField::EField(){}
 EField::~EField(){}

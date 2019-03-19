@@ -1,18 +1,15 @@
+#ifndef __GEN_WRITEBEAMHDF5__
+#define __GEN_WRITEBEAMHDF5__
+
 #include <iostream>
 #include <iomanip>
 #include <fstream>
 #include <string>
-#include <math.h>
+#include <cmath>
 #include <complex>
-
-
-#ifndef __GEN_WRITEBEAMHDF5__
-#define __GEN_WRITEBEAMHDF5__
-
-#include "mpi.h"
-#include "hdf5.h"
-#include "HDF5base.h"
-#include "Beam.h"
+#include <hdf5.h>
+#include <libgenesis13/core/Beam.h>
+#include "HDF5Base.h"
 
 using namespace std;
 

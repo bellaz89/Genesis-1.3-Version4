@@ -3,53 +3,48 @@
 
 #include <iostream>
 #include <vector>
-#include <math.h>
+#include <cmath>
 #include <stdlib.h>
 #include <string>
 #include <map>
 #include <fstream>
 #include <cctype>
-
-#include "StringProcessing.h"
+#include <libgenesis13/util/StringProcessing.h>
 #include "Setup.h"
-
-
 
 using namespace std;
 
-
-
 class Time: public StringProcessing{
- public:
-   Time();
-   virtual ~Time();
-   bool init(int, int, map<string,string> *, Setup *);
-   void finishInit(Setup *);
+    public:
+        Time();
+        virtual ~Time();
+        bool init(int, int, map<string,string>*, Setup*);
+        void finishInit(Setup*);
 
-   void set(double,double,int,bool);
+        void set(double,double,int,bool);
 
-   int getPosition(vector<double> *);
-   double getSampleRate();
-   double getTimeWindowStart();
-   double getTimeWindowLength();
-   bool isTime();
-   bool isScan();
-   int getNodeOffset();
-   int getNodeNSlice();
-   bool isInitialized();
+        int getPosition(vector<double>*);
+        double getSampleRate();
+        double getTimeWindowStart();
+        double getTimeWindowLength();
+        bool isTime();
+        bool isScan();
+        int getNodeOffset();
+        int getNodeNSlice();
+        bool isInitialized();
 
-   void setSampleRate(double);
-   void setTimeWindowStart(double);
-   void setTimeWindowLength(double);
+        void setSampleRate(double);
+        void setTimeWindowStart(double);
+        void setTimeWindowLength(double);
 
 
- private:
-   void usage();
-   bool dotime, doscan;
-   double s0,slen,ds;
-   int rank, size,sample;
-   int ns_node,noff_node,nslice;
-   bool initialized;
+    private:
+        void usage();
+        bool dotime, doscan;
+        double s0,slen,ds;
+        int rank, size,sample;
+        int ns_node,noff_node,nslice;
+        bool initialized;
 };
 
 inline void Time::setSampleRate(double in){ sample=static_cast<int>(round(in)); }
@@ -67,8 +62,8 @@ inline bool Time::isInitialized(){ return initialized; }
 
 inline double Time::getSampleRate()
 {
-  if (dotime) { return sample;} else { return 1.; }
-  //return sample;
+    if (dotime) { return sample;} else { return 1.; }
+    //return sample;
 }
 
 

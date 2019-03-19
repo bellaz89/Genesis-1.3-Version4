@@ -1,4 +1,4 @@
-#include "readBeamHDF5.h"
+#include "ReadBeamHDF5.h"
 
 ReadBeamHDF5::ReadBeamHDF5()
 {

@@ -4,44 +4,34 @@
 #include <vector>
 #include <iostream>
 #include <string>
-#include <math.h>
-
-#include "hdf5.h"
-#include "HDF5base.h"
-#include "Particle.h"
-#include "Beam.h"
-#include "Field.h"
-#include "Undulator.h"
+#include <cmath>
+#include <hdf5.h>
+#include <libgenesis13/core/Beam.h>
+#include <libgenesis13/core/Field.h>
+#include <libgenesis13/core/Undulator.h>
+#include "HDF5Base.h"
 
 using namespace std;
 
-extern const double vacimp;
-extern const double eev;
-
-extern const int versionmajor;
-extern const int versionminor;
-extern const int versionrevision;
-extern const bool versionbeta;
-extern string *meta_inputfile;
-extern string *meta_latfile;
+extern string* meta_inputfile;
+extern string* meta_latfile;
 
 class Output : public HDF5Base {
- public:
-   Output();
-   virtual ~Output();
-   void open(string,int,int);
-   void close();
-   void writeFieldBuffer(Field *);
-   void writeBeamBuffer(Beam *);
-   void writeLattice(Beam *, Undulator *);
-   void writeGlobal(double,double,double,double,bool,bool,bool);
-   void writeMeta();
+    public:
+        Output();
+        virtual ~Output();
+        void open(string,int,int);
+        void close();
+        void writeFieldBuffer(Field*);
+        void writeBeamBuffer(Beam*);
+        void writeLattice(Beam*, Undulator*);
+        void writeGlobal(double, double, double, double, bool, bool, bool);
+        void writeMeta();
 
- private:
-   void write(hsize_t,string,string,double *);
-   bool noOutput;
-   hid_t fid;   
+    private:
+        void write(hsize_t, string, string, double*);
+        bool noOutput;
+        hid_t fid;   
 };
-
 
 #endif

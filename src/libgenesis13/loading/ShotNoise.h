@@ -9,17 +9,13 @@
 
 #include <iostream>
 #include <complex>
-#include <math.h>
+#include <cmath>
 
-
-#include "Particle.h"
-#include "Sequence.h"
-#include "RandomU.h"
-
+#include <libgenesis13/core/Particle.h>
+#include <libgenesis13/util/RandomU.h>
 
 #ifndef __GENESIS_SHOTNOISE__
 #define __GENESIS_SHOTNOISE__
-
 
 using namespace std;
 
@@ -29,13 +25,10 @@ public:
 	~ShotNoise();
         void applyShotNoise(Particle *beam, int, int, double); 
         void init(int,int); 
-	
-	
 private:
         RandomU *sran;
         double *work;
         int nwork;
 };
-
 
 #endif

@@ -1,5 +1,5 @@
 
-#include "writeBeamHDF5.h"
+#include "WriteBeamHDF5.h"
 
 extern bool MPISingle;
 

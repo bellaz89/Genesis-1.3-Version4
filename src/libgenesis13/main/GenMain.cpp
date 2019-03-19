@@ -1,3 +1,4 @@
+#include "GenMain.h"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -10,47 +11,35 @@
 #include <fenv.h>
 #include <signal.h>
 #include <mpi.h>
-
-// genesis headerfiles & classes
-#include "Beam.h"
-#include "Field.h"
-#include "EField.h"
-#include "Parser.h"
-#include "Profile.h"
-#include "Setup.h"
-#include "AlterSetup.h"
-#include "Lattice.h"
+#include <libgenesis13/core/Field.h>
+#include <libgenesis13/core/Beam.h>
+#include <libgenesis13/core/Particle.h>
+#include <libgenesis13/core/Gencore.h>
+#include <libgenesis13/io/SDDSBeam.h>
+#include <libgenesis13/lattice/AlterLattice.h>
+#include <libgenesis13/lattice/Lattice.h>
+#include <libgenesis13/loading/Profile.h>
+#include <libgenesis13/loading/ImportBeam.h>
+#include <libgenesis13/loading/ImportField.h>
+#include <libgenesis13/loading/LoadField.h>
+#include <libgenesis13/loading/LoadBeam.h>
 #include "Time.h"
-#include "Gencore.h"
-#include "LoadField.h"
-#include "LoadBeam.h"
-#include "AlterLattice.h"
-#include "Track.h"
-#include "SDDSBeam.h"
 #include "SponRad.h"
-#include "Dump.h"
-#include "ImportBeam.h"
-#include "ImportField.h"
-#include "WriteBeamHDF5.h"
-#include "WriteFieldHDF5.h"
-#include "Collective.h"
 #include "Wake.h"
-
+#include "AlterSetup.h"
+#include "Dump.h"
+#include "Parser.h"
+#include "Setup.h"
+#include "Track.h"
+#include "EField.h"
 
 using namespace std;
-
 const double vacimp = 376.73;
 const double eev    = 510999.06; 
 const double ce     = 4.8032045e-11;
 
-
-const int versionmajor = 4;
-const int versionminor = 3;
-const int versionrevision = 0;
-const bool versionbeta=true;
-
-string *meta_inputfile;
-string *meta_latfile;
+string* meta_inputfile;
+string* meta_latfile;
 
 bool MPISingle;  // global variable to do mpic or not
 
@@ -74,8 +63,8 @@ double genmain (string mainstring, string latstring, bool streaming, bool supres
 	if (rank==0){
           time(&timer);
           cout << "---------------------------------------------" << endl;
-          cout << "GENESIS - Version " <<  versionmajor <<"."<< versionminor << "." << versionrevision ;
-	  if (versionbeta) {cout << " (beta)";}
+          cout << "GENESIS - Version " << VERSIONMAJOR <<"."<< VERSIONMINOR << "." << VERSIONREVISION ;
+	  if (VERSIONBETA) {cout << " (beta)";}
 	  cout << " has started..." << endl;			
 	  cout << "Starting Time: " << ctime(&timer)<< endl;
           cout << "MPI-Comm Size: " << size << " nodes" << endl << endl;
@@ -84,8 +73,8 @@ double genmain (string mainstring, string latstring, bool streaming, bool supres
         //---------------------------------------------------------
         // Instance of beam and field class to carry the distribution
 
-        vector<Field *> field;   // an vector of various field components (harmonics, vertical/horizonthal components)
-        Beam  *beam =new Beam;
+        vector<Field* > field;   // an vector of various field components (harmonics, vertical/horizonthal components)
+        Beam * beam =new Beam;
 
 
         //----------------------------------------------------------
@@ -95,11 +84,11 @@ double genmain (string mainstring, string latstring, bool streaming, bool supres
         string element;
         map<string,string> argument;
 
-        Setup *setup=new Setup;
-	AlterLattice *alt=new AlterLattice;
-        Lattice *lattice=new Lattice;
-        Profile *profile=new Profile;
-        Time *timewindow=new Time;
+        Setup* setup=new Setup;
+	AlterLattice* alt=new AlterLattice;
+        Lattice* lattice=new Lattice;
+        Profile* profile=new Profile;
+        Time* timewindow=new Time;
 
         if (streaming){
     	    meta_inputfile=new string ("streaming");
@@ -124,7 +113,7 @@ double genmain (string mainstring, string latstring, bool streaming, bool supres
 	  // modifying run
 
           if (element.compare("&alter_setup")==0){
-	    AlterSetup *altersetup= new AlterSetup;
+	    AlterSetup* altersetup= new AlterSetup;
             if (!altersetup->init(rank,&argument,setup,lattice,timewindow,beam,&field)){ break;}
 	    delete altersetup;
             continue;  
@@ -162,7 +151,7 @@ double genmain (string mainstring, string latstring, bool streaming, bool supres
           // internal generation of the field
 
 	  if (element.compare("&field")==0){
-	    LoadField *loadfield=new LoadField;
+	    LoadField* loadfield=new LoadField;
             if (!loadfield->init(rank,size,&argument,&field,setup,timewindow,profile)){ break;}
 	    delete loadfield;
             continue;  
@@ -172,7 +161,7 @@ double genmain (string mainstring, string latstring, bool streaming, bool supres
           // setup of space charge field
 
 	  if (element.compare("&efield")==0){
-   	    EField *efield=new EField;
+   	    EField* efield=new EField;
             if (!efield->init(rank,size,&argument,beam,setup,timewindow)){ break;}
 	    delete efield;
             continue;  
@@ -182,7 +171,7 @@ double genmain (string mainstring, string latstring, bool streaming, bool supres
           // setup of spontaneous radiation
 
 	  if (element.compare("&sponrad")==0){
-            SponRad *sponrad=new SponRad;
+            SponRad* sponrad=new SponRad;
             if (!sponrad->init(rank,size,&argument,beam)){ break;}
 	    delete sponrad;
             continue;  
@@ -192,7 +181,7 @@ double genmain (string mainstring, string latstring, bool streaming, bool supres
           // setup wakefield
 
 	  if (element.compare("&wake")==0){
-	    Wake *wake = new Wake;
+	    Wake* wake = new Wake;
             if (!wake->init(rank,size,&argument,timewindow, setup, beam)){ break;}
 	    delete wake;
 	    continue;  
@@ -202,7 +191,7 @@ double genmain (string mainstring, string latstring, bool streaming, bool supres
           // internal generation of beam
 
 	  if (element.compare("&beam")==0){
-            LoadBeam *loadbeam=new LoadBeam;
+            LoadBeam* loadbeam=new LoadBeam;
             if (!loadbeam->init(rank,size,&argument,beam,setup,timewindow,profile,lattice)){ break;}
 	    delete loadbeam;
             continue;  
@@ -212,7 +201,7 @@ double genmain (string mainstring, string latstring, bool streaming, bool supres
           // external generation of beam with an sdds file
 
 	  if (element.compare("&importdistribution")==0){
-            SDDSBeam *sddsbeam=new SDDSBeam;
+            SDDSBeam* sddsbeam=new SDDSBeam;
             if (!sddsbeam->init(rank,size,&argument,beam,setup,timewindow,lattice)){ break;}
 	    delete sddsbeam;
             continue;  
@@ -222,7 +211,7 @@ double genmain (string mainstring, string latstring, bool streaming, bool supres
           // tracking - the very core part of Genesis
 
 	  if (element.compare("&track")==0){
-            Track *track=new Track;
+            Track* track=new Track;
 	    if (!track->init(rank,size,&argument,beam,&field,setup,lattice,alt,timewindow,supressOutput)){ break;}
             delete track;
             continue;  
@@ -242,7 +231,7 @@ double genmain (string mainstring, string latstring, bool streaming, bool supres
           // write beam, field or undulator to file
 
 	  if (element.compare("&write")==0){
-            Dump *dump=new Dump;
+            Dump* dump=new Dump;
 	    if (!dump->init(rank,size,&argument,setup,beam,&field)){ break;}
             delete dump;
             continue;  
@@ -253,7 +242,7 @@ double genmain (string mainstring, string latstring, bool streaming, bool supres
           // import beam from a particle dump
 
 	  if (element.compare("&importbeam")==0){
-            ImportBeam *import=new ImportBeam;
+            ImportBeam* import=new ImportBeam;
 	    if (!import->init(rank,size,&argument,beam,setup,timewindow)){ break;}
             delete import;
             continue;  
@@ -264,7 +253,7 @@ double genmain (string mainstring, string latstring, bool streaming, bool supres
           // import field from a field dump
 
 	  if (element.compare("&importfield")==0){
-            ImportField *import=new ImportField;
+            ImportField* import=new ImportField;
 	    if (!import->init(rank,size,&argument,&field,setup,timewindow)){ break;}
             delete import;
             continue;  

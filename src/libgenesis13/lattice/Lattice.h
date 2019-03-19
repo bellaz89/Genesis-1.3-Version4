@@ -3,17 +3,12 @@
 
 #include <iostream>
 #include <vector>
-#include <math.h>
+#include <cmath>
 #include <string>
 #include <map>
-
-
-//#include "HDF5base.h"
-
-#include "LatticeParser.h"
-#include "Optics.h"
-#include "AlterLattice.h"
-#include "Undulator.h"
+#include <libgenesis13/lattice/AlterLattice.h>
+#include <libgenesis13/lattice/LatticeElements.h>
+#include <libgenesis13/core/Undulator.h>
 
 using namespace std;
 
@@ -23,17 +18,17 @@ class Lattice{
  public:
    Lattice();
    virtual ~Lattice();
-   bool generateLattice(double, double, double,AlterLattice *, Undulator *);
+   bool generateLattice(double, double, double, AlterLattice*, Undulator*);
 
-   //   bool writeLattice(hid_t,double, double, double,AlterLattice *);
+   //   bool writeLattice(hid_t,double, double, double,AlterLattice*);
 
    bool parse(string,string,int,bool);
-   void getMatchedOptics(double *, double *, double *, double *);
+   void getMatchedOptics(double*, double*, double*, double*);
    void match(int, double, double);
  private:
 
    map<double,int> layout;
-   vector<Element *> lat;
+   vector<Element*> lat;
    int nlat;
    bool matched;
    double mbetax,mbetay,malphax,malphay;

@@ -1,6 +1,7 @@
 #include "ImportBeam.h"
-#include "readBeamHDF5.h"
-
+#include <libgenesis13/io/ReadBeamHDF5.h>
+#include <libgenesis13/lattice/LatticeElements.h>
+#include <libgenesis13/main/Setup.h>
 
 ImportBeam::ImportBeam()
 {
@@ -21,7 +22,7 @@ void ImportBeam::usage(){
 }
 
 
-bool ImportBeam::init(int rank, int size, map<string,string> *arg, Beam *beam, Setup *setup, Time *time)
+bool ImportBeam::init(int rank, int size, map<string,string>* arg, Beam*beam, Setup* setup, Time* time)
 {
 
 
@@ -71,8 +72,6 @@ bool ImportBeam::init(int rank, int size, map<string,string> *arg, Beam *beam, S
   int nslice=time->getPosition(&s);
 
   beam->init(time->getNodeNSlice(),nbins,lambda,sample*lambda,s[0],one4one);
-
-
 
   for (int j=0; j<time->getNodeNSlice(); j++){
     int i=j+time->getNodeOffset();

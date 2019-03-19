@@ -8,34 +8,37 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(MPI REQUIRED ompi-cxx)
 pkg_check_modules(HDF5 REQUIRED hdf5-openmpi)
 
-file(GLOB genesis_sources src/libgenesis13/*/*.cpp)
+file(GLOB COMMON_SOURCES src/libgenesis13/*/*.cpp)
+set(COMMON_INCLUDE_DIRS src/)
+set(PROJECT_INCLUDE_DIRS ${MPI_INCLUDE_DIRS} ${HDF5_INCLUDE_DIRS})
+list(APPEND COMMON_INCLUDE_DIRS ${PROJECT_INCLUDE_DIRS})
+set(COMMON_CFLAGS ${MPI_CFLAGS} ${HDF5_CFLAGS})
+set(COMMON_LIB_DIRS ${MPI_LIBRARY_DIRS} ${HDF5_LIBRARY_DIRS})
+set(COMMON_LIBRARIES ${MPI_LIBRARIES} ${HDF5_LIBRARIES})
+set(COMMON_LDFLAGS ${MPI_LDFLAGS} ${HDF5_LDFLAGS})
 
 #------------------------------------------------------------------------------
 # Genesis 1.3 C++ build rules
 #------------------------------------------------------------------------------
 
-file(GLOB genesis_CPP_sources src/libgenesis13/*/cpp/*.cpp)
+file(GLOB CPP_SOURCES src/libgenesis13/*/cpp/*.cpp)
 
-add_library(genesis13 ${genesis_sources} ${genesis_CPP_sources})
-target_include_directories(genesis13  PUBLIC include 
-    PRIVATE ${MPI_INCLUDE_DIRS}
-    PRIVATE ${HDF5_INCLUDE_DIRS})
-
+add_library(genesis13 ${COMMON_SOURCES} ${CPP_SOURCES})
+target_include_directories(genesis13 PUBLIC include PRIVATE ${COMMON_INCLUDE_DIRS}) 
 target_compile_definitions(genesis13 PUBLIC -DMPE)
-target_compile_options(genesis13 PUBLIC ${MPI_CFLAGS} ${HDF5_CFLAGS})
-target_link_options(genesis13 PUBLIC ${MPI_LDFLAGS} ${HDF5_LDFLAGS})
+target_compile_options(genesis13 PUBLIC ${COMMON_CFLAGS})
+target_link_libraries(genesis13 PRIVATE ${COMMON_LIBRARIES}) 
+target_link_options(genesis13 PUBLIC ${COMMON_LDFLAGS})
 
 add_executable(gencore src/gencore/mainwrap.cpp)
-target_include_directories(gencore  PRIVATE include 
-    PRIVATE ${MPI_INCLUDE_DIRS}
-    PRIVATE ${HDF5_INCLUDE_DIRS})
-
+target_include_directories(gencore  PRIVATE include COMMON_INCLUDE_DIRS)
 target_compile_definitions(gencore PRIVATE -DMPE)
-target_compile_options(gencore PRIVATE ${MPI_CFLAGS} ${HDF5_CFLAGS})
-target_link_directories(gencore PRIVATE ${MPI_LIBRARY_DIRS} ${HDF5_LIBRARY_DIRS})
-target_link_libraries(gencore PRIVATE genesis13 ${MPI_LIBRARIES} ${HDF5_LIBRARIES}) 
-target_link_options(gencore PRIVATE ${MPI_LDFLAGS} ${HDF5_LDFLAGS})
+target_compile_options(gencore PRIVATE ${COMMON_CFLAGS})
+target_link_directories(gencore PRIVATE ${COMMON_LIB_DIRS})
+target_link_libraries(gencore PRIVATE genesis13)
+target_link_options(gencore PRIVATE ${COMMON_LDFLAGS})
 
+install(TARGETS genesis13 gencore)
 #------------------------------------------------------------------------------
 # Genesis 1.3 CUDA build rules
 #------------------------------------------------------------------------------
@@ -45,32 +48,35 @@ if(CMAKE_CUDA_COMPILER)
 
     enable_language(CUDA)
 
-    file(GLOB genesis_CUDA_sources_cpp src/libgenesis13/*/cuda/*.cpp)
-    file(GLOB genesis_CUDA_sources_cu src/libgenesis13/*/cuda/*.cu)
+    file(GLOB CUDA_SOURCES src/libgenesis13/*/cuda/*.cpp src/libgenesis13/*/cuda/*.cu)
+    
+    add_library(genesis13-cuda ${COMMON_SOURCES} ${CUDA_SOURCES})
+    set_target_properties(genesis13-cuda PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+    target_include_directories(genesis13-cuda PUBLIC include PRIVATE ${COMMON_INCLUDE_DIRS}) 
+    target_compile_definitions(genesis13-cuda PUBLIC -DMPE)
+   
+    if("-pthread" IN_LIST COMMON_CFLAGS) 
+        # Delete -pthread because it is unsupported by nvcc
 
-    add_library(genesis13-cuda ${genesis_sources} 
-                               ${genesis_CUDA_sources_cpp}
-                               ${genesis_CUDA_sources_cu})
-    target_include_directories(genesis13-cuda  PUBLIC include 
-        PRIVATE ${MPI_INCLUDE_DIRS}
-        PRIVATE ${HDF5_INCLUDE_DIRS})
+        list(REMOVE_ITEM COMMON_CFLAGS -pthread)
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pthread")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+        set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -Xcompiler -pthread")
 
-    target_compile_definitions(genesis13-cuda PUBLIC -DMPE -DUSE_CUDA)
-    target_compile_options(genesis13-cuda PUBLIC ${MPI_CFLAGS} ${HDF5_CFLAGS})
-    target_link_options(genesis13-cuda PUBLIC ${MPI_LDFLAGS} ${HDF5_LDFLAGS})
+    endif()
+
+    target_compile_options(genesis13-cuda PUBLIC ${COMMON_CFLAGS})
+    target_link_libraries(genesis13-cuda PRIVATE ${COMMON_LIBRARIES}) 
+    target_link_options(genesis13-cuda PUBLIC ${COMMON_LDFLAGS})
 
     add_executable(gencore-cuda src/gencore/mainwrap.cpp)
-    target_include_directories(gencore-cuda  PRIVATE include 
-        PRIVATE ${MPI_INCLUDE_DIRS}
-        PRIVATE ${HDF5_INCLUDE_DIRS})
+    target_include_directories(gencore-cuda  PRIVATE include ${COMMON_INCLUDE_DIRS})
+    target_compile_definitions(gencore-cuda PRIVATE -DMPE)
+    target_compile_options(gencore-cuda PRIVATE ${COMMON_CFLAGS})
+    target_link_directories(gencore-cuda PRIVATE ${COMMON_LIB_DIRS})
+    target_link_libraries(gencore-cuda PRIVATE genesis13-cuda)
+    target_link_options(gencore-cuda PRIVATE ${COMMON_LDFLAGS})
 
-    target_compile_definitions(gencore-cuda PRIVATE -DMPE -DUSE_CUDA)
-    target_compile_options(gencore-cuda PRIVATE ${MPI_CFLAGS} ${HDF5_CFLAGS})
-    target_link_directories(gencore-cuda PRIVATE ${MPI_LIBRARY_DIRS} ${HDF5_LIBRARY_DIRS})
-    target_link_libraries(gencore-cuda PRIVATE genesis13-cuda ${MPI_LIBRARIES} ${HDF5_LIBRARIES}) 
-    target_link_options(gencore-cuda PRIVATE ${MPI_LDFLAGS} ${HDF5_LDFLAGS})
     install(TARGETS genesis13-cuda gencore-cuda)
-
 endif()    
 
-install(TARGETS genesis13 gencore)

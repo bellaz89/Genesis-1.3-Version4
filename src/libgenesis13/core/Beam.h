@@ -5,11 +5,11 @@
 #include <iostream>
 #include <string>
 
+#include <libgenesis13/util/Sorting.h>
 #include "Particle.h"
 #include "Undulator.h"
 #include "BeamSolver.h"
 #include "Incoherent.h"
-#include "Sorting.h"
 #include "Collective.h"
 
 using namespace std;

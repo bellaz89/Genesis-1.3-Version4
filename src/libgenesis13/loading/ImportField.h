@@ -3,39 +3,33 @@
 
 #include <iostream>
 #include <vector>
-#include <math.h>
-#include <stdlib.h>
+#include <cmath>
+#include <cstdlib>
 #include <string>
 #include <map>
 #include <fstream>
 #include <complex>
-
-#include "StringProcessing.h"
-#include "Setup.h"
-#include "Time.h"
-#include "Profile.h"
-#include "Lattice.h"
-#include "Field.h"
-
-
+#include <libgenesis13/util/StringProcessing.h>
+#include <libgenesis13/main/Setup.h>
+#include <libgenesis13/main/Time.h>
+#include <libgenesis13/core/Field.h>
 
 using namespace std;
 
 extern const double ce;
 
 class ImportField : public StringProcessing{
- public:
-   ImportField();
-   virtual ~ImportField();
-   bool init(int, int, map<string,string> *,vector<Field *> *,Setup *, Time *);
+    public:
+        ImportField();
+        virtual ~ImportField();
+        bool init(int, int, map<string, string>*, vector<Field*>*, Setup*, Time*);
 
- private:
-   void usage();
-   string file;
-   int harm;
-   double offset;
-   bool dotime;
+    private:
+        void usage();
+        string file;
+        int harm;
+        double offset;
+        bool dotime;
 };
-
 
 #endif

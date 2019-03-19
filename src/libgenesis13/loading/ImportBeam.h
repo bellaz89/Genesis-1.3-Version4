@@ -3,40 +3,32 @@
 
 #include <iostream>
 #include <vector>
-#include <math.h>
-#include <stdlib.h>
+#include <cmath>
+#include <cstdlib>
 #include <string>
 #include <map>
 #include <fstream>
 #include <complex>
-
-#include "StringProcessing.h"
-#include "Setup.h"
-#include "Time.h"
-#include "Profile.h"
-#include "Lattice.h"
-#include "QuietLoading.h"
-#include "ShotNoise.h"
-#include "Beam.h"
-
-
+#include <libgenesis13/util/StringProcessing.h>
+#include <libgenesis13/core/Beam.h>
+#include <libgenesis13/main/Setup.h>
+#include <libgenesis13/main/Time.h>
 
 using namespace std;
 
 extern const double ce;
 
 class ImportBeam : public StringProcessing{
- public:
-   ImportBeam();
-   virtual ~ImportBeam();
-   bool init(int, int, map<string,string> *,Beam *,Setup *, Time *);
+    public:
+        ImportBeam();
+        virtual ~ImportBeam();
+        bool init(int, int, map<string,string>*, Beam*, Setup*, Time*);
 
- private:
-   void usage();
-   string file;
-   double offset;
-   bool dotime;
+    private:
+        void usage();
+        string file;
+        double offset;
+        bool dotime;
 };
-
 
 #endif

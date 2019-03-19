@@ -3,15 +3,14 @@
 
 #include <iostream>
 #include <vector>
-#include <math.h>
+#include <cmath>
 #include <stdlib.h>
 #include <string>
 #include <map>
 #include <fstream>
 #include <cctype>
-
-#include "StringProcessing.h"
-#include "Lattice.h"
+#include <libgenesis13/util/StringProcessing.h>
+#include <libgenesis13/lattice/Lattice.h>
 
 using namespace std;
 

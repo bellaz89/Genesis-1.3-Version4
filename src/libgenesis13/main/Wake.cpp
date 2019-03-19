@@ -1,5 +1,5 @@
 #include "Wake.h"
-#include "Beam.h"
+#include <libgenesis13/core/Beam.h>
 
 Wake::Wake()
 {
@@ -158,31 +158,6 @@ void Wake::singleWakeResistive(int rank)
    for (int i = 0; i < ns; i++){
      wakeres[i]*=coef;
    }
-
-
-  /*
-   ofstream myfile;
-
-   myfile.open ("Zre.txt");
-   for (int i = 0; i < nk ; i++){
-	myfile << Zre[i] << endl;
-   }
-   myfile.close();   
-
-   myfile.open ("Zim.txt");
-   for (int i = 0; i < nk ; i++){
-	myfile << Zim[i] << endl;
-   }
-   myfile.close(); 
-
-   myfile.open ("wake.txt");
-   for (int i = 0; i < ns ; i++){
-	myfile << wakeres[i] << endl;
-   }
-   myfile.close();
-   */
-
-
 
    if (rank==0){
        cout << "Resistive Wake calculated (s0 = " << s0 << ")..." << endl;   

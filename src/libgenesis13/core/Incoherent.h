@@ -5,12 +5,9 @@
 #include <iostream>
 #include <string>
 #include <complex>
-#include <math.h>
-
+#include <cmath>
+#include <libgenesis13/util/RandomU.h>
 #include "Undulator.h"
-#include "Particle.h"
-#include "Sequence.h"
-#include "RandomU.h"
 
 class Beam;
 

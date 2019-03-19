@@ -5,8 +5,7 @@
 #include <vector>
 #include <math.h>
 
-#include "HDF5base.h"
-#include "BesselJ.h"
+#include <libgenesis13/io/HDF5Base.h>
 
 using namespace std;
 

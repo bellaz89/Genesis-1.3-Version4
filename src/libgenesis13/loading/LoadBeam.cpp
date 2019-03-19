@@ -1,4 +1,6 @@
 #include "LoadBeam.h"
+#include "QuietLoading.h"
+#include "ShotNoise.h"
 
 LoadBeam::LoadBeam()
 {
