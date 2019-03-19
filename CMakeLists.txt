@@ -4,6 +4,8 @@ project(Genesis13 LANGUAGES C CXX)
 include(CheckLanguage)
 find_package(PkgConfig REQUIRED)
 
+set(default_build_type "Release")
+
 # openmpi and hdf5 libraries
 pkg_check_modules(MPI REQUIRED ompi-cxx)
 pkg_check_modules(HDF5 REQUIRED hdf5-openmpi)
