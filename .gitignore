@@ -3,3 +3,4 @@ benchmark/*/*.h5
 *.swp
 *.o
 lib
+__pycache__/

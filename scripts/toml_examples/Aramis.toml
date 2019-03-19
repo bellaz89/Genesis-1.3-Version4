@@ -1,0 +1,48 @@
+[setup]
+rootname = "Benchmark"
+beamline = "ARAMIS"
+lambda0 = 1e-10
+gamma0 = 11357.82
+delz = 0.045
+shotnoise = 0
+
+[lattice]
+zmatch = 9.5
+
+[field]
+power = 5000.0
+dgrid = 0.0005
+ngrid = 151
+waist_size = 3e-5
+
+[beam]
+current = 3000
+delgam = 1.0
+ex = 4e-7
+ey = 4e-7
+
+[track]
+
+[line]
+FODO = [ "UND", "D1", "QF", "D2", "UND", "D1", "QD", "D1", "D2",]
+ARAMIS = [ "6*FODO",]
+
+[undulator.UND]
+lambdau = 0.015
+nwig = 266
+aw = 0.84853
+
+[drift.D1]
+l = 0.44
+
+[drift.D2]
+l = 0.24
+
+[quadrupole.QF]
+l = 0.08
+k1 = 2.0
+
+[quadrupole.QD]
+l = 0.08
+k1 = -2.0
+
