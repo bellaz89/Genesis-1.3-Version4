@@ -1,23 +1,19 @@
 # Compilation script for Genesis 1.3
 cmake_minimum_required (VERSION 3.13)
 
-set(VERSIONMAJOR 4)
-set(VERSIONMINOR 3)
-set(VERSIONREVISION 0)
-set(VERSIONBETA true)
-
 project(Genesis13 
-    VERSION "${VERSIONMAJOR}.${VERSIONMINOR}.${VERSIONREVISION}"
+    VERSION 4.3.0
     DESCRIPTION "Genesis 1.3 V4. Tool to simulate beam-field interaction \
     in Free Electron Lasers"
     HOMEPAGE_URL "https://github.com/bellaz89/Genesis-1.3-Version4"
     LANGUAGES C CXX)
 
+# pass the project version as compile time preprocessor flags
 add_compile_definitions(
-    VERSIONMAJOR=${VERSIONMAJOR}
-    VERSIONMINOR=${VERSIONMINOR}
-    VERSIONREVISION=${VERSIONREVISION}
-    VERSIONBETA=${VERSIONBETA})
+    VERSIONMAJOR=${PROJECT_VERSION_MAJOR}
+    VERSIONMINOR=${PROJECT_VERSION_MINOR}
+    VERSIONREVISION=${PROJECT_VERSION_PATCH}
+    VERSIONBETA=true)
 
 set (CMAKE_CXX_STANDARD 11)
 include(CheckLanguage)
@@ -56,10 +52,13 @@ target_include_directories(gencore  PRIVATE include COMMON_INCLUDE_DIRS)
 target_compile_definitions(gencore PRIVATE -DMPE)
 target_compile_options(gencore PRIVATE ${COMMON_CFLAGS})
 target_link_directories(gencore PRIVATE ${COMMON_LIB_DIRS})
-target_link_libraries(gencore PRIVATE genesis13)
+target_link_libraries(gencore PUBLIC genesis13)
 target_link_options(gencore PRIVATE ${COMMON_LDFLAGS})
 
-install(TARGETS genesis13 gencore)
+install(TARGETS gencore DESTINATION bin)
+install(TARGETS genesis13 LIBRARY DESTINATION lib
+        PUBLIC_HEADER DESTINATION include)
+
 #------------------------------------------------------------------------------
 # Genesis 1.3 CUDA build rules
 #------------------------------------------------------------------------------
@@ -95,9 +94,43 @@ if(FALSE)
     target_compile_definitions(gencore-cuda PRIVATE -DMPE)
     target_compile_options(gencore-cuda PRIVATE ${COMMON_CFLAGS})
     target_link_directories(gencore-cuda PRIVATE ${COMMON_LIB_DIRS})
-    target_link_libraries(gencore-cuda PRIVATE genesis13-cuda)
+    target_link_libraries(gencore-cuda PUBLIC genesis13-cuda)
     target_link_options(gencore-cuda PRIVATE ${COMMON_LDFLAGS})
 
-    install(TARGETS genesis13-cuda gencore-cuda)
+    install(TARGETS gencore-cuda DESTINATION bin)
+    install(TARGETS genesis13-cuda LIBRARY DESTINATION lib
+            PUBLIC_HEADER DESTINATION include)
 endif()    
 
+# Packaging support
+set(CPACK_PACKAGE_NAME "genesis13v4")
+set(CPACK_PACKAGE_VENDOR "Andrea Bellandi")
+set(CPACK_PACKAGE_CONTACT "bellaz89@gmail.com")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "FEL simulator")
+set(CPACK_PACKAGE_DESCRIPTION ${PROJECT_DESCRIPTION})
+set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
+set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+set(CPACK_PACKAGING_INSTALL_PREFIX "/usr")
+set(CPACK_INSTALL_PREFIX "/usr")
+set(CPACK_SOURCE_IGNORE_FILES
+    /.git
+    /dist
+    /.*build.*
+    /\\\\.DS_Store
+)
+
+set(CPACK_SOURCE_GENERATOR "TGZ;RPM;DEB")
+
+set(CPACK_BINARY_RPM TRUE)
+set(CPACK_RPM_PACKAGE_GROUP "General")
+set(CPACK_RPM_PACKAGE_DEPENDS "openmpi-devel, hdf5-openmpi-devel, cmake (>= 3.13), gcc, gcc-c++")
+
+set(CPACK_BINARY_DEBIAN TRUE)
+set(CPACK_DEBIAN_PACKAGE_GROUP "General")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "libopenmpi-dev, libhdf5-openmpi-dev, cmake (>= 3.13), build-essential")
+set(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
+set(CPACK_DEBIAN_PACKAGE_SECTION "science")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Andrea Bellandi <bellaz89@gmail.com>")
+
+include(CPack)

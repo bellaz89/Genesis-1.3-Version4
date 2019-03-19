@@ -45,5 +45,7 @@ Ideas
   for input and lattice files?
   A standard filetype will make it easier
   to interoperate the program with external program and programming language.
-  An additional benefit of use an external library (ex [cpptoml](https://github.com/skystrife/cpptoml)) will make the codebase
-  easier to mantain.
+  An additional benefit of use an external library 
+  (ex [cpptoml](https://github.com/skystrife/cpptoml)) will make the codebase
+  easier to mantain. Also it could be possible to merge .in and .lat files in a 
+  single one.
