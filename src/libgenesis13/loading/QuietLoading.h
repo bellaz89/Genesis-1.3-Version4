@@ -7,8 +7,7 @@
 extern const double vacimp;
 extern const double eev;
 
-typedef struct
-{
+typedef struct {
     double gamma;
     double delgam;
     double current;
@@ -32,15 +31,15 @@ typedef struct
 using namespace std;
 
 class QuietLoading  {
-    public:
-        QuietLoading();
-        ~QuietLoading();
-        void loadQuiet(Particle* beam, BeamSlice*, int, int, double,int); 
-        void init(bool, int*); 
+public:
+    QuietLoading();
+    ~QuietLoading();
+    void loadQuiet(Particle* beam, BeamSlice*, int, int, double, int);
+    void init(bool, int*);
 
 
-    private:
-        Sequence* sx, *sy, *st, *spx, *spy, *sg;
+private:
+    Sequence* sx, *sy, *st, *spx, *spy, *sg;
 };
 
 #endif

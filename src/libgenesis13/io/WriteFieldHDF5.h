@@ -13,16 +13,16 @@ extern const double vacimp;
 extern const double eev;
 
 class WriteFieldHDF5 : public HDF5Base {
-    public:
-        WriteFieldHDF5();
-        virtual ~WriteFieldHDF5();
-        void write(string fileroot, vector<Field *> *field);
+public:
+    WriteFieldHDF5();
+    virtual ~WriteFieldHDF5();
+    void write(string fileroot, vector<Field*>* field);
 
-    private:
-        void writeMain(string fileroot, Field *field);
-        void writeGlobal(double, double, double, double, int, int);
-        hid_t fid;
-        int rank, size;
+private:
+    void writeMain(string fileroot, Field* field);
+    void writeGlobal(double, double, double, double, int, int);
+    hid_t fid;
+    int rank, size;
 };
 
 #endif

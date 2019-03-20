@@ -12,17 +12,17 @@ using namespace std;
 
 extern const double ce;
 
-class ImportBeam : public StringProcessing{
-    public:
-        ImportBeam();
-        virtual ~ImportBeam();
-        bool init(int, int, map<string,string>*, Beam*, Setup*, Time*);
+class ImportBeam : public StringProcessing {
+public:
+    ImportBeam();
+    virtual ~ImportBeam();
+    bool init(int, int, map<string, string>*, Beam*, Setup*, Time*);
 
-    private:
-        void usage();
-        string file;
-        double offset;
-        bool dotime;
+private:
+    void usage();
+    string file;
+    double offset;
+    bool dotime;
 };
 
 #endif

@@ -10,11 +10,11 @@
 
 using namespace std;
 
-class Gencore{
-    public:
-        Gencore(){};
-        virtual ~Gencore(){};
-        int run(const char*, Beam*, vector<Field*>*, Undulator*, bool, bool, bool);
+class Gencore {
+public:
+    Gencore() {};
+    virtual ~Gencore() {};
+    int run(const char*, Beam*, vector<Field*>*, Undulator*, bool, bool, bool);
 };
 
 #endif

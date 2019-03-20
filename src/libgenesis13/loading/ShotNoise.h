@@ -16,15 +16,15 @@
 using namespace std;
 
 class ShotNoise  {
-    public:
-        ShotNoise();
-        ~ShotNoise();
-        void applyShotNoise(Particle *beam, int, int, double); 
-        void init(int,int); 
-    private:
-        RandomU *sran;
-        double *work;
-        int nwork;
+public:
+    ShotNoise();
+    ~ShotNoise();
+    void applyShotNoise(Particle* beam, int, int, double);
+    void init(int, int);
+private:
+    RandomU* sran;
+    double* work;
+    int nwork;
 };
 
 #endif

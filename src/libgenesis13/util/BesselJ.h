@@ -15,13 +15,13 @@
 using namespace std;
 
 class BesselJ  {
-    public:
-        BesselJ();
-        ~BesselJ();
-        double value(int, double);
-    private:
-        double BesselJ0(double);
-        double BesselJ1(double);
+public:
+    BesselJ();
+    ~BesselJ();
+    double value(int, double);
+private:
+    double BesselJ0(double);
+    double BesselJ1(double);
 };
 
 #endif

@@ -14,21 +14,21 @@ extern string* meta_inputfile;
 extern string* meta_latfile;
 
 class Output : public HDF5Base {
-    public:
-        Output();
-        virtual ~Output();
-        void open(string,int,int);
-        void close();
-        void writeFieldBuffer(Field*);
-        void writeBeamBuffer(Beam*);
-        void writeLattice(Beam*, Undulator*);
-        void writeGlobal(double, double, double, double, bool, bool, bool);
-        void writeMeta();
+public:
+    Output();
+    virtual ~Output();
+    void open(string, int, int);
+    void close();
+    void writeFieldBuffer(Field*);
+    void writeBeamBuffer(Beam*);
+    void writeLattice(Beam*, Undulator*);
+    void writeGlobal(double, double, double, double, bool, bool, bool);
+    void writeMeta();
 
-    private:
-        void write(hsize_t, string, string, double*);
-        bool noOutput;
-        hid_t fid;   
+private:
+    void write(hsize_t, string, string, double*);
+    bool noOutput;
+    hid_t fid;
 };
 
 #endif

@@ -13,16 +13,16 @@
 
 #include "Sequence.h"
 
-class RandomU : public Sequence{
+class RandomU : public Sequence {
 public:
-	RandomU(unsigned int = 0 );
-	~RandomU();
-	void set(unsigned int);
-	double getElement();
+    RandomU(unsigned int = 0 );
+    ~RandomU();
+    void set(unsigned int);
+    double getElement();
 private:
 
-	int iv[32],iy;
-	int iseed,iseed2;
+    int iv[32], iy;
+    int iseed, iseed2;
 };
 
 

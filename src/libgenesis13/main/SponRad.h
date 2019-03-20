@@ -13,16 +13,16 @@ using namespace std;
 
 class Beam;
 
-class SponRad: public StringProcessing{
-    public:
-        SponRad();
-        virtual ~SponRad();
-        bool init(int, int, map<string, string>*, Beam*);
+class SponRad: public StringProcessing {
+public:
+    SponRad();
+    virtual ~SponRad();
+    bool init(int, int, map<string, string>*, Beam*);
 
-    private:
-        void usage();
-        bool doLoss,doSpread;
-        int seed;
+private:
+    void usage();
+    bool doLoss, doSpread;
+    int seed;
 };
 
 #endif

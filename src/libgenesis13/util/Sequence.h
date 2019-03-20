@@ -7,11 +7,10 @@
 #ifndef __GENESIS_SEQUENCE__
 #define __GENESIS_SEQUENCE__
 
-class Sequence
-{
+class Sequence {
 public:
-	virtual double getElement() = 0;
-	virtual void set(unsigned int) = 0;
+    virtual double getElement() = 0;
+    virtual void set(unsigned int) = 0;
 };
 
-#endif 
+#endif

@@ -123,11 +123,9 @@ set(CPACK_SOURCE_IGNORE_FILES
 
 set(CPACK_SOURCE_GENERATOR "TGZ;RPM;DEB")
 
-set(CPACK_BINARY_RPM TRUE)
 set(CPACK_RPM_PACKAGE_GROUP "General")
 set(CPACK_RPM_PACKAGE_DEPENDS "openmpi-devel, hdf5-openmpi-devel, cmake (>= 3.13), gcc, gcc-c++")
 
-set(CPACK_BINARY_DEBIAN TRUE)
 set(CPACK_DEBIAN_PACKAGE_GROUP "General")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "libopenmpi-dev, libhdf5-openmpi-dev, cmake (>= 3.13), build-essential")
 set(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")

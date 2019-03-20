@@ -12,16 +12,16 @@ class Beam;
 
 using namespace std;
 
-class EField{
-    public:
-        EField();
-        virtual ~EField();
-        bool init(int,int,map<string,string>*, Beam*, Setup*, Time*);
+class EField {
+public:
+    EField();
+    virtual ~EField();
+    bool init(int, int, map<string, string>*, Beam*, Setup*, Time*);
 
-    private:
-        void usage();
-        double rmax,dr,lambda;
-        int nz,nphi,ngrid;
+private:
+    void usage();
+    double rmax, dr, lambda;
+    int nz, nphi, ngrid;
 };
 
 #endif

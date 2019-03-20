@@ -9,16 +9,16 @@
 using namespace std;
 
 class Parser : public StringProcessing {
-    public:
-        Parser();
-        virtual ~Parser();
-        bool open(string, int, bool);
-        bool parse(string*, map<string, string>*);
+public:
+    Parser();
+    virtual ~Parser();
+    bool open(string, int, bool);
+    bool parse(string*, map<string, string>*);
 
-    private:
-        int rank;
-        istringstream input;
-        bool fillMap(string*, map<string, string>*);
+private:
+    int rank;
+    istringstream input;
+    bool fillMap(string*, map<string, string>*);
 };
 
 #endif

@@ -13,16 +13,17 @@
 #include "Time.h"
 using namespace std;
 
-class Track{
-    public:
-        Track();
-        virtual ~Track();
-        bool init(int, int, map<string,string> *,Beam *, vector<Field *> *,Setup *, Lattice *, AlterLattice *, Time *,bool);
-    private:
-        void usage();
-        double zstop,slen,s0;
-        int output_step,dumpFieldStep,dumpBeamStep,sort_step,bunchharm;
-        int rank, size;
+class Track {
+public:
+    Track();
+    virtual ~Track();
+    bool init(int, int, map<string, string>*, Beam*, vector<Field*>*, Setup*, Lattice*,
+              AlterLattice*, Time*, bool);
+private:
+    void usage();
+    double zstop, slen, s0;
+    int output_step, dumpFieldStep, dumpBeamStep, sort_step, bunchharm;
+    int rank, size;
 };
 
 

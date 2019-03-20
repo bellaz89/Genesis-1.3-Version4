@@ -13,18 +13,18 @@ using namespace std;
 
 extern const double ce;
 
-class ImportField : public StringProcessing{
-    public:
-        ImportField();
-        virtual ~ImportField();
-        bool init(int, int, map<string, string>*, vector<Field*>*, Setup*, Time*);
+class ImportField : public StringProcessing {
+public:
+    ImportField();
+    virtual ~ImportField();
+    bool init(int, int, map<string, string>*, vector<Field*>*, Setup*, Time*);
 
-    private:
-        void usage();
-        string file;
-        int harm;
-        double offset;
-        bool dotime;
+private:
+    void usage();
+    string file;
+    int harm;
+    double offset;
+    bool dotime;
 };
 
 #endif

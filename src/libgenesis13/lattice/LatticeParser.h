@@ -9,28 +9,28 @@
 using namespace std;
 
 class LatticeParser : public StringProcessing {
-    public:
-        LatticeParser();
-        virtual ~LatticeParser();
-        bool parse(string, string, int, vector<Element*>&, bool);
-    private:
+public:
+    LatticeParser();
+    virtual ~LatticeParser();
+    bool parse(string, string, int, vector<Element*> &, bool);
+private:
 
-        Quadrupole* parseQuad(int, int, double);
-        Drift* parseDrift(int, int, double);
-        Marker* parseMarker(int, int, double);
-        Chicane* parseChicane(int, int, double);
-        Corrector* parseCorrector(int, int, double);
-        ID* parseID(int,int,double);
-        Phaseshifter* parsePhaseshifter(int,int,double);
+    Quadrupole* parseQuad(int, int, double);
+    Drift* parseDrift(int, int, double);
+    Marker* parseMarker(int, int, double);
+    Chicane* parseChicane(int, int, double);
+    Corrector* parseCorrector(int, int, double);
+    ID* parseID(int, int, double);
+    Phaseshifter* parsePhaseshifter(int, int, double);
 
-        int findIndex(vector<string>*, string);
-        bool unroll(int, int, int);
-        bool resolve(int, int, int);
-        int checkMultiplier(string*);
-        bool checkResetPosition(string*);
-        vector<string> label, type, argument, sequence;
-        vector<int> zref;
-        int refele;
+    int findIndex(vector<string>*, string);
+    bool unroll(int, int, int);
+    bool resolve(int, int, int);
+    int checkMultiplier(string*);
+    bool checkResetPosition(string*);
+    vector<string> label, type, argument, sequence;
+    vector<int> zref;
+    int refele;
 };
 
 
