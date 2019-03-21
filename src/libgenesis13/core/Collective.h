@@ -1,12 +1,8 @@
 #ifndef __GENESIS_COLLECTIVE__
 #define __GENESIS_COLLECTIVE__
 
-#include "mpi.h"
 #include "Particle.h"
 #include "Undulator.h"
-
-extern bool MPISingle;
-extern const double ce;
 
 class Beam;
 

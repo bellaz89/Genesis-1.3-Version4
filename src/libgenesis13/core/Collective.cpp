@@ -3,9 +3,13 @@
 // Longrange Space Charge
 // CSR
 
+#include <cmath>
+#include <mpi.h>
 #include "Collective.h"
 #include "Beam.h"
-#include <cmath>
+
+extern bool MPISingle;
+extern const double ce;
 
 Collective::Collective() {
     hasWake=false;

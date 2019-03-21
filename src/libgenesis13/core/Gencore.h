@@ -2,7 +2,6 @@
 #define __GENESIS_GENCORE__
 
 #include <vector>
-#include <mpi.h>
 #include "Beam.h"
 #include "Field.h"
 #include "Undulator.h"
