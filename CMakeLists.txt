@@ -1,11 +1,9 @@
 # Compilation script for Genesis 1.3
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.3)
 
 project(Genesis13 
     VERSION 4.3.0
     LANGUAGES C CXX)
-
-set(BUILD_MULTITHREADED OFF)
 
 # pass the project version as compile time preprocessor flags
 add_definitions(
@@ -19,17 +17,18 @@ include(CheckLanguage)
 find_package(PkgConfig REQUIRED)
 
 if (NOT EXISTS ${CMAKE_BINARY_DIR}/CMakeCache.txt)
-  if (NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
-  endif()
+    if (NOT CMAKE_BUILD_TYPE)
+        set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
+    endif()
 endif()
 
 # openmpi, boost and hdf5 libraries
 
 # Not useful in multithreaded enviroment 
+set(BUILD_MULTITHREADED OFF)
 set(Boost_USE_MULTITHREADED ${BUILD_MULTITHREADED})
 
-find_package(Boost REQUIRED COMPONENTS random mpi)
+find_package(Boost REQUIRED COMPONENTS random mpi unit_test_framework)
 pkg_check_modules(MPI REQUIRED ompi-cxx)
 pkg_check_modules(HDF5 REQUIRED hdf5-openmpi)
 
@@ -44,12 +43,42 @@ set(COMMON_LDFLAGS ${MPI_LDFLAGS} ${HDF5_LDFLAGS})
 link_directories(${COMMON_LIB_DIRS})
 
 #------------------------------------------------------------------------------
-# Genesis 1.3 C++ build rules
+# CUDA support
 #------------------------------------------------------------------------------
 
-file(GLOB CPP_SOURCES src/libgenesis13/*/cpp/*.cpp)
+if(ENABLE_CUDA)
+    if(${CMAKE_VERSION} VERSION_LESS 3.10)
+        message(ERROR "CUDA builds require CMAKE >= 3.10")
+    endif()
 
-add_library(genesis13 ${COMMON_SOURCES} ${CPP_SOURCES})
+    enable_language(CUDA)
+    
+    if(${CMAKE_CUDA_COMPILER_VERSION} VERSION_LESS 9.0)
+        message(ERROR "CUDA requires nvcc version >= 9.0")
+    endif()
+
+    file(GLOB CUDA_SOURCES src/libgenesis13/*/cuda/*.cpp src/libgenesis13/*/cuda/*.cu)
+    set(COMMON_SOURCES ${COMMON_SOURCES} ${CUDA_SOURCES}) 
+    add_definitions(-DUSE_CUDA)
+
+    if("-pthread" IN_LIST COMMON_CFLAGS) 
+        # Delete -pthread because it is unsupported by nvcc
+        list(REMOVE_ITEM COMMON_CFLAGS -pthread)
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pthread")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+        set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -Xcompiler -pthread")
+    endif()
+endif()
+
+
+#------------------------------------------------------------------------------
+# Genesis support
+#------------------------------------------------------------------------------
+
+add_library(genesis13 ${COMMON_SOURCES})
+if(ENABLE_CUDA)
+    set_target_properties(genesis13 PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+endif()
 target_include_directories(genesis13 PUBLIC include PRIVATE ${COMMON_INCLUDE_DIRS}) 
 target_compile_definitions(genesis13 PUBLIC -DMPE)
 target_compile_options(genesis13 PUBLIC ${COMMON_CFLAGS})
@@ -63,59 +92,20 @@ target_link_libraries(gencore PUBLIC genesis13)
 
 install(TARGETS gencore DESTINATION bin)
 install(TARGETS genesis13 
-        ARCHIVE DESTINATION lib
-        LIBRARY DESTINATION lib
-        PUBLIC_HEADER DESTINATION include)
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+    PUBLIC_HEADER DESTINATION include)
 
 #------------------------------------------------------------------------------
-# Genesis 1.3 CUDA build rules
-#------------------------------------------------------------------------------
-
-check_language(CUDA)
-if(FALSE)
-
-    enable_language(CUDA)
-
-    file(GLOB CUDA_SOURCES src/libgenesis13/*/cuda/*.cpp src/libgenesis13/*/cuda/*.cu)
-
-    add_library(genesis13-cuda ${COMMON_SOURCES} ${CUDA_SOURCES})
-    set_target_properties(genesis13-cuda PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
-    target_include_directories(genesis13-cuda PUBLIC include PRIVATE ${COMMON_INCLUDE_DIRS}) 
-    target_compile_definitions(genesis13-cuda PUBLIC -DMPE)
-
-    if("-pthread" IN_LIST COMMON_CFLAGS) 
-        # Delete -pthread because it is unsupported by nvcc
-
-        list(REMOVE_ITEM COMMON_CFLAGS -pthread)
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pthread")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
-        set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -Xcompiler -pthread")
-
-    endif()
-
-    target_compile_options(genesis13-cuda PUBLIC ${COMMON_CFLAGS})
-    target_link_libraries(genesis13-cuda PRIVATE ${COMMON_LIBRARIES}) 
-
-    add_executable(gencore-cuda src/gencore/mainwrap.cpp)
-    target_include_directories(gencore-cuda  PRIVATE include ${COMMON_INCLUDE_DIRS})
-    target_compile_definitions(gencore-cuda PRIVATE -DMPE)
-    target_compile_options(gencore-cuda PRIVATE ${COMMON_CFLAGS})
-    target_link_libraries(gencore-cuda PUBLIC genesis13-cuda)
-
-    install(TARGETS gencore-cuda DESTINATION bin)
-    install(TARGETS genesis13-cuda 
-            LIBRARY DESTINATION lib
-            ARCHIVE DESTINATION lib
-            PUBLIC_HEADER DESTINATION include)
-endif()    
-
 # Packaging support
+#------------------------------------------------------------------------------
+
 set(CPACK_PACKAGE_NAME "genesis13v4")
 set(CPACK_PACKAGE_VENDOR "Andrea Bellandi")
 set(CPACK_PACKAGE_CONTACT "bellaz89@gmail.com")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "FEL simulator")
 set(CPACK_PACKAGE_DESCRIPTION "Genesis 1.3 V4. Tool to simulate beam-field interaction \
-                              in Free Electron Lasers")
+in Free Electron Lasers")
 set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
 set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
 set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
@@ -126,7 +116,7 @@ set(CPACK_SOURCE_IGNORE_FILES
     /dist
     /.*build.*
     /\\\\.DS_Store
-)
+    )
 
 set(CPACK_SOURCE_GENERATOR "TGZ;RPM;DEB")
 

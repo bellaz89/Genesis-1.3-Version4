@@ -56,4 +56,12 @@ For the standard C++ version:
     make gencore
 ```
 
+For the CUDA version:
+
+```bash
+    mkdir build
+    cd build
+    cmake -DENABLE_CUDA=ON ..
+    make gencore
+```
 
