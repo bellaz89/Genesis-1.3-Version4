@@ -19,7 +19,7 @@ void HDF5Base::writeBuffer(hid_t gid, string dataset, vector<double>* data) {
     }
     hsize_t dz=data->size()/ds;
     hsize_t fblock[2]= {dz, size*ds};
-    hid_t filespace=H5Screate_simple(2, fblock, NULL);
+    hid_t filespace=H5Screate_simple(2, fblock, nullptr);
     hid_t did=H5Dcreate(gid,
                         dataset.c_str(),
                         H5T_NATIVE_DOUBLE,
@@ -31,10 +31,10 @@ void HDF5Base::writeBuffer(hid_t gid, string dataset, vector<double>* data) {
     // step 2 - file space
     hsize_t count[2]= {dz, ds};
     hsize_t offset[2] = {0, static_cast<hsize_t>(s0)};   // offset of record entry
-    hid_t memspace=H5Screate_simple(2, count, NULL);
+    hid_t memspace=H5Screate_simple(2, count, nullptr);
     // step 3 - set up hyperslab for file transfer.
     filespace=H5Dget_space(did);
-    H5Sselect_hyperslab(filespace, H5S_SELECT_SET, offset, NULL, count, NULL);
+    H5Sselect_hyperslab(filespace, H5S_SELECT_SET, offset, nullptr, count, nullptr);
     // step 4 - set up transfer and write
     hid_t pid =  H5Pcreate(H5P_DATASET_XFER);
     if (!MPISingle) {
@@ -51,7 +51,7 @@ void HDF5Base::writeBuffer(hid_t gid, string dataset, vector<double>* data) {
 void HDF5Base::writeSingleNode(hid_t gid, string dataset, vector<double>* data) {
     int nd = data->size();
     hsize_t fblock[1]= {static_cast<hsize_t>(nd)};
-    hid_t filespace=H5Screate_simple(1, fblock, NULL);
+    hid_t filespace=H5Screate_simple(1, fblock, nullptr);
     hid_t did=H5Dcreate(gid,
                         dataset.c_str(),
                         H5T_NATIVE_DOUBLE,
@@ -60,7 +60,7 @@ void HDF5Base::writeSingleNode(hid_t gid, string dataset, vector<double>* data) 
                         H5P_DEFAULT,
                         H5P_DEFAULT);
     H5Sclose(filespace);
-    hid_t memspace=H5Screate_simple(1, fblock, NULL);
+    hid_t memspace=H5Screate_simple(1, fblock, nullptr);
     filespace=H5Dget_space(did);
     if (s0==0) {
         H5Dwrite(did, H5T_NATIVE_DOUBLE, memspace, filespace, H5P_DEFAULT, &data->at(0));
@@ -73,11 +73,11 @@ void HDF5Base::writeSingleNode(hid_t gid, string dataset, vector<double>* data) 
 void HDF5Base::writeSingleNodeInt(hid_t gid, string dataset, vector<int>* data) {
     int nd = data->size();
     hsize_t fblock[1]= {static_cast<hsize_t>(nd)};
-    hid_t filespace=H5Screate_simple(1, fblock, NULL);
+    hid_t filespace=H5Screate_simple(1, fblock, nullptr);
     hid_t did=H5Dcreate(gid, dataset.c_str(), H5T_NATIVE_INT, filespace, H5P_DEFAULT,
                         H5P_DEFAULT, H5P_DEFAULT);
     H5Sclose(filespace);
-    hid_t memspace=H5Screate_simple(1, fblock, NULL);
+    hid_t memspace=H5Screate_simple(1, fblock, nullptr);
     filespace=H5Dget_space(did);
     if (s0==0) {
         H5Dwrite(did, H5T_NATIVE_INT, memspace, filespace, H5P_DEFAULT, &data->at(0));
@@ -90,13 +90,13 @@ void HDF5Base::writeSingleNodeInt(hid_t gid, string dataset, vector<int>* data) 
 void HDF5Base::writeSingleNodeString(hid_t gid, string dataset, string* data) {
     int nd = data->size();
     hsize_t fblock[1]= {1};
-    hid_t filespace=H5Screate_simple(1, fblock, NULL);
+    hid_t filespace=H5Screate_simple(1, fblock, nullptr);
     hid_t dtype = H5Tcopy (H5T_C_S1);
     herr_t status = H5Tset_size (dtype, nd);
     hid_t did=H5Dcreate(gid, dataset.c_str(), dtype, filespace, H5P_DEFAULT, H5P_DEFAULT,
                         H5P_DEFAULT);
     H5Sclose(filespace);
-    hid_t memspace=H5Screate_simple(1, fblock, NULL);
+    hid_t memspace=H5Screate_simple(1, fblock, nullptr);
     filespace=H5Dget_space(did);
     if (s0==0) {
         H5Dwrite(did, dtype, memspace, filespace, H5P_DEFAULT, data->c_str());
@@ -113,8 +113,8 @@ void HDF5Base::readDouble1D(hid_t fid, const char* name, double* data,
     hsize_t offset[1] = {start};   // offset of record entry
     hid_t did=H5Dopen(fid, name, H5P_DEFAULT);
     hid_t filespace=H5Dget_space(did);
-    H5Sselect_hyperslab(filespace, H5S_SELECT_SET, offset, NULL, count, NULL);
-    hid_t memspace=H5Screate_simple(dataset_rank, count, NULL);
+    H5Sselect_hyperslab(filespace, H5S_SELECT_SET, offset, nullptr, count, nullptr);
+    hid_t memspace=H5Screate_simple(dataset_rank, count, nullptr);
     hid_t pid =  H5Pcreate(H5P_DATASET_XFER);
     H5Pset_dxpl_mpio(pid, H5FD_MPIO_COLLECTIVE);
     H5Dread(did, H5T_NATIVE_DOUBLE, memspace, filespace, pid, data);
@@ -129,7 +129,7 @@ void HDF5Base::readDouble1D(hid_t fid, const char* name, double* data,
 void HDF5Base::readDataDouble(hid_t fid, char* name, double* data, int size) {
     hsize_t dims[1];
     dims[0]=size;
-    hid_t dataspace_id=H5Screate_simple(1, dims, NULL);
+    hid_t dataspace_id=H5Screate_simple(1, dims, nullptr);
     hid_t dataset_id=H5Dopen(fid, name, H5P_DEFAULT);
     hid_t plist_id=H5Pcreate(H5P_DATASET_XFER);
     H5Pset_dxpl_mpio(plist_id, H5FD_MPIO_INDEPENDENT);
@@ -143,7 +143,7 @@ void HDF5Base::readDataDouble(hid_t fid, char* name, double* data, int size) {
 void HDF5Base::readDataChar(hid_t fid, char* name, char* data, int size) {
     hsize_t dims[1];
     dims[0]=size;
-    hid_t dataspace_id=H5Screate_simple(1, dims, NULL);
+    hid_t dataspace_id=H5Screate_simple(1, dims, nullptr);
     hid_t dataset_id=H5Dopen(fid, name, H5P_DEFAULT);
     hid_t plist_id=H5Pcreate(H5P_DATASET_XFER);
     H5Pset_dxpl_mpio(plist_id, H5FD_MPIO_INDEPENDENT);
@@ -157,7 +157,7 @@ void HDF5Base::readDataChar(hid_t fid, char* name, char* data, int size) {
 void HDF5Base::readDataInt(hid_t fid, char* name, int* data, int size) {
     hsize_t dims[1];
     dims[0]=size;
-    hid_t dataspace_id=H5Screate_simple(1, dims, NULL);
+    hid_t dataspace_id=H5Screate_simple(1, dims, nullptr);
     hid_t dataset_id=H5Dopen(fid, name, H5P_DEFAULT);
     hid_t plist_id=H5Pcreate(H5P_DATASET_XFER);
     H5Pset_dxpl_mpio(plist_id, H5FD_MPIO_INDEPENDENT);

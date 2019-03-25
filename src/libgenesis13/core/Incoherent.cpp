@@ -4,7 +4,7 @@
 #include "Beam.h"
 
 Incoherent::Incoherent() {
-    sran=NULL;
+    sran=nullptr;
     doLoss=false;
     doSpread=false;
 }
@@ -21,7 +21,7 @@ void Incoherent::init(int base, int rank, bool doLoss_in, bool doSpread_in) {
     }
     val*=1e9;
     int locseed=static_cast<int> (round(val));
-    if (sran !=NULL) {
+    if (sran !=nullptr) {
         delete sran;
     }
     sran  = new RandomU (locseed);

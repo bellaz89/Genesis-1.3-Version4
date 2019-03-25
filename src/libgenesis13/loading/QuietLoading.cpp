@@ -7,34 +7,34 @@
 using boost::math::erfc_inv;
 
 QuietLoading::QuietLoading() {
-    sx=NULL;
-    sy=NULL;
-    st=NULL;
-    spx=NULL;
-    spy=NULL;
-    sg=NULL;
+    sx=nullptr;
+    sy=nullptr;
+    st=nullptr;
+    spx=nullptr;
+    spy=nullptr;
+    sg=nullptr;
 }
 QuietLoading::~QuietLoading() {}
 
 
 
 void QuietLoading::init(bool one4one, int* base) {
-    if (sx !=NULL) {
+    if (sx !=nullptr) {
         delete sx;
     }
-    if (sy !=NULL) {
+    if (sy !=nullptr) {
         delete sy;
     }
-    if (spx!=NULL) {
+    if (spx!=nullptr) {
         delete spx;
     }
-    if (spy!=NULL) {
+    if (spy!=nullptr) {
         delete spy;
     }
-    if (st !=NULL) {
+    if (st !=nullptr) {
         delete st;
     }
-    if (sg !=NULL) {
+    if (sg !=nullptr) {
         delete sg;
     }
     if (one4one) {

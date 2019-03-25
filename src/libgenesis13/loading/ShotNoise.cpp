@@ -2,7 +2,7 @@
 #include <cmath>
 
 ShotNoise::ShotNoise() {
-    sran=NULL;
+    sran=nullptr;
     nwork=1000;
     work=new double [nwork];
 }
@@ -19,7 +19,7 @@ void ShotNoise::init(int base, int rank) {
     }
     val*=1e9;
     int locseed=static_cast<int> (round(val));
-    if (sran !=NULL) {
+    if (sran !=nullptr) {
         delete sran;
     }
     sran  = new RandomU (locseed);
