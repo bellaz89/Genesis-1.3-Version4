@@ -1,7 +1,8 @@
 #include "Undulator.h"
-
-#include <libgenesis13/util/BesselJ.h>
+#include <boost/math/special_functions.hpp>
 #include <libgenesis13/lattice/LatticeElements.h>
+
+using boost::math::cyl_bessel_j;
 
 Undulator::~Undulator() {}
 
@@ -76,7 +77,6 @@ bool Undulator::advance(int rank) {
 }
 
 double Undulator::fc(int h) {
-    BesselJ bessj;
     double coup=aw[istepz];
     if (this->isHelical()) {
         if (h==1) {
@@ -91,11 +91,11 @@ double Undulator::fc(int h) {
         if ((h % 2) == 1) {
             h0=(h-1)/2;
             h1 = h0+1;
-            return coup*(bessj.value(h0, xi)-bessj.value(h1, xi))*pow(-1., h0);
+            return coup*(cyl_bessel_j(h0, xi)-cyl_bessel_j(h1, xi))*pow(-1., h0);
         } else {
             h0=(h-2)/2;
             h1 = h0+2;
-            return coup*0.5*(bessj.value(h0, xi)-bessj.value(h1, xi))*pow(-1., h0);
+            return coup*0.5*(cyl_bessel_j(h0, xi)-cyl_bessel_j(h1, xi))*pow(-1., h0);
         }
     }
 }

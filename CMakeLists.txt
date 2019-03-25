@@ -5,6 +5,8 @@ project(Genesis13
     VERSION 4.3.0
     LANGUAGES C CXX)
 
+set(BUILD_MULTITHREADED OFF)
+
 # pass the project version as compile time preprocessor flags
 add_definitions(
     -DVERSIONMAJOR=${PROJECT_VERSION_MAJOR}
@@ -22,7 +24,12 @@ if (NOT EXISTS ${CMAKE_BINARY_DIR}/CMakeCache.txt)
   endif()
 endif()
 
-# openmpi and hdf5 libraries
+# openmpi, boost and hdf5 libraries
+
+# Not useful in multithreaded enviroment 
+set(Boost_USE_MULTITHREADED ${BUILD_MULTITHREADED})
+
+find_package(Boost REQUIRED COMPONENTS random mpi)
 pkg_check_modules(MPI REQUIRED ompi-cxx)
 pkg_check_modules(HDF5 REQUIRED hdf5-openmpi)
 
@@ -31,8 +38,8 @@ set(COMMON_INCLUDE_DIRS src/)
 set(PROJECT_INCLUDE_DIRS ${MPI_INCLUDE_DIRS} ${HDF5_INCLUDE_DIRS})
 list(APPEND COMMON_INCLUDE_DIRS ${PROJECT_INCLUDE_DIRS})
 set(COMMON_CFLAGS ${MPI_CFLAGS} ${HDF5_CFLAGS})
-set(COMMON_LIB_DIRS ${MPI_LIBRARY_DIRS} ${HDF5_LIBRARY_DIRS})
-set(COMMON_LIBRARIES ${MPI_LIBRARIES} ${HDF5_LIBRARIES})
+set(COMMON_LIB_DIRS ${MPI_LIBRARY_DIRS} ${HDF5_LIBRARY_DIRS} ${Boost_INCLUDE_DIRS})
+set(COMMON_LIBRARIES ${MPI_LIBRARIES} ${HDF5_LIBRARIES} ${Boost_LIBRARIES})
 set(COMMON_LDFLAGS ${MPI_LDFLAGS} ${HDF5_LDFLAGS})
 link_directories(${COMMON_LIB_DIRS})
 

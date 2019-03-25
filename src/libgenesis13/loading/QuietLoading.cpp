@@ -1,8 +1,10 @@
 #include "QuietLoading.h"
+#include <boost/math/special_functions.hpp>
 #include <libgenesis13/util/GaussHermite.h>
 #include <libgenesis13/util/RandomU.h>
 #include <libgenesis13/util/Hammerslay.h>
-#include <libgenesis13/util/Inverfc.h>
+
+using boost::math::erfc_inv;
 
 QuietLoading::QuietLoading() {
     sx=NULL;
@@ -72,16 +74,15 @@ void QuietLoading::loadQuiet(Particle* beam, BeamSlice* slice, int npart, int nb
     spx->set(iseed);
     spy->set(iseed);
     int mpart=npart/nbins;
-    Inverfc erf;
     double dtheta=1./static_cast<double>(nbins);
     // raw distribution
     for (int i=0; i <mpart; i++) {
-        beam[i].theta=st->getElement()*dtheta;
-        beam[i].gamma=erf.value(2*sg->getElement());
-        beam[i].x    =erf.value(2*sx->getElement());
-        beam[i].y    =erf.value(2*sy->getElement());
-        beam[i].px   =erf.value(2*spx->getElement());
-        beam[i].py   =erf.value(2*spy->getElement());
+        beam[i].theta= st->getElement()*dtheta;
+        beam[i].gamma= erfc_inv(2*sg->getElement());
+        beam[i].x    = erfc_inv(2*sx->getElement());
+        beam[i].y    = erfc_inv(2*sy->getElement());
+        beam[i].px   = erfc_inv(2*spx->getElement());
+        beam[i].py   = erfc_inv(2*spy->getElement());
     }
     // normalization
     double z=0;
