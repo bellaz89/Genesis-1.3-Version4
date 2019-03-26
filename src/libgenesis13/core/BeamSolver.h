@@ -7,61 +7,46 @@
 #include "EFieldSolver.h"
 #include "TrackBeam.h"
 
-using namespace std;
+using std::vector;
+using std::complex;
 
 class Field;
 
 class BeamSolver {
 public:
-    BeamSolver();
-    virtual ~BeamSolver();
 
+    BeamSolver(bool _onlyFundamental = false);
     void initEField(double rmax, int ngrid, int nz, int nphi, double lambda);
-
     void advance(double, Beam*, vector< Field*>*, Undulator*);
-
     void track(double, Beam*, Undulator*, bool);
     void applyR56(Beam*, Undulator*, double);
 
+protected:
+
+    // needed to pass simulation params in the various sections
+    class SimulationParams {
+
+    public:
+        SimulationParams(vector<double> &_rharm, vector<complex<double>> &_rpart) :
+            rharm(_rharm), rpart(_rpart) {};
+        double gamma = 0.0;
+        double theta = 0.0;
+        double xku = 0.0;
+        double xks = 0.0;
+        double btpar = 0.0;
+        vector<double> &rharm;
+        vector<complex<double>> &rpart;
+    };
+
 private:
 
-    complex <double> cpart;
-
-    vector< double > rharm;
-    vector< complex <double >> rpart;
-
-    double ez;
-    double xks, xku;
-
-    double theta, gamma, btpar;
-    double k2gg, k2pp, k3gg, k3pp;
-
     bool onlyFundamental;
-
-    void RungeKutta(double);
-    void ODE(double, double);
+    void RungeKutta(const double delz, SimulationParams &sim_params);
+    void ODE(double &k2gg, double &k2pp, const SimulationParams &sim_params);
 
     EFieldSolver efield;
     TrackBeam tracker;
 
 };
-
-
-inline void BeamSolver::initEField(double rmax, int ngrid, int nz, int nphi,
-                                   double lambda) {
-    efield.init(rmax, ngrid, nz, nphi, lambda);
-    return;
-}
-
-
-inline void BeamSolver::track(double dz, Beam* beam, Undulator* und, bool last) {
-    tracker.track(dz, beam, und, last);
-    return;
-}
-
-inline void BeamSolver::applyR56(Beam* beam, Undulator* und, double reflen) {
-    tracker.applyR56(beam, und, reflen);
-    return;
-}
 
 #endif
