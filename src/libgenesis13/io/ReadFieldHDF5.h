@@ -11,9 +11,6 @@
 
 using namespace std;
 
-extern const double vacimp;
-extern const double eev;
-
 class ReadFieldHDF5 : public HDF5Base {
 public:
     ReadFieldHDF5();

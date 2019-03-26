@@ -1,4 +1,5 @@
 #include "LoadBeam.h"
+#include <libgenesis13/core/PhysicalConstants.h>
 #include "QuietLoading.h"
 #include "ShotNoise.h"
 
@@ -197,7 +198,7 @@ bool LoadBeam::init(int rank, int size, map<string, string>* arg, Beam* beam,
     for (int j=0; j<time->getNodeNSlice(); j++) {
         int i=j+time->getNodeOffset();
         slice.current=prof->value(s[i], current, currentref);
-        double ne=slice.current*lambda*sample/ce;
+        double ne=slice.current*lambda*sample/ELECTRON_CHARGE_X_C;
         slice.gamma =prof->value(s[i], gamma, gammaref);
         slice.delgam=prof->value(s[i], delgam, delgamref);
         slice.ex    =prof->value(s[i], ex, exref);

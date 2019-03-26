@@ -1,6 +1,8 @@
 #include "Wake.h"
 #include <iostream>
+#include <cmath>
 #include <libgenesis13/core/Beam.h>
+#include <libgenesis13/core/PhysicalConstants.h>
 
 Wake::Wake() {
     radius=2.5e-3;
@@ -96,11 +98,10 @@ bool Wake::init(int rank, int size, map<string, string>* arg,  Time* time,
 }
 
 void Wake::singleWakeResistive(int rank) {
-    double s0=pow(2*radius*radius/vacimp/conductivity,
+    double s0=pow(2*radius*radius/VACUUM_IMPEDANCE/conductivity,
                   1./3.); // characteristic length in SI units
     double gamma=relaxation/s0;
     double coef = radius/(s0*s0);
-    double pi=2.*asin(1.);
     double kappamax=100;  // empirical cut-off in impedance spectrum
     unsigned int nk=1000;
     unsigned int nq=10000;
@@ -151,7 +152,7 @@ void Wake::singleWakeResistive(int rank) {
             wakeres[i]+=Zre[j]*cos(phi)+Zim[j]*sin(phi);
         }
     }
-    coef=-kappamax/nk/s0*3e8/pi*(vacimp*ce/4/pi); // to scale to SI units
+    coef=-kappamax/nk/s0*3e8/M_PI*(VACUUM_IMPEDANCE*ELECTRON_CHARGE_X_C/4/M_PI); // to scale to SI units
     for (int i = 0; i < ns; i++) {
         wakeres[i]*=coef;
     }

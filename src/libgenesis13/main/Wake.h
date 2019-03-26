@@ -11,9 +11,6 @@ class Beam;
 
 using namespace std;
 
-extern const double vacimp;
-extern const double ce;
-
 class Wake: public StringProcessing {
 public:
     Wake();

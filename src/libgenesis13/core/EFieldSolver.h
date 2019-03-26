@@ -7,9 +7,6 @@
 
 using namespace std;
 
-extern const double vacimp;
-extern const double eev;
-
 class EFieldSolver {
 public:
     EFieldSolver();

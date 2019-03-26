@@ -8,9 +8,6 @@
 
 using namespace std;
 
-extern const double vacimp;
-extern const double eev;
-
 class Beam;
 
 class Field {
@@ -50,27 +47,5 @@ private:
 
     FieldSolver solver;
 };
-
-inline void Field::disable(double conv) {
-    if (disabled==false) { // check whether it hasn't been disabled before
-        rharm=harm;         // assign current double harmonic with the given harmonic
-    }
-    rharm=rharm*conv;     // convert to new harmonic, might be even a non-integer.
-    disabled=true;         // disbable it.
-}
-
-inline bool Field::isEnabled() {
-    return !disabled;
-}
-
-
-inline double Field::getRHarm() {
-    return rharm;
-}
-
-
-inline int Field::getHarm() {
-    return harm;
-}
 
 #endif

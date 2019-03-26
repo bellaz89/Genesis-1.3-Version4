@@ -1,5 +1,6 @@
 #include "ReadFieldHDF5.h"
 #include <iostream>
+#include <libgenesis13/core/PhysicalConstants.h>
 
 using namespace std;
 
@@ -41,7 +42,7 @@ bool ReadFieldHDF5::readGlobal(int rank, int size, string file, Setup* setup,
     s0=s0;  // add offset from input deck
     slen=slicelen*count;
     double ks=4.*asin(1)/reflen;
-    scl=dgrid*eev/ks/sqrt(vacimp);
+    scl=dgrid*ELECTRON_MASS_EV/ks/sqrt(VACUUM_IMPEDANCE);
     scl=1./scl;
     dgrid=0.5*dgrid*static_cast<double>(ngrid-1);
     if (fabs((lambda-reflen)/lambda)>1e-6) {

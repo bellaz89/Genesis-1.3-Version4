@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <iostream>
 #include <libgenesis13/loading/ShotNoise.h>
+#include <libgenesis13/core/PhysicalConstants.h>
 
 using namespace std;
 
@@ -428,7 +429,7 @@ bool SDDSBeam::init(int inrank, int insize, map<string, string>* arg, Beam* beam
         int mpart;
         beam->current[islice]=static_cast<double>(ncount)*dQ*3e8/dslen;
         if (one4one) {
-            npart=static_cast<int>(round(beam->current[islice]*lambda*sample/ce));
+            npart=static_cast<int>(round(beam->current[islice]*lambda*sample/ELECTRON_CHARGE_X_C));
             mpart=npart;
             nbins=1;
         } else {
@@ -460,7 +461,7 @@ bool SDDSBeam::init(int inrank, int insize, map<string, string>* arg, Beam* beam
                     beam->beam.at(islice).at(i2+j).theta=beam->beam.at(islice).at(i1).theta+j*theta0;
                 }
             }
-            double ne=round(beam->current[islice]*lambda*sample/ce);
+            double ne=round(beam->current[islice]*lambda*sample/ELECTRON_CHARGE_X_C);
             if (mpart*nbins>nwork) {
                 nwork=mpart*nbins;
                 delete[] work;
@@ -722,7 +723,7 @@ void SDDSBeam::analyse(double ttotal, int nsize) {
     ay=-(ypy-yavg*pyavg)*gavg/ey;
     if (rank==0) {
         cout << "   Length for Matching (microns): " << (mt1-mt0)*1e6 << endl;
-        cout << "   Energy                  (MeV): " << gavg* eev*1e-6 << endl;
+        cout << "   Energy                  (MeV): " << gavg*ELECTRON_MASS_EV*1e-6 << endl;
         cout << "   Norm. Emittance in x (micron): " << ex*1e6 << endl;
         cout << "   Norm. Emittance in y (micron): " << ey*1e6 << endl;
         cout << "   Beta Function in x        (m): " << bx << endl;

@@ -9,9 +9,6 @@
 
 using namespace std;
 
-extern const double vacimp;
-extern const double eev;
-
 class WriteFieldHDF5 : public HDF5Base {
 public:
     WriteFieldHDF5();

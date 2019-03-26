@@ -3,13 +3,13 @@
 // Longrange Space Charge
 // CSR
 
+#include "Collective.h"
 #include <cmath>
 #include <mpi.h>
-#include "Collective.h"
+#include "PhysicalConstants.h"
 #include "Beam.h"
 
 extern bool MPISingle;
-extern const double ce;
 
 Collective::Collective() {
     hasWake=false;
@@ -61,7 +61,7 @@ void Collective::apply(Beam* beam, Undulator* und, double delz) {
         unsigned int idx=static_cast<int> (floor(s/dscur));
         double wei=1-(s-idx*dscur)/dscur;
         current[is]=wei*cur[idx]+(1-wei)*cur[idx+1];
-        current[is]*=ds/ce;   // convert current to number of electrons
+        current[is]*=ds/ELECTRON_CHARGE_X_C;   // convert current to number of electrons
         wake[is]=0;
     }
     // do the convolution

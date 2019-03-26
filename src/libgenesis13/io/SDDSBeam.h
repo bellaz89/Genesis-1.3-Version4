@@ -13,9 +13,6 @@
 
 using namespace std;
 
-extern const double eev;
-extern const double ce;
-
 class SDDSBeam: public StringProcessing, HDF5Base {
 public:
     SDDSBeam();

@@ -1,6 +1,7 @@
 #include "FieldSolver.h"
 #include "Field.h"
 #include "Beam.h"
+#include "PhysicalConstants.h"
 
 FieldSolver::FieldSolver() {
     delz_save=0;
@@ -18,8 +19,8 @@ void FieldSolver::advance(double delz, Field* field, Beam* beam, Undulator* und)
         int harm=field->getHarm();
         // construc source term
         if (und->inUndulator()&& field->isEnabled()) {
-            double scl=und->fc(harm)*vacimp*beam->current[ii]*field->xks*delz;
-            scl/=4*eev*beam->beam[ii].size()*field->dgrid*field->dgrid;
+            double scl=und->fc(harm)*VACUUM_IMPEDANCE*beam->current[ii]*field->xks*delz;
+            scl/=4*ELECTRON_MASS_EV*beam->beam[ii].size()*field->dgrid*field->dgrid;
             complex<double> cpart;
             double part, weight, wx, wy;
             int idx;

@@ -12,8 +12,6 @@
 
 using namespace std;
 
-extern const double ce;
-
 class Beam {
 public:
     Beam();

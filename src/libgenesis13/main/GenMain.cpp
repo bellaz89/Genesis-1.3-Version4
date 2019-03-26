@@ -26,15 +26,11 @@
 #include "EField.h"
 
 using namespace std;
-const double vacimp = 376.73;
-const double eev    = 510999.06;
-const double ce     = 4.8032045e-11;
 
 string* meta_inputfile;
 string* meta_latfile;
 
 bool MPISingle;  // global variable to do mpic or not
-
 
 double genmain (string mainstring, string latstring, bool streaming,
                 bool supressOutput, bool split) {

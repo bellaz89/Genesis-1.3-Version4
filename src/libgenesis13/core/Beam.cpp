@@ -1,5 +1,5 @@
-
 #include "Beam.h"
+#include "PhysicalConstants.h"
 #include "Field.h"
 
 #ifdef VTRACE
@@ -71,12 +71,12 @@ void Beam::initSorting(int rank, int size, bool doshift, bool dosort) {
 
 int Beam::sort() {
     int shift=0;
-    double dQ=ce/slicelength;
+    double dQ=ELECTRON_CHARGE_X_C/slicelength;
     if (one4one) {
         shift= sorting.sort(&beam);
         for (int i=0; i<beam.size(); i++) {  // correct the local current
             int np=beam.at(i).size();
-            current.at(i)=static_cast<double>(np)*ce/slicelength;
+            current.at(i)=static_cast<double>(np)*ELECTRON_CHARGE_X_C/slicelength;
         }
     }
     return shift;

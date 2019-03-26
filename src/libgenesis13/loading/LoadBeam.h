@@ -12,8 +12,6 @@
 
 using namespace std;
 
-extern const double ce;
-
 class LoadBeam : public StringProcessing {
 public:
     LoadBeam();

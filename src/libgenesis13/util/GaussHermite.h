@@ -12,9 +12,6 @@
 
 #include <complex>
 
-extern const double vacimp;
-extern const double eev;
-
 typedef struct {
     double lambda;
     double power;

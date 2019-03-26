@@ -1,5 +1,5 @@
-
 #include "WriteFieldHDF5.h"
+#include <libgenesis13/core/PhysicalConstants.h>
 
 extern bool MPISingle;
 
@@ -55,7 +55,7 @@ void WriteFieldHDF5::writeMain(string fileroot, Field* field) {
     vector<double> work;
     work.resize(ngrid*ngrid);
     double ks=4.*asin(1)/field->xlambda;
-    double scl=field->dgrid*eev/ks/sqrt(vacimp);
+    double scl=field->dgrid*ELECTRON_MASS_EV/ks/sqrt(VACUUM_IMPEDANCE);
     for (int i=0; i<ntotal; i++) {
         s0=-1;
         char name[16];

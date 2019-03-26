@@ -9,6 +9,7 @@
 
 #include "GaussHermite.h"
 #include <cmath>
+#include <libgenesis13/core/PhysicalConstants.h>
 
 GaussHermite::GaussHermite() {}
 
@@ -24,8 +25,9 @@ void GaussHermite::loadGauss(complex<double>* field, FieldSlice* slice, double d
     complex<double> qz=complex<double>(-z0, zr); // q(z)= z-z0 + i zr , see Siegman p.664
     complex<double> q0=complex<double>(0,  zr);
     complex<double> coef=complex<double>(0, 1)*0.5*k/qz;
-    // some normalization crap
-    double unit=sqrt(slice->power*vacimp)*k/eev;  // P=|E|^2/Z0 -> u = k (e/mc^2) E
+    // some normalization crap  
+    // P=|E|^2/Z0 -> u = k (e/mc^2) E
+    double unit=sqrt(slice->power*VACUUM_IMPEDANCE)*k/ELECTRON_MASS_EV;
     double norm=f0/sqrt(2.*asin(1.)*this->fac(slice->nx)*this->fac(slice->ny)*(1<<
                         (slice->nx+slice->ny))); // f0/sqrt(pi 2^(nx+ny) nx! ny!)
     complex<double> zscale=unit*norm*complex<double>(cos(slice->phase),

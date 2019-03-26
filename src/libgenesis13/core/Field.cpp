@@ -1,5 +1,6 @@
 #include "Field.h"
-#include<cmath>
+#include <cmath>
+#include "PhysicalConstants.h"
 
 #ifdef VTRACE
 #include "vt_user.h"
@@ -221,13 +222,13 @@ void Field::diagnostics(bool output) {
             bphinf=atan2(loc.imag(), loc.real());
         }
         double ks=4.*asin(1)/xlambda;
-        double scl=dgrid*eev/ks;
-        bpower*=scl*scl/vacimp; // scale to W
+        double scl=dgrid*ELECTRON_MASS_EV/ks;
+        bpower*=scl*scl/VACUUM_IMPEDANCE; // scale to W
         bxavg*=dgrid;
         bxsig*=dgrid;
         byavg*=dgrid;
         bysig*=dgrid;
-        bintensity*=eev*eev/ks/ks/vacimp;  // scale to W/m^2
+        bintensity*=ELECTRON_MASS_EV*ELECTRON_MASS_EV/ks/ks/VACUUM_IMPEDANCE;  // scale to W/m^2
         power[ioff+is]=bpower;
         xavg[ioff+is] =bxavg;
         xsig[ioff+is] =bxsig;
@@ -240,3 +241,27 @@ void Field::diagnostics(bool output) {
     }
     idx++;
 }
+
+void Field::disable(double conv) {
+    if (disabled==false) { // check whether it hasn't been disabled before
+        rharm=harm;         // assign current double harmonic with the given harmonic
+    }
+    rharm=rharm*conv;     // convert to new harmonic, might be even a non-integer.
+    disabled=true;         // disbable it.
+}
+
+bool Field::isEnabled() {
+    return !disabled;
+}
+
+
+double Field::getRHarm() {
+    return rharm;
+}
+
+
+int Field::getHarm() {
+    return harm;
+}
+
+
