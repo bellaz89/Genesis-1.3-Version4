@@ -41,7 +41,7 @@ bool ReadFieldHDF5::readGlobal(int rank, int size, string file, Setup* setup,
         setup->getReferenceLength();                        // reference length for theta
     s0=s0;  // add offset from input deck
     slen=slicelen*count;
-    double ks=4.*asin(1)/reflen;
+    double ks=2.*M_PI/reflen;
     scl=dgrid*ELECTRON_MASS_EV/ks/sqrt(VACUUM_IMPEDANCE);
     scl=1./scl;
     dgrid=0.5*dgrid*static_cast<double>(ngrid-1);

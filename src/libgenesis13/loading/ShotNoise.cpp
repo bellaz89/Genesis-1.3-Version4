@@ -39,7 +39,7 @@ void ShotNoise::applyShotNoise(Particle* beam, int npart, int nbins, double ne) 
     }
     for (int ih=0; ih< (nbins-1)/2; ih++) {
         for (int i1=0; i1<mpart; i1++) {
-            double phi=4*asin(1)*sran->getElement();
+            double phi=2.*M_PI*sran->getElement();
             double an=sqrt(-log(sran->getElement())/nbl)*2/static_cast<double>(ih+1);
             for (int i2=0; i2<nbins; i2++) {
                 int idx=i1*nbins+i2;

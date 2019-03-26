@@ -72,7 +72,7 @@ bool SDDSBeam::init(int inrank, int insize, map<string, string>* arg, Beam* beam
     bool shotnoise=setup->getShotNoise();
     int npart=setup->getNpart();
     int nbins=setup->getNbins();
-    double theta0=4.*asin(1.);
+    double theta0=2.*M_PI;
     if (one4one) {
         nbins=1;
         theta0*=sample;
@@ -278,7 +278,7 @@ bool SDDSBeam::init(int inrank, int insize, map<string, string>* arg, Beam* beam
         cout << "Analysing external distribution... " << endl;
     }
     for (int i=0; i<nsize; i++) {
-        t[i]*=-3e8;       // convert to positin in meters
+        t[i]*=-LIGHT_SPEED;       // convert to positin in meters
         g[i]+=1.;         // convert from kinetic energy to total energy
     }
     double tmin, tmax;
@@ -427,9 +427,10 @@ bool SDDSBeam::init(int inrank, int insize, map<string, string>* arg, Beam* beam
         // step 2 - calculate the current and number of particles.
         int ncount = beam->beam.at(islice).size();
         int mpart;
-        beam->current[islice]=static_cast<double>(ncount)*dQ*3e8/dslen;
+        beam->current[islice]=static_cast<double>(ncount)*dQ*LIGHT_SPEED/dslen;
         if (one4one) {
-            npart=static_cast<int>(round(beam->current[islice]*lambda*sample/ELECTRON_CHARGE_X_C));
+            npart=static_cast<int>(round(
+                                       beam->current[islice]*lambda*sample/ELECTRON_CHARGE_X_C));
             mpart=npart;
             nbins=1;
         } else {
@@ -723,7 +724,7 @@ void SDDSBeam::analyse(double ttotal, int nsize) {
     ay=-(ypy-yavg*pyavg)*gavg/ey;
     if (rank==0) {
         cout << "   Length for Matching (microns): " << (mt1-mt0)*1e6 << endl;
-        cout << "   Energy                  (MeV): " << gavg*ELECTRON_MASS_EV*1e-6 << endl;
+        cout << "   Energy                  (MeV): " << gavg* ELECTRON_MASS_EV*1e-6 << endl;
         cout << "   Norm. Emittance in x (micron): " << ex*1e6 << endl;
         cout << "   Norm. Emittance in y (micron): " << ey*1e6 << endl;
         cout << "   Beta Function in x        (m): " << bx << endl;

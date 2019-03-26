@@ -165,7 +165,7 @@ bool LoadBeam::init(int rank, int size, map<string, string>* arg, Beam* beam,
     if (rank==0) {
         cout << "Generating input particle distribution..." << endl;
     }
-    double theta0=4.*asin(1.);
+    double theta0=2.*M_PI;
     if (one4one) {
         nbins=1;
         theta0*=sample;

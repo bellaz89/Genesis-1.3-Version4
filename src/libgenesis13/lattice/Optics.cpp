@@ -26,14 +26,14 @@ bool Optics::match(double* bx, double* ax, double* by, double* ay, double* phix,
     }
     *bx=2*Dx12/sqrt(arg);
     *ax=(Dx11-Dx22)/sqrt(arg);
-    *phix=acos(0.5*(Dx11+Dx22))*90/asin(1);
+    *phix=acos(0.5*(Dx11+Dx22))*90/M_PI_2;
     arg=2-Dy11*Dy11-2*Dy12*Dy21-Dy22*Dy22;
     if (arg<=0) {
         return false;
     }
     *by=2*Dy12/sqrt(arg);
     *ay=(Dy11-Dy22)/sqrt(arg);
-    *phiy=acos(0.5*(Dy11+Dy22))*90./asin(1.);
+    *phiy=acos(0.5*(Dy11+Dy22))*90./M_PI_2;
     return true;
 }
 

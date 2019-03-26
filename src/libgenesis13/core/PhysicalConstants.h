@@ -9,7 +9,7 @@
 // Electron charge in A.s
 #define ELECTRON_CHARGE 1.602176620898e-19
 // Speed of light in m/s
-#define LIGHT_SPEED 299792458 
+#define LIGHT_SPEED 299792458.0
 // Electron charge multiplied by the speed of light in A.m
 #define ELECTRON_CHARGE_X_C (ELECTRON_CHARGE*LIGHT_SPEED)
 

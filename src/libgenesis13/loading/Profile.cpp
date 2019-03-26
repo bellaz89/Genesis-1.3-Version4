@@ -2,6 +2,7 @@
 #include <iostream>
 #include <algorithm>
 #include <cmath>
+#include <libgenesis13/core/PhysicalConstants.h>
 
 using namespace std;
 
@@ -342,7 +343,7 @@ string ProfileFile::init(int rank, map<string, string>* arg) {
     }
     if (isTime) {
         for (int i=0; i<xdat.size(); i++) {
-            xdat[i]*=3e8;         // scale time variable to space varial by multiplying the speed of light
+            xdat[i]*=LIGHT_SPEED;         // scale time variable to space varial by multiplying the speed of light
         }
     }
     if (revert) {

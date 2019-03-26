@@ -97,7 +97,7 @@ bool Lattice::generateLattice(double delz, double lambda, double gamma,
         if (und->chic_angle[i]!=0) {
             double delay=fabs(und->chic_angle[i]);
             double tmin=0;
-            double tmax=asin(1)-0.001;
+            double tmax=M_PI_2-0.001;
             bool converged=false;
             double theta, d;
             while (!converged) {
@@ -150,7 +150,7 @@ void Lattice::calcSlippage(double lambda, double gamma) {
                 tmp=Lz/2/gamma/gamma/lambda;
                 lat_slip[i-1]+=floor(tmp)+1;  //auto phasing would always add some slippage
                 //        tmp-=floor(tmp);
-                //        lat_phase[i-1]+=tmp*4*asin(1);   // auto phasing
+                //        lat_phase[i-1]+=tmp*2.*M_PI;   // auto phasing
                 Lz=0; // clear last intra beam section
             }
             // reset drift parameters
@@ -166,7 +166,7 @@ void Lattice::calcSlippage(double lambda, double gamma) {
     tmp=Lz/2/gamma/gamma/lambda;
     lat_slip[nz-1]+=floor(tmp)+1;
     //  tmp-=floor(tmp);
-    // lat_phase[nz-1]+=tmp*4*asin(1);
+    // lat_phase[nz-1]+=tmp*2.*M_PI;
 }
 
 
@@ -298,7 +298,7 @@ void Lattice::unrollLattice(double delz) {
             for (int iz=0; iz<nz; iz++) {
                 lat_dz.push_back(dz);
                 lat_aw.push_back(und->aw);
-                double ku=4.*asin(1)/und->lambdau;
+                double ku=2.*M_PI/und->lambdau;
                 lat_ku.push_back(ku);
                 lat_kx.push_back(ku*ku*und->kx);
                 lat_ky.push_back(ku*ku*und->ky);

@@ -32,7 +32,7 @@ void Field::init(int nsize, int ngrid_in, double dgrid_in, double xlambda0,
             field[i].resize(ngrid*ngrid);
         }
     }
-    xks=4.*asin(1)/xlambda;
+    xks=2.*M_PI/xlambda;
     first=0; // pointer to slice which correspond to first in the time window
     dz_save=0;
     return;
@@ -221,7 +221,7 @@ void Field::diagnostics(bool output) {
         if (bintensity > 0) {
             bphinf=atan2(loc.imag(), loc.real());
         }
-        double ks=4.*asin(1)/xlambda;
+        double ks=2.*M_PI/xlambda;
         double scl=dgrid*ELECTRON_MASS_EV/ks;
         bpower*=scl*scl/VACUUM_IMPEDANCE; // scale to W
         bxavg*=dgrid;

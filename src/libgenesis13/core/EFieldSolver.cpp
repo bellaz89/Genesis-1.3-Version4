@@ -1,4 +1,5 @@
 #include "EFieldSolver.h"
+#include <cmath>
 #include "PhysicalConstants.h"
 
 EFieldSolver::EFieldSolver() {
@@ -15,7 +16,7 @@ void EFieldSolver::init(double rmax_in, int ngrid_in, int nz_in, int nphi_in,
     ngrid_ref=ngrid_in;
     nz=nz_in;
     nphi=nphi_in;
-    ks = 4*asin(1)/lambda;
+    ks = 2.*M_PI/lambda;
 }
 
 void EFieldSolver::shortRange(vector<Particle>* beam, vector<double> &ez,
@@ -23,7 +24,6 @@ void EFieldSolver::shortRange(vector<Particle>* beam, vector<double> &ez,
     double npart=beam->size();
     double rmax=rmax_ref;
     int ngrid=ngrid_ref;
-    double pi=2.*asin(1);
     // gammaz = gamma/sqrt(1+aw^2)
     double gz2=gammaz*gammaz;
     double xcuren=current;
@@ -93,7 +93,7 @@ void EFieldSolver::shortRange(vector<Particle>* beam, vector<double> &ez,
             csrc[i]=complex<double> (0, 0);          // clear source term
         }
         // normalize source term
-        double coef=VACUUM_IMPEDANCE/ELECTRON_MASS_EV*xcuren/static_cast<double>(npart)/pi;
+        double coef=VACUUM_IMPEDANCE/ELECTRON_MASS_EV*xcuren/static_cast<double>(npart)/M_PI;
         // add the azimuthal dependence
         for (int m=-nphi; m<=nphi; m++) {
             // construct the source term

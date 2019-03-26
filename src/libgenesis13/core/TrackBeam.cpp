@@ -235,7 +235,7 @@ void TrackBeam::applyR56(Beam* beam, Undulator* und, double lambda0) {
     }
     double R56=(4*lb/sin(angle)*(1-angle/tan(angle))+2*ld*tan(angle)/cos(angle))*angle;
     //    cout << "R56: " << R56 << endl;
-    R56=R56*4*asin(1)/lambda0/gamma0;
+    R56=R56*2.*M_PI/lambda0/gamma0;
     for (int i=0; i<beam->beam.size(); i++) {
         for (int j=0; j<beam->beam.at(i).size(); j++) {
             beam->beam.at(i).at(j).theta+=R56*(beam->beam.at(i).at(j).gamma-gamma0);

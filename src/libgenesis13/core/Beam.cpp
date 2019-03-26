@@ -63,7 +63,7 @@ void Beam::initDiagnostics(int nz) {
 // reference position is in ponderomotive phase. The valid bucket size is from 0 to 2 pi*sample
 void Beam::initSorting(int rank, int size, bool doshift, bool dosort) {
     int isz=beam.size();
-    double sl=4*asin(1.)*slicelength/reflength;
+    double sl=2.*M_PI*slicelength/reflength;
     sorting.init(rank, size, doshift, dosort);
     sorting.configure(0, sl, 0, sl*isz, 0, sl*isz, false);
     return;
@@ -122,7 +122,7 @@ bool Beam::harmonicConversion(int harmonic, bool resample) {
     int nsize=beam.size();
     beam.resize(harmonic*nsize);
     current.resize(harmonic*nsize);
-    double sl=4*asin(1.)*slicelength/reflength;
+    double sl=2.*M_PI*slicelength/reflength;
     sorting.configure(0, sl, 0, sl*nsize*harmonic, 0, sl*nsize*harmonic, false);
     // first make all new slices zero length
     for (int i=nsize; i < harmonic*nsize; i++) {
@@ -174,7 +174,7 @@ bool Beam::subharmonicConversion(int harmonic, bool resample) {
         return false;   // check whether the number of slices cannot merged into a smaller number
     }
     //return true;
-    double dtheta=4.*asin(1)*slicelength/reflength/static_cast<double>(harmonic);
+    double dtheta=2.*M_PI*slicelength/reflength/static_cast<double>(harmonic);
     for (int i=1; i<nsize; i++) {
         for (int k=0; k<beam.at(i).size(); k++) {
             p.gamma=beam[i].at(k).gamma;
@@ -191,7 +191,7 @@ bool Beam::subharmonicConversion(int harmonic, bool resample) {
     current.resize(nsize/harmonic);
     // updating the sorting algorithm
     int isz=beam.size();
-    double sl=4*asin(1.)*slicelength/reflength;
+    double sl=2.*M_PI*slicelength/reflength;
     sorting.configure(0, sl, 0, sl*isz, 0, sl*isz, false);
     int shift=this->sort();  // sort the particles and update current
     return true;

@@ -54,7 +54,7 @@ void WriteFieldHDF5::writeMain(string fileroot, Field* field) {
     int ngrid=field->ngrid;
     vector<double> work;
     work.resize(ngrid*ngrid);
-    double ks=4.*asin(1)/field->xlambda;
+    double ks=2.*M_PI/field->xlambda;
     double scl=field->dgrid*ELECTRON_MASS_EV/ks/sqrt(VACUUM_IMPEDANCE);
     for (int i=0; i<ntotal; i++) {
         s0=-1;

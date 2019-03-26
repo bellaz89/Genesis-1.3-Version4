@@ -17,7 +17,7 @@ GaussHermite::~GaussHermite() {}
 
 void GaussHermite::loadGauss(complex<double>* field, FieldSlice* slice, double dgrid,
                              int ngrid) {
-    double k=4.*asin(1)/slice->lambda*static_cast<double>(slice->harm);
+    double k=2.*M_PI/slice->lambda*static_cast<double>(slice->harm);
     double z0=-slice->z0;
     double w0=slice->w0;
     double zr=w0*w0*k*0.5;  // Zr=w0^2*k/2
@@ -25,10 +25,10 @@ void GaussHermite::loadGauss(complex<double>* field, FieldSlice* slice, double d
     complex<double> qz=complex<double>(-z0, zr); // q(z)= z-z0 + i zr , see Siegman p.664
     complex<double> q0=complex<double>(0,  zr);
     complex<double> coef=complex<double>(0, 1)*0.5*k/qz;
-    // some normalization crap  
+    // some normalization crap
     // P=|E|^2/Z0 -> u = k (e/mc^2) E
     double unit=sqrt(slice->power*VACUUM_IMPEDANCE)*k/ELECTRON_MASS_EV;
-    double norm=f0/sqrt(2.*asin(1.)*this->fac(slice->nx)*this->fac(slice->ny)*(1<<
+    double norm=f0/sqrt(M_PI*this->fac(slice->nx)*this->fac(slice->ny)*(1<<
                         (slice->nx+slice->ny))); // f0/sqrt(pi 2^(nx+ny) nx! ny!)
     complex<double> zscale=unit*norm*complex<double>(cos(slice->phase),
                            sin(slice->phase));
