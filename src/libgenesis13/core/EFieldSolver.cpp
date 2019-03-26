@@ -2,14 +2,6 @@
 #include <cmath>
 #include "PhysicalConstants.h"
 
-EFieldSolver::EFieldSolver() {
-    nz=0;
-    nphi=0;
-    ngrid_ref=0;
-}
-
-EFieldSolver::~EFieldSolver() {}
-
 void EFieldSolver::init(double rmax_in, int ngrid_in, int nz_in, int nphi_in,
                         double lambda) {
     rmax_ref=rmax_in;
@@ -74,6 +66,7 @@ void EFieldSolver::shortRange(vector<Particle>* beam, vector<double> &ez,
         cmid.resize(ngrid);
         cupp.resize(ngrid);
         gam.resize(ngrid);
+        rlog.resize(ngrid);
     }
     // r_j are the center grid points. The boundaries are given +/-dr/2. Thus r_j=(j+1/2)*dr
     for (int j=0; j<ngrid; j++) {
