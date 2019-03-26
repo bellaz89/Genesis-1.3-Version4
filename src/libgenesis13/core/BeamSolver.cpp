@@ -5,10 +5,11 @@
 
 using namespace std;
 
-BeamSolver::BeamSolver(bool _onlyFundamental) : onlyFundamental(_onlyFundamental) {}
+BeamSolver::BeamSolver(bool _onlyFundamental) : onlyFundamental(_onlyFundamental),
+    tracker(), efield() {}
 
 void BeamSolver::advance(double delz, Beam* beam, vector< Field*>* field,
-                         Undulator* und) {
+                         Undulator* und) const {
     // here the harmonics needs to be taken into account
     vector<int> nfld;
     vector<double> rtmp;
@@ -18,8 +19,8 @@ void BeamSolver::advance(double delz, Beam* beam, vector< Field*>* field,
     for (int i=0; i < field->size(); i++) {
         int harm=field->at(i)->getHarm();
         if ((harm==1) || !onlyFundamental) {
-            xks=field->at(i)->xks/static_cast<double>
-                (harm);    // fundamental field wavenumber used in ODE below
+            // fundamental field wavenumber used in ODE below
+            xks=field->at(i)->xks/static_cast<double>(harm);
             nfld.push_back(i);
             rtmp.push_back(und->fc(harm)/field->at(
                                i)->xks);      // here the harmonics have to be taken care
@@ -28,11 +29,13 @@ void BeamSolver::advance(double delz, Beam* beam, vector< Field*>* field,
         }
     }
     double xku=und->getku();
-    if (xku==0) {  // in the case of drifts - the beam stays in phase if it has the reference energy // this requires that the phase slippage is not applied
+    // in the case of drifts - the beam stays in phase if it has the reference energy
+    // this requires that the phase slippage is not applied
+    if (xku==0) {
         xku=xks*0.5/und->getGammaRef()/und->getGammaRef();
     }
     double aw=und->getaw();
-    double autophase=und->autophase();
+    const double autophase=und->autophase();
     // Runge Kutta solver to advance particle
     for (int is=0; is<beam->beam.size(); is++) {
         for (int ip=0; ip<beam->beam.at(is).size(); ip++) {
@@ -41,18 +44,18 @@ void BeamSolver::advance(double delz, Beam* beam, vector< Field*>* field,
             sim_params.xks = xks;
             sim_params.gamma=beam->beam.at(is).at(ip).gamma;
             sim_params.theta=beam->beam.at(is).at(ip).theta+autophase; // add autophase here
-            double x =beam->beam.at(is).at(ip).x;
-            double y =beam->beam.at(is).at(ip).y;
-            double px=beam->beam.at(is).at(ip).px;
-            double py=beam->beam.at(is).at(ip).py;
-            double awloc=und->faw(x,
-                                  y);                // get the transverse dependence of the undulator field
+            const double x =beam->beam.at(is).at(ip).x;
+            const double y =beam->beam.at(is).at(ip).y;
+            const double px=beam->beam.at(is).at(ip).px;
+            const double py=beam->beam.at(is).at(ip).py;
+            // get the transverse dependence of the undulator field
+            const double awloc=und->faw(x, y);
             sim_params.btpar=1+px*px+py*py+aw*aw*awloc*awloc;
             complex<double> cpart=0;
-            double wx, wy;
-            int idx;
             for (int ifld=0; ifld<nfld.size(); ifld++) {
                 int islice=(is+field->at(nfld[ifld])->first) % field->at(nfld[ifld])->field.size();
+                int idx;
+                double wx, wy;
                 // check whether particle is on grid
                 if (field->at(nfld[ifld])->getLLGridpoint(x, y, &wx, &wy,
                         &idx)) {
@@ -74,7 +77,7 @@ void BeamSolver::advance(double delz, Beam* beam, vector< Field*>* field,
     return;
 }
 
-void BeamSolver::RungeKutta(const double delz, SimulationParams &sim_params) {
+void BeamSolver::RungeKutta(const double delz, SimulationParams &sim_params) const {
     // Runge Kutta Solver 4th order - taken from pushp from the old Fortran source
     // first step
     double k2gg=0.;
@@ -115,17 +118,17 @@ void BeamSolver::RungeKutta(const double delz, SimulationParams &sim_params) {
 
 
 void BeamSolver::ODE(double &k2gg, double &k2pp,
-                     const SimulationParams &sim_params) {
+                     const SimulationParams &sim_params) const {
     // differential equation for longitudinal motion
-    double ztemp1=-2./sim_params.xks;
+    const double ztemp1=-2./sim_params.xks;
     complex<double> ctmp=0;
     for (int i=0; i<sim_params.rpart.size(); i++) {
-        double angle = sim_params.rharm[i]*sim_params.theta;
+        const double angle = sim_params.rharm[i]*sim_params.theta;
         ctmp+=sim_params.rpart[i]*complex<double> (cos(angle), -sin(angle));
     }
-    double btper0=sim_params.btpar+ztemp1*ctmp.real();   //perpendicular velocity
-    double btpar0=sqrt(1.-btper0/
-                       (sim_params.gamma*sim_params.gamma));     //parallel velocity
+    const double btper0=sim_params.btpar+ztemp1*ctmp.real();   //perpendicular velocity
+    const double btpar0=sqrt(1.-btper0/
+                             (sim_params.gamma*sim_params.gamma));     //parallel velocity
     k2pp+=sim_params.xks*(1.-1./btpar0)+sim_params.xku;             //dtheta/dz
     k2gg+=ctmp.imag()/btpar0/sim_params.gamma;         //dgamma/dz
     return;

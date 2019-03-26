@@ -17,7 +17,7 @@ public:
 
     BeamSolver(bool _onlyFundamental = false);
     void initEField(double rmax, int ngrid, int nz, int nphi, double lambda);
-    void advance(double, Beam*, vector< Field*>*, Undulator*);
+    void advance(double, Beam*, vector< Field*>*, Undulator*) const;
     void track(double, Beam*, Undulator*, bool);
     void applyR56(Beam*, Undulator*, double);
 
@@ -40,9 +40,9 @@ protected:
 
 private:
 
-    bool onlyFundamental;
-    void RungeKutta(const double delz, SimulationParams &sim_params);
-    void ODE(double &k2gg, double &k2pp, const SimulationParams &sim_params);
+    const bool onlyFundamental;
+    void RungeKutta(const double delz, SimulationParams &sim_params) const;
+    void ODE(double &k2gg, double &k2pp, const SimulationParams &sim_params) const;
 
     EFieldSolver efield;
     TrackBeam tracker;
