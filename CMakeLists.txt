@@ -5,6 +5,8 @@ project(Genesis13
     VERSION 4.3.0
     LANGUAGES C CXX)
 
+set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
 # pass the project version as compile time preprocessor flags
 add_definitions(
     -DVERSIONMAJOR=${PROJECT_VERSION_MAJOR}
@@ -23,8 +25,6 @@ if (NOT EXISTS ${CMAKE_BINARY_DIR}/CMakeCache.txt)
 endif()
 
 # openmpi, boost and hdf5 libraries
-
-# Not useful in multithreaded enviroment 
 set(BUILD_MULTITHREADED OFF)
 set(Boost_USE_MULTITHREADED ${BUILD_MULTITHREADED})
 
@@ -52,7 +52,7 @@ if(ENABLE_CUDA)
     endif()
 
     enable_language(CUDA)
-    
+
     if(${CMAKE_CUDA_COMPILER_VERSION} VERSION_LESS 9.0)
         message(ERROR "CUDA requires nvcc version >= 9.0")
     endif()
@@ -70,7 +70,21 @@ if(ENABLE_CUDA)
     endif()
 endif()
 
+#------------------------------------------------------------------------------
+# Tests
+#------------------------------------------------------------------------------
 
+find_package(GTest)
+if(GTest_FOUND)
+    enable_testing()
+    file(GLOB TEST_SOURCES test/*.cpp)
+    foreach(testsource ${TEST_SOURCES})
+        get_filename_component(testname ${testsource} NAME_WE)
+        add_executable("${testname}.test" ${testsource})
+        target_link_libraries ("${testname}.test" genesis13 GTest::Main GTest::GTest)
+        gtest_add_tests(TARGET "${testname}.test")
+    endforeach(testsource)
+endif()
 #------------------------------------------------------------------------------
 # Genesis support
 #------------------------------------------------------------------------------

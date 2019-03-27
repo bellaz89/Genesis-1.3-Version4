@@ -14,7 +14,7 @@ Ideas for development
 |----------|-----------------|---------------|
 | CMake support | Use [CMake](https://cmake.org/) to configure the build of genesis | **Done** |
 | Boost support | Add [Boost C++](https://www.boost.org/) support in build script | **Done** | 
-| Remove Invertfc and Besselj code | Remove Invertfc and Besselj from code base and substitute them with functions in [boost::math](https://www.boost.org/doc/libs/1_69_0/libs/math/doc/html/special.html) | **To test** |
+| Remove Invertfc and Besselj code | Remove Invertfc and Besselj from code base and substitute them with functions in [boost::math](https://www.boost.org/doc/libs/1_69_0/libs/math/doc/html/special.html) | **Done** |
 | General refactoring | General refactoring of interfaces, commenting, use of STL facilities ([like smart pointers](https://en.cppreference.com/book/intro/smart_pointers)) | **In progress** |
 | CUDA support | Use [CUDA](https://developer.nvidia.com/) to speed up computations using NVIDIA GPUs | **Not started** |
 | OpenMP support | Use [OpenMP](https://www.openmp.org/) to speed up computations when multicore nodes are available | **Not started** |
