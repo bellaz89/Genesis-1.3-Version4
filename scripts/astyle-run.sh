@@ -12,6 +12,7 @@ astyle $ASTYLE_ARGS "$BASEDIR"/../src/libgenesis13/*/*.h
 astyle $ASTYLE_ARGS "$BASEDIR"/../src/libgenesis13/*/cpp/*.h
 astyle $ASTYLE_ARGS "$BASEDIR"/../src/libgenesis13/*/cuda/*.h
 astyle $ASTYLE_ARGS "$BASEDIR"/../src/gencore/*.cpp
-astyle $ASTYLE_ARGS "$BASEDIR"/../include/*.h
+astyle $ASTYLE_ARGS "$BASEDIR/../test"/*.cpp
+astyle $ASTYLE_ARGS "$BASEDIR"/../include/libgenesis13/*.h
 
 find . -name "*.orig" -type f -delete
