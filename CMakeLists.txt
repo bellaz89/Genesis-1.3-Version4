@@ -29,6 +29,17 @@ set(BUILD_MULTITHREADED OFF)
 set(Boost_USE_MULTITHREADED ${BUILD_MULTITHREADED})
 
 find_package(Boost REQUIRED COMPONENTS random mpi unit_test_framework)
+include(CheckIncludeFileCXX)
+CHECK_INCLUDE_FILE_CXX(boost/math/special_functions/erf.hpp ERFC_INV_FOUND)
+if(NOT ERFC_INV_FOUND)
+    message(SEND_ERROR "boost/math/special_functions/erf.hpp not found")
+endif()
+
+CHECK_INCLUDE_FILE_CXX(boost/math/special_functions/bessel.hpp BESSEL_J_FOUND)
+if(NOT BESSEL_J_FOUND)
+    message(SEND_ERROR "boost/math/special_functions/bessel.hpp not found")
+endif()
+
 pkg_check_modules(MPI REQUIRED ompi-cxx)
 pkg_check_modules(HDF5 REQUIRED hdf5-openmpi)
 

@@ -1,5 +1,5 @@
 #include "Undulator.h"
-#include <boost/math/special_functions.hpp>
+#include <boost/math/special_functions/bessel.hpp>
 #include <libgenesis13/lattice/LatticeElements.h>
 
 using boost::math::cyl_bessel_j;

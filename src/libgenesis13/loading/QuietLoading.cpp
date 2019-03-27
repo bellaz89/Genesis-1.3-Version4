@@ -1,5 +1,5 @@
 #include "QuietLoading.h"
-#include <boost/math/special_functions.hpp>
+#include <boost/math/special_functions/erf.hpp>
 #include <libgenesis13/util/GaussHermite.h>
 #include <libgenesis13/util/RandomU.h>
 #include <libgenesis13/util/Hammerslay.h>
