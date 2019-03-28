@@ -14,7 +14,7 @@ add_definitions(
     -DVERSIONREVISION=${PROJECT_VERSION_PATCH}
     -DVERSIONBETA=true)
 
-set (CMAKE_CXX_STANDARD 17)
+set (CMAKE_CXX_STANDARD 11)
 include(CheckLanguage)
 find_package(PkgConfig REQUIRED)
 
@@ -106,13 +106,13 @@ if(ENABLE_CUDA)
 endif()
 target_include_directories(genesis13 PUBLIC include/libgenesis13 PRIVATE ${COMMON_INCLUDE_DIRS}) 
 target_compile_definitions(genesis13 PUBLIC -DMPE)
-target_compile_options(genesis13 PUBLIC ${COMMON_CFLAGS})
+target_compile_options(genesis13 PUBLIC ${COMMON_CFLAGS} -Wall -Wextra)
 target_link_libraries(genesis13 PRIVATE ${COMMON_LIBRARIES}) 
 
 add_executable(gencore src/gencore/mainwrap.cpp)
 target_include_directories(gencore  PRIVATE include/libgenesis13 COMMON_INCLUDE_DIRS)
 target_compile_definitions(gencore PRIVATE -DMPE)
-target_compile_options(gencore PRIVATE ${COMMON_CFLAGS})
+target_compile_options(gencore PRIVATE ${COMMON_CFLAGS} -Wall -Wextra)
 target_link_libraries(gencore PUBLIC genesis13)
 
 install(TARGETS gencore DESTINATION bin)

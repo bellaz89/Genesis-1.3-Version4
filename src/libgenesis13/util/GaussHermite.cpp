@@ -23,7 +23,6 @@ void GaussHermite::loadGauss(complex<double>* field, FieldSlice* slice, double d
     double zr=w0*w0*k*0.5;  // Zr=w0^2*k/2
     double f0=sqrt(k*zr/(zr*zr+z0*z0));          // is same as  sqrt(2)/w(z)
     complex<double> qz=complex<double>(-z0, zr); // q(z)= z-z0 + i zr , see Siegman p.664
-    complex<double> q0=complex<double>(0,  zr);
     complex<double> coef=complex<double>(0, 1)*0.5*k/qz;
     // some normalization crap
     // P=|E|^2/Z0 -> u = k (e/mc^2) E
@@ -36,7 +35,6 @@ void GaussHermite::loadGauss(complex<double>* field, FieldSlice* slice, double d
     double ymid=dgrid+slice->ycen;
     double dxy=2.*dgrid/(ngrid-1.);
     double kx=k*slice->xangle;
-    double ky=k*slice->yangle;
     for (int iy=0; iy<ngrid; iy++) {
         double y=iy*dxy-ymid;
         double Hy=this->Hn(f0*y, slice->ny);

@@ -30,8 +30,6 @@ bool ImportBeam::init(int rank, int size, map<string, string>* arg, Beam* beam,
     }
     double lambda=setup->getReferenceLength();   // reference length for theta
     bool one4one=setup->getOne4One();            // check for one4one simulations
-    double gamma=
-        setup->getReferenceEnergy();           // get default energy from setup input deck
     int nbins=setup->getNbins();
     map<string, string>::iterator end=arg->end();
     if (arg->find("file")!=end    ) {
@@ -63,11 +61,10 @@ bool ImportBeam::init(int rank, int size, map<string, string>* arg, Beam* beam,
                   (time->getSampleRate());         // check slice length
     dotime=time->isTime();                                            // check for time simulation
     vector<double> s;
-    int nslice=time->getPosition(&s);
+    time->getPosition(&s);
     beam->init(time->getNodeNSlice(), nbins, lambda, sample*lambda, s[0], one4one);
     for (int j=0; j<time->getNodeNSlice(); j++) {
         int i=j+time->getNodeOffset();
-        double sloc=s[i];
         import.readSlice(s[i], &beam->beam[j], &beam->current[j], one4one);
     }
     import.close();

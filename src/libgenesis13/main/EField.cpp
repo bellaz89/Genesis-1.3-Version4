@@ -17,7 +17,6 @@ void EField::usage() {
 
 bool EField::init(int rank, int size, map<string, string>* arg,  Beam* beam,
                   Setup* setup, Time* time) {
-    bool dotime=time->isTime();                  // check for time simulation
     lambda=setup->getReferenceLength();
     map<string, string>::iterator end=arg->end();
     if (arg->find("rmax")!=end) {

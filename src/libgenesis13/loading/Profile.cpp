@@ -294,26 +294,32 @@ string ProfileFile::init(int rank, map<string, string>* arg) {
     isTime=false;
     revert=false;
     map<string, string>::iterator end=arg->end();
+    
     if (arg->find("label")!=end) {
         label = arg->at("label");
         arg->erase(arg->find("label"));
     }
+    
     if (arg->find("xdata")!=end)   {
         xdataset = arg->at("xdata");
         arg->erase(arg->find("xdata"));
     }
+    
     if (arg->find("ydata")!=end)   {
         ydataset = arg->at("ydata");
         arg->erase(arg->find("ydata"));
     }
+    
     if (arg->find("isTime")!=end)  {
         isTime = atob(arg->at("isTime").c_str());
         arg->erase(arg->find("isTime"));
     }
+    
     if (arg->find("reverse")!=end) {
         revert = atob(arg->at("reverse").c_str());
         arg->erase(arg->find("reverse"));
     }
+    
     if (arg->size()!=0) {
         if (rank==0) {
             cout << "*** Error: Unknown elements in &profile_file" << endl;
@@ -321,12 +327,14 @@ string ProfileFile::init(int rank, map<string, string>* arg) {
         }
         return "";
     }
+    
     if ((label.size()<1)&&(rank==0)) {
         cout << "*** Error: Label not defined in &profile_file" << endl;
         this->usage();
     }
-    int ndata=-1;
+    
     bool success;
+    
     success=this->simpleReadDouble1D(xdataset, &xdat);
     if (!success) {
         if (rank==0) {
@@ -334,6 +342,7 @@ string ProfileFile::init(int rank, map<string, string>* arg) {
         }
         return "";
     }
+    
     success=this->simpleReadDouble1D(ydataset, &ydat);
     if (!success) {
         if (rank==0) {
@@ -341,11 +350,13 @@ string ProfileFile::init(int rank, map<string, string>* arg) {
         }
         return "";
     }
+    
     if (isTime) {
         for (int i=0; i<xdat.size(); i++) {
             xdat[i]*=LIGHT_SPEED;         // scale time variable to space varial by multiplying the speed of light
         }
     }
+    
     if (revert) {
         double xmin=xdat[0];
         double xmax=xdat[xdat.size()-1];

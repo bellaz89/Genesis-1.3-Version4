@@ -71,7 +71,6 @@ void Beam::initSorting(int rank, int size, bool doshift, bool dosort) {
 
 int Beam::sort() {
     int shift=0;
-    double dQ=ELECTRON_CHARGE_X_C/slicelength;
     if (one4one) {
         shift= sorting.sort(&beam);
         for (int i=0; i<beam.size(); i++) {  // correct the local current
@@ -146,7 +145,7 @@ bool Beam::harmonicConversion(int harmonic, bool resample) {
         beam[i].clear();
     }
     // updating the sorting algorithm
-    int shift=this->sort();  // sort the particles and update current
+    this->sort();  // sort the particles and update current
     return true;
 }
 
@@ -193,7 +192,7 @@ bool Beam::subharmonicConversion(int harmonic, bool resample) {
     int isz=beam.size();
     double sl=2.*M_PI*slicelength/reflength;
     sorting.configure(0, sl, 0, sl*isz, 0, sl*isz, false);
-    int shift=this->sort();  // sort the particles and update current
+    this->sort();  // sort the particles and update current
     return true;
 }
 
@@ -281,7 +280,6 @@ void Beam::diagnostics(bool output, double z) {
 
 
 void Beam::diagnosticsStart() {
-    double gx, gy, gammax, gammay;
     double x1, y1, x2, y2, px1, py1, px2, py2, g1, xpx, ypy;
     int ds=beam.size();
     for (int is=0; is<ds; is++) {
@@ -338,8 +336,6 @@ void Beam::diagnosticsStart() {
         by[is]=(y2-y1*y1)/ey[is]*g1;
         ax[is]=-(xpx-x1*px1)*g1/ex[is];
         ay[is]=-(ypy-y1*py1)*g1/ey[is];
-        gx=(1+ax[is]*ax[is])/bx[is];
-        gy=(1+ay[is]*ay[is])/by[is];
     }
     return;
 }

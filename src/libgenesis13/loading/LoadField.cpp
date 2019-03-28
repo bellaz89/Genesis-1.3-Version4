@@ -53,7 +53,6 @@ void LoadField::usage() {
 
 bool LoadField::init(int rank, int size, map<string, string>* arg,
                      vector<Field*>* fieldin,  Setup* setup, Time* time, Profile* prof) {
-    bool dotime=time->isTime();                  // check for time simulation
     double sample=static_cast<double>
                   (time->getSampleRate());         // check slice length
     lambda=setup->getReferenceLength();
@@ -152,7 +151,7 @@ bool LoadField::init(int rank, int size, map<string, string>* arg,
         cout << "input radiation field for HARM = " << harm <<  " ..." << endl;
     }
     vector<double> s;
-    int nslice=time->getPosition(&s);
+    time->getPosition(&s);
     field->init(time->getNodeNSlice(), ngrid, dgrid, lambda, sample*lambda, s[0], harm);
     if (idx<0) {
         fieldin->push_back(field);

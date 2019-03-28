@@ -35,9 +35,9 @@ void Wake::usage() {
 
 bool Wake::init(int rank, int size, map<string, string>* arg,  Time* time,
                 Setup* setup, Beam* beam) {
+    
     string material="";
     map<string, string>::iterator end=arg->end();
-    map<string, string>::iterator iter=arg->begin();
     if (arg->find("radius")!=end) {
         radius = atof(arg->at("radius").c_str());
         arg->erase(arg->find("radius"));

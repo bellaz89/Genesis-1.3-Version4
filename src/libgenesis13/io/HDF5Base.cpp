@@ -92,7 +92,7 @@ void HDF5Base::writeSingleNodeString(hid_t gid, string dataset, string* data) {
     hsize_t fblock[1]= {1};
     hid_t filespace=H5Screate_simple(1, fblock, nullptr);
     hid_t dtype = H5Tcopy (H5T_C_S1);
-    herr_t status = H5Tset_size (dtype, nd);
+    H5Tset_size (dtype, nd);
     hid_t did=H5Dcreate(gid, dataset.c_str(), dtype, filespace, H5P_DEFAULT, H5P_DEFAULT,
                         H5P_DEFAULT);
     H5Sclose(filespace);

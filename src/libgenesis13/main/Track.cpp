@@ -35,7 +35,6 @@ bool Track::init(int inrank, int insize, map<string, string>* arg, Beam* beam,
     bunchharm=1; //reset to default for each tracking
     bool isTime=time->isTime();
     bool isScan=time->isScan();
-    double sample=time->getSampleRate();
     s0=time->getTimeWindowStart();
     slen=time->getTimeWindowLength();
     map<string, string>::iterator end=arg->end();

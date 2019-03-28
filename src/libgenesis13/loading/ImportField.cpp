@@ -23,8 +23,6 @@ void ImportField::usage() {
 bool ImportField::init(int rank, int size, map<string, string>* arg,
                        vector<Field*>* fieldin, Setup* setup, Time* time) {
     double lambda=setup->getReferenceLength();   // reference length for theta
-    double gamma=
-        setup->getReferenceEnergy();           // get default energy from setup input deck
     map<string, string>::iterator end=arg->end();
     if (arg->find("file")!=end    ) {
         file=arg->at("file");
@@ -56,7 +54,7 @@ bool ImportField::init(int rank, int size, map<string, string>* arg,
                   (time->getSampleRate());         // check slice length
     dotime=time->isTime();                                            // check for time simulation
     vector<double> s;
-    int nslice=time->getPosition(&s);
+    time->getPosition(&s);
     int idx=-1;
     Field* field;
     for (int i=0; i<fieldin->size(); i++) {
@@ -85,7 +83,6 @@ bool ImportField::init(int rank, int size, map<string, string>* arg,
     }
     for (int j=0; j<time->getNodeNSlice(); j++) {
         int i=j+time->getNodeOffset();
-        double sloc=s[i];
         import.readSlice(s[i], &field->field[j]);
     }
     import.close();

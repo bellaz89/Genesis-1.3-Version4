@@ -162,7 +162,7 @@ void Sorting::globalSort(vector <vector <Particle>>* rec) {
             pushbackward.clear();
         }
         // step two - pairing ranks (1,2) (3,4) etc
-        transfer == true;
+        // transfer == true; // hanging comparison, commented out. what is the sense of this?
         if (((rank % 2) == 1) && (rank == (size -1))) {
             transfer = false;    // last core for an even number
         }
