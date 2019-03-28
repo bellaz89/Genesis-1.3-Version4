@@ -59,12 +59,12 @@ void SDDSBeam::usage() {
 }
 
 bool SDDSBeam::init(int inrank, int insize, map<string, string>* arg, Beam* beam,
-        Setup* setup, Time* time, Lattice* lat) {
+                    Setup* setup, Time* time, Lattice* lat) {
     rank=inrank;
     size=insize;
     gamma=setup->getReferenceEnergy();           // get default energy from setup input deck
     lat->getMatchedOptics(&betax, &alphax, &betay,
-            &alphay); // use matched value if calculated
+                          &alphay); // use matched value if calculated
     double lambda=setup->getReferenceLength();   // reference length for theta
     // check slice length
     double sample=static_cast<double>(time->getSampleRate());
@@ -370,7 +370,7 @@ bool SDDSBeam::init(int inrank, int insize, map<string, string>* arg, Beam* beam
     int node_off=time->getNodeOffset();
     int node_len=time->getNodeNSlice();
     beam->init(time->getNodeNSlice(), nbins, lambda, sample*lambda, s[0],
-            one4one); // init beam
+               one4one); // init beam
     double smin=s[node_off];
     double smax=s[node_off+node_len-1];
     if (rank==0) {
@@ -401,7 +401,7 @@ bool SDDSBeam::init(int inrank, int insize, map<string, string>* arg, Beam* beam
     Sorting sort;
     sort.init(rank, size, false, true);
     sort.configure(0, 0, smin+0.5*dslen, smax-0.5*dslen, smin-0.5*dslen, smax+0.5*dslen,
-            true);
+                   true);
     sort.globalSort(&dist);
     // step 7 - populate internal distribution
     // now each node has all the particles, which is needed for the phase space reconstruction
@@ -428,7 +428,7 @@ bool SDDSBeam::init(int inrank, int insize, map<string, string>* arg, Beam* beam
         beam->current[islice]=static_cast<double>(ncount)*dQ*LIGHT_SPEED/dslen;
         if (one4one) {
             npart=static_cast<int>(round(
-                        beam->current[islice]*lambda*sample/ELECTRON_CHARGE_X_C));
+                                       beam->current[islice]*lambda*sample/ELECTRON_CHARGE_X_C));
             mpart=npart;
             nbins=1;
         } else {
@@ -588,7 +588,7 @@ void SDDSBeam::addParticles(vector<Particle>* beam, int mpart) {
             }
         }
         par.gamma=0.5*(beam->at(n1).gamma+beam->at(n2).gamma)+(2*ran->getElement()-1)*
-            (beam->at(n1).gamma-beam->at(n2).gamma);
+                  (beam->at(n1).gamma-beam->at(n2).gamma);
         par.x =0.5*(beam->at(n1).x +beam->at(n2).x) +(2*ran->getElement()-1)*(beam->at(
                     n1).x -beam->at(n2).x);
         par.px=0.5*(beam->at(n1).px+beam->at(n2).px)+(2*ran->getElement()-1)*(beam->at(
@@ -713,9 +713,9 @@ void SDDSBeam::analyse(double ttotal, int nsize) {
         ypy*=tmp;
     }
     ex=sqrt(fabs((xvar-xavg*xavg)*(pxvar-pxavg*pxavg)-(xpx-xavg*pxavg)*
-                (xpx-xavg*pxavg)))*gavg;
+                 (xpx-xavg*pxavg)))*gavg;
     ey=sqrt(fabs((yvar-yavg*yavg)*(pyvar-pyavg*pyavg)-(ypy-yavg*pyavg)*
-                (ypy-yavg*pyavg)))*gavg;
+                 (ypy-yavg*pyavg)))*gavg;
     bx=(xvar-xavg*xavg)/ex*gavg;
     by=(yvar-yavg*yavg)/ey*gavg;
     ax=-(xpx-xavg*pxavg)*gavg/ex;
