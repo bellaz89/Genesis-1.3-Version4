@@ -21,8 +21,6 @@ public:
     void applyChicane(Beam*, double, double, double, double, double);
     void applyR56(Beam*, Undulator*, double);
 
-private:
-    void matmul(double a[][4], double b[][4]);
 };
 
 

@@ -1,4 +1,6 @@
 #include "TrackBeam.h"
+#include <Eigen/Core>
+#include <Eigen/Dense>
 #include "Beam.h"
 
 TrackBeam::TrackBeam() {}
@@ -120,110 +122,50 @@ void TrackBeam::applyChicane(Beam* beam, double angle, double lb, double ld,
     // longitudinal position
     // the transfer matrix order is
     //  m -> bp -> ep -> d1 -> en -> bn -> d2 -> bn -> en-> d1 -> ep-> bp ->d3
-    double m[4][4];
-    double d1[4][4];
-    double d2[4][4];
-    double d3[4][4];
-    double bp[4][4];
-    double bn[4][4];
-    double ep[4][4];
-    double en[4][4];
-    // construct the transfer matrix
-    for (int i=0; i<4; i++) {
-        for (int j=0; j<4; j++) {
-            m[i][j]=0;
-            d1[i][j]=0;
-            d2[i][j]=0;
-            d3[i][j]=0;
-            bp[i][j]=0;
-            bn[i][j]=0;
-            ep[i][j]=0;
-            en[i][j]=0;
-        }
-        m[i][i]=1;
-        d1[i][i]=1;
-        d2[i][i]=1;
-        d3[i][i]=1;
-        bp[i][i]=1;
-        bn[i][i]=1;
-        ep[i][i]=1;
-        en[i][i]=1;
-    }
-    d1[0][1]=ld/cos(angle);  // drift between dipoles
-    d1[2][3]=ld/cos(angle);
-    d2[0][1]=lt-4*lb-2*ld;   // drift in the middle
-    d2[2][3]=lt-4*lb-2*ld;
-    d3[0][1]=-lt;            // negative drift over total chicane to get a zero element
-    d3[2][3]=-lt;
-    double R=lb/sin(angle);
+    
+    Eigen::Matrix4d m;
+    Eigen::Matrix4d d1 = Eigen::Matrix4d::Identity();
+    Eigen::Matrix4d d2 = Eigen::Matrix4d::Identity();
+    Eigen::Matrix4d d3 = Eigen::Matrix4d::Identity();
+    Eigen::Matrix4d bpn = Eigen::Matrix4d::Identity();
+    Eigen::Matrix4d epn = Eigen::Matrix4d::Identity();
+   
+    double cos_angle = cos(angle);
+    double sin_angle = sin(angle);
+    double R=lb/sin_angle;
     double Lpath=R*angle;
-    bp[2][3]=Lpath;  // positive deflection angle
-    bp[0][0]=cos(angle);
-    bp[0][1]=R*sin(angle);
-    bp[1][0]=-sin(angle)/R;
-    bp[1][1]=cos(angle);
-    bn[2][3]=Lpath; // negative deflection angle
-    bn[0][0]=cos(-angle);
-    bn[0][1]=R*sin(-angle)*-1;
-    bn[1][0]=-sin(-angle)/R*-1;
-    bn[1][1]=cos(-angle);
     double efoc=tan(angle)/R;
-    ep[1][0]=efoc;
-    ep[3][2]=-efoc;
-    en[1][0]=-efoc*-1;
-    en[3][2]=efoc*-1;
-    this->matmul(m, bp);
-    this->matmul(m, ep);
-    this->matmul(m, d1);
-    this->matmul(m, en);
-    this->matmul(m, bn);
-    this->matmul(m, d2);
-    this->matmul(m, bn);
-    this->matmul(m, en);
-    this->matmul(m, d1);
-    this->matmul(m, ep);
-    this->matmul(m, bp);
-    // transport matrix has been cross checked with Madx.
-    /*
-       cout << "lt = " << lt << " angle = " << angle << " lb = " << lb << " ld = " << ld <<  endl;
-       cout << m[0][0] << " " << m[0][1] << endl;
-       cout << m[1][0] << " " << m[1][1] << endl;
-       cout << m[2][2] << " " << m[2][3] << endl;
-       cout << m[3][2] << " " << m[3][3] << endl;
-       */
-    // transport backwards because the main tracking still has to do the drift
-    this->matmul(m, d3);
+
+    d1(0, 1)=ld/cos_angle;  // drift between dipoles
+    d1(2, 3)=ld/cos_angle;
+    d2(0, 1)=lt-4*lb-2*ld;   // drift in the middle
+    d2(2, 3)=lt-4*lb-2*ld;
+    d3(0, 1)=-lt;            // negative drift over total chicane to get a zero element
+    d3(2, 3)=-lt;
+    bpn(2, 3)=Lpath;  // positive deflection angle
+    bpn(0, 0)=cos_angle;
+    bpn(0, 1)=R*sin_angle;
+    bpn(1, 0)=-sin_angle/R;
+    bpn(1, 1)=cos_angle;
+    epn(1, 0)=efoc;
+    epn(3, 2)=-efoc;
+   
+    m = bpn*epn*d1*epn*bpn*d2*bpn*epn*d1*epn*bpn;
+
     for (int i=0; i<beam->beam.size(); i++) {
         for (int j=0; j<beam->beam.at(i).size(); j++) {
             Particle* p=&beam->beam.at(i).at(j);
             double gammaz=sqrt(p->gamma*p->gamma-1- p->px*p->px -
                                p->py*p->py); // = gamma*betaz=gamma*(1-(1+aw*aw)/gamma^2);
             double tmp=p->x;
-            p->x =m[0][0]*tmp        +m[0][1]*p->px/gammaz;
-            p->px=m[1][0]*tmp*gammaz +m[1][1]*p->px;
+            p->x =m(0, 0)*tmp        +m(0, 1)*p->px/gammaz;
+            p->px=m(1, 0)*tmp*gammaz +m(1, 1)*p->px;
             tmp=p->y;
-            p->y =m[2][2]*tmp        +m[2][3]*p->py/gammaz;
-            p->py=m[3][2]*tmp*gammaz +m[3][3]*p->py;
+            p->y =m(2, 2)*tmp        +m(2, 3)*p->py/gammaz;
+            p->py=m(3, 2)*tmp*gammaz +m(3, 3)*p->py;
         }
     }
     return;
-}
-
-void TrackBeam::matmul(double m[][4], double e[][4]) {
-    double t[4][4];
-    for (int i=0; i<4; i++) {
-        for (int j=0; j<4; j++) {
-            t[i][j]=0;
-            for (int k=0; k<4; k++) {
-                t[i][j]+=e[i][k]*m[k][j];
-            }
-        }
-    }
-    for (int i=0; i<4; i++) {
-        for (int j=0; j<4; j++) {
-            m[i][j]=t[i][j];
-        }
-    }
 }
 
 void TrackBeam::applyR56(Beam* beam, Undulator* und, double lambda0) {

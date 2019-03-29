@@ -24,7 +24,7 @@ if (NOT EXISTS ${CMAKE_BINARY_DIR}/CMakeCache.txt)
     endif()
 endif()
 
-# openmpi, boost and hdf5 libraries
+# openmpi, boost, hdf5, eigen libraries
 set(BUILD_MULTITHREADED OFF)
 set(Boost_USE_MULTITHREADED ${BUILD_MULTITHREADED})
 
@@ -53,6 +53,8 @@ set(COMMON_LIBRARIES ${MPI_LIBRARIES} ${HDF5_LIBRARIES} ${Boost_LIBRARIES})
 set(COMMON_LDFLAGS ${MPI_LDFLAGS} ${HDF5_LDFLAGS})
 link_directories(${COMMON_LIB_DIRS})
 
+find_package(Eigen3 3.3 REQUIRED NO_MODULE)
+
 #------------------------------------------------------------------------------
 # Tests
 #------------------------------------------------------------------------------
@@ -76,7 +78,7 @@ add_library(genesis13 ${COMMON_SOURCES})
 target_include_directories(genesis13 PUBLIC include/libgenesis13 PRIVATE ${COMMON_INCLUDE_DIRS}) 
 target_compile_definitions(genesis13 PUBLIC -DMPE)
 target_compile_options(genesis13 PUBLIC ${COMMON_CFLAGS} -Wall -Wextra)
-target_link_libraries(genesis13 PRIVATE ${COMMON_LIBRARIES}) 
+target_link_libraries(genesis13 PRIVATE ${COMMON_LIBRARIES} Eigen3::Eigen) 
 
 add_executable(gencore src/gencore/mainwrap.cpp)
 target_include_directories(gencore  PRIVATE include/libgenesis13 COMMON_INCLUDE_DIRS)
