@@ -54,34 +54,6 @@ set(COMMON_LDFLAGS ${MPI_LDFLAGS} ${HDF5_LDFLAGS})
 link_directories(${COMMON_LIB_DIRS})
 
 #------------------------------------------------------------------------------
-# CUDA support
-#------------------------------------------------------------------------------
-
-if(ENABLE_CUDA)
-    if(${CMAKE_VERSION} VERSION_LESS 3.10)
-        message(ERROR "CUDA builds require CMAKE >= 3.10")
-    endif()
-
-    enable_language(CUDA)
-
-    if(${CMAKE_CUDA_COMPILER_VERSION} VERSION_LESS 9.0)
-        message(ERROR "CUDA requires nvcc version >= 9.0")
-    endif()
-
-    file(GLOB CUDA_SOURCES src/libgenesis13/*/cuda/*.cpp src/libgenesis13/*/cuda/*.cu)
-    set(COMMON_SOURCES ${COMMON_SOURCES} ${CUDA_SOURCES}) 
-    add_definitions(-DUSE_CUDA)
-
-    if("-pthread" IN_LIST COMMON_CFLAGS) 
-        # Delete -pthread because it is unsupported by nvcc
-        list(REMOVE_ITEM COMMON_CFLAGS -pthread)
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pthread")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
-        set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -Xcompiler -pthread")
-    endif()
-endif()
-
-#------------------------------------------------------------------------------
 # Tests
 #------------------------------------------------------------------------------
 
@@ -101,9 +73,6 @@ endif()
 #------------------------------------------------------------------------------
 
 add_library(genesis13 ${COMMON_SOURCES})
-if(ENABLE_CUDA)
-    set_target_properties(genesis13 PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
-endif()
 target_include_directories(genesis13 PUBLIC include/libgenesis13 PRIVATE ${COMMON_INCLUDE_DIRS}) 
 target_compile_definitions(genesis13 PUBLIC -DMPE)
 target_compile_options(genesis13 PUBLIC ${COMMON_CFLAGS} -Wall -Wextra)

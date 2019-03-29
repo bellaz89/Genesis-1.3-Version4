@@ -5,3 +5,4 @@ benchmark/*/*.h5
 *.orig
 lib
 __pycache__/
+*.sw*

@@ -16,7 +16,6 @@ Ideas for development
 | Boost support | Add [Boost C++](https://www.boost.org/) support in build script | **Done** | 
 | Remove Invertfc and Besselj code | Remove Invertfc and Besselj from code base and substitute them with functions in [boost::math](https://www.boost.org/doc/libs/1_69_0/libs/math/doc/html/special.html) | **Done** |
 | General refactoring | General refactoring of interfaces, commenting, use of STL facilities ([like smart pointers](https://en.cppreference.com/book/intro/smart_pointers)) | **In progress** |
-| CUDA support | Use [CUDA](https://developer.nvidia.com/) to speed up computations using NVIDIA GPUs | **Not started** |
 | OpenMP support | Use [OpenMP](https://www.openmp.org/) to speed up computations when multicore nodes are available | **Not started** |
 | Tests | Add support to tests. This can be done with [CTest](https://gitlab.kitware.com/cmake/community/wikis/doc/ctest/Testing-With-CTest) and [GTest](https://github.com/google/googletest) | **Done** |
 | TOML input files | Use [TOML](https://github.com/toml-lang/toml) for input and lattice files. A possible library to use is [cpptoml](https://github.com/skystrife/cpptoml) | **Not started** |
@@ -29,6 +28,7 @@ Ideas for development
 | Remove RandomU code | Remove RandomU code and substitute at least with [boost::random](https://www.boost.org/doc/libs/1_69_0/doc/html/boost_random.html) mt19937 engine | **Not started** |
 | Fully reproducible simulations | Make it possible to make fully reproducible simulations idependently of the number of nodes/cores used. This needs the use of a CBPRNG (eg [librandom123](http://www.deshawresearch.com/resources_random123.html)) or skippable PRNG (eg [libpcg-cpp](http://www.pcg-random.org/)) | **Under evaluation** |
 | Remove HDF5-parallel support | Change the output code generation to use the serial version of libhdf5. This would ease the configure and build process | **Under evaluation** |
+| CUDA support | Use [CUDA](https://developer.nvidia.com/) to speed up computations using NVIDIA GPUs | **Under evaluation** |
 
 Dependencies
 ------------
