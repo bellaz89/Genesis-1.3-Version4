@@ -20,40 +20,29 @@ find_package(PkgConfig REQUIRED)
 
 if (NOT EXISTS ${CMAKE_BINARY_DIR}/CMakeCache.txt)
     if (NOT CMAKE_BUILD_TYPE)
-        set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
+        set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "" FORCE)
     endif()
 endif()
 
 # openmpi, boost, hdf5, eigen libraries
 set(BUILD_MULTITHREADED OFF)
 set(Boost_USE_MULTITHREADED ${BUILD_MULTITHREADED})
-
-find_package(Boost REQUIRED COMPONENTS random mpi unit_test_framework)
-include(CheckIncludeFileCXX)
-CHECK_INCLUDE_FILE_CXX(boost/math/special_functions/erf.hpp ERFC_INV_FOUND)
-if(NOT ERFC_INV_FOUND)
-    message(SEND_ERROR "boost/math/special_functions/erf.hpp not found")
-endif()
-
-CHECK_INCLUDE_FILE_CXX(boost/math/special_functions/bessel.hpp BESSEL_J_FOUND)
-if(NOT BESSEL_J_FOUND)
-    message(SEND_ERROR "boost/math/special_functions/bessel.hpp not found")
-endif()
-
-pkg_check_modules(MPI REQUIRED ompi-cxx)
-pkg_check_modules(HDF5 REQUIRED hdf5-openmpi)
+set(HDF5_PREFER_PARALLEL TRUE)
+find_package(Boost 1.65 REQUIRED COMPONENTS random mpi unit_test_framework)
+find_package(MPI REQUIRED COMPONENTS CXX)
+find_package(HDF5 REQUIRED COMPONENTS C)
+find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 
 file(GLOB COMMON_SOURCES src/libgenesis13/*/*.cpp)
 set(COMMON_INCLUDE_DIRS src/)
-set(PROJECT_INCLUDE_DIRS ${MPI_INCLUDE_DIRS} ${HDF5_INCLUDE_DIRS})
+set(PROJECT_INCLUDE_DIRS ${MPI_CXX_INCLUDE_DIRS} ${HDF5_INCLUDE_DIRS})
 list(APPEND COMMON_INCLUDE_DIRS ${PROJECT_INCLUDE_DIRS})
-set(COMMON_CFLAGS ${MPI_CFLAGS} ${HDF5_CFLAGS})
-set(COMMON_LIB_DIRS ${MPI_LIBRARY_DIRS} ${HDF5_LIBRARY_DIRS} ${Boost_INCLUDE_DIRS})
-set(COMMON_LIBRARIES ${MPI_LIBRARIES} ${HDF5_LIBRARIES} ${Boost_LIBRARIES})
-set(COMMON_LDFLAGS ${MPI_LDFLAGS} ${HDF5_LDFLAGS})
+set(COMMON_CFLAGS ${MPI_CXX_COMPILE_OPTIONS})
+set(COMMON_LIB_DIRS ${Boost_INCLUDE_DIRS})
+set(COMMON_LIBRARIES ${MPI_CXX_LIBRARIES} ${HDF5_LIBRARIES} ${Boost_LIBRARIES})
+set(COMMON_LDFLAGS ${MPI_CXX_LINK_FLAGS} ${HDF5_DEFINITIONS})
 link_directories(${COMMON_LIB_DIRS})
 
-find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 
 #------------------------------------------------------------------------------
 # Tests
