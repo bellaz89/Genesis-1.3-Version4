@@ -8,7 +8,7 @@
 #include <libgenesis13/core/Undulator.h>
 #include "HDF5Base.h"
 
-using namespace std;
+using std::string;
 
 extern string* meta_inputfile;
 extern string* meta_latfile;

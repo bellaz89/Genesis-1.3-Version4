@@ -1,18 +1,18 @@
 #include "WriteBeamHDF5.h"
 #include <iostream>
+#include <mpi.h>
 
-using namespace std;
+using std::cout;
+using std::endl;
 
 extern bool MPISingle;
 
 // constructor destructor
-WriteBeamHDF5::WriteBeamHDF5() {}
-
-WriteBeamHDF5::~WriteBeamHDF5() {}
-
 void WriteBeamHDF5::write(string fileroot, Beam* beam) {
-    size=MPI::COMM_WORLD.Get_size(); // get size of cluster
-    rank=MPI::COMM_WORLD.Get_rank(); // assign rank to node
+    // Get size of the network and the rank of the process
+    int size, rank;
+    MPI_Comm_size(MPI_COMM_WORLD, &size);
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     if (MPISingle) {
         size=1;
         rank=0;
@@ -27,7 +27,7 @@ void WriteBeamHDF5::write(string fileroot, Beam* beam) {
     if (size>1) {
         H5Pset_fapl_mpio(pid, MPI_COMM_WORLD, MPI_INFO_NULL);
     }
-    fid=H5Fcreate(filename, H5F_ACC_TRUNC, H5P_DEFAULT, pid);
+    hid_t fid=H5Fcreate(filename, H5F_ACC_TRUNC, H5P_DEFAULT, pid);
     H5Pclose(pid);
     s0=rank;
     int ntotal=size*beam->beam.size();
@@ -36,7 +36,7 @@ void WriteBeamHDF5::write(string fileroot, Beam* beam) {
                       beam->one4one,
                       beam->reflength,
                       beam->slicelength,
-                      beam->s0, ntotal);
+                      beam->s0, ntotal, fid);
     // write slices
     // loop through slices
     int smin=rank*beam->beam.size();
@@ -45,7 +45,7 @@ void WriteBeamHDF5::write(string fileroot, Beam* beam) {
     cur.resize(1);
     int nwork=0;
     int npart=0;
-    for (int i=0; i<(ntotal); i++) {
+    for (int i=0; i<ntotal; i++) {
         s0=-1;
         char name[16];
         sprintf(name, "slice%6.6d", i+1);
@@ -55,10 +55,9 @@ void WriteBeamHDF5::write(string fileroot, Beam* beam) {
             s0=0;    // select the slice which is writing
             npart=beam->beam.at(islice).size();
         }
-        int root =
-            i /beam->beam.size();  // the current rank which sends the informationof a slice
+        int root =i/beam->beam.size();  // the current rank which sends the informationof a slice
         if (size>1) {
-            MPI::COMM_WORLD.Bcast(&npart, 1, MPI::INT, root);
+            MPI_Bcast(&npart, 1, MPI_INT, root, MPI_COMM_WORLD);
         }
         if (npart !=
                 nwork) {  // all cores do need to have the same length -> otherwise one4one crashes
@@ -112,7 +111,7 @@ void WriteBeamHDF5::write(string fileroot, Beam* beam) {
 }
 
 void WriteBeamHDF5::writeGlobal(int nbins, bool one4one, double reflen,
-                                double slicelen, double s0, int count) {
+                                double slicelen, double s0, int count, hid_t fid) {
     vector<double> tmp;
     tmp.resize(1);
     tmp[0]=reflen;

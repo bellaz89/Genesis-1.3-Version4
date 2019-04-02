@@ -5,12 +5,10 @@
 #include <vector>
 #include <hdf5.h>
 
-using namespace std;
+using std::string;
+using std::vector;
 
 class HDF5Base {
-public:
-    HDF5Base();
-    virtual ~HDF5Base();
 protected:
     bool isOpen;
     int nwork;

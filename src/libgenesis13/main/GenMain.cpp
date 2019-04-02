@@ -36,8 +36,9 @@ double genmain (string mainstring, string latstring, bool streaming,
                 bool supressOutput, bool split) {
     double ret=0;
     MPISingle=split;
-    int rank=MPI::COMM_WORLD.Get_rank(); // assign rank to node
-    int size=MPI::COMM_WORLD.Get_size(); // get size of cluster
+    int size, rank;
+    MPI_Comm_size(MPI_COMM_WORLD, &size);
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     if (MPISingle) {
         rank=0;
         size=1;

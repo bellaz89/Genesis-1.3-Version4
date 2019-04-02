@@ -65,12 +65,12 @@ void Sorting::localSort(vector <vector <Particle>>*
     vector<int> count, count2;
     count.resize(recdat->size());
     count2.resize(recdat->size());
-    for  (int i=0; i< count.size(); i++) {
+    for  (size_t i=0; i< count.size(); i++) {
         count[i]=0;
         count2[i]=0;
     }
-    for (int a=0; a<recdat->size(); a++) { //Run over the slices
-        int b=0;
+    for (size_t a=0; a<recdat->size(); a++) { //Run over the slices
+        size_t b=0;
         while ( b < recdat->at(a).size()) {
             double theta=recdat->at(a).at(b).theta;
             int atar=static_cast<int>(floor(
@@ -100,7 +100,7 @@ void Sorting::localSort(vector <vector <Particle>>*
         }
     }
     //    count++;
-    for (int i=0; i<count.size(); i++) {
+    for (size_t i=0; i<count.size(); i++) {
         cout<<"Rank: " << rank << " Slice: " << i << " received: " << count[i] <<
             " send: "<<count2[i]<<endl;
     }
@@ -131,8 +131,8 @@ void Sorting::globalSort(vector <vector <Particle>>* rec) {
     int nbackward=pushbackward.size();
     int ntotal=nforward+nbackward;
     int nreduce=0;
-    MPI::COMM_WORLD.Allreduce(&ntotal, &nreduce, 1, MPI::INT,
-                              MPI::SUM); // get the info on total number of particles shifted among nodes
+    // get the info on total number of particles shifted among nodes
+    MPI_Allreduce(&ntotal, &nreduce, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
     if (nreduce == 0) {
         return;
     }
@@ -189,7 +189,7 @@ void Sorting::globalSort(vector <vector <Particle>>* rec) {
         nbackward=pushbackward.size();
         ntotal=nforward+nbackward;
         nreduce=0;
-        MPI::COMM_WORLD.Allreduce(&ntotal, &nreduce, 1, MPI::INT, MPI::SUM);
+        MPI_Allreduce(&ntotal, &nreduce, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
         if (nreduce == 0) {
             return;
         }
@@ -202,11 +202,11 @@ void Sorting::globalSort(vector <vector <Particle>>* rec) {
 
 void Sorting::send(int target, vector<double>* data) {
     int ndata=data->size();
-    MPI::COMM_WORLD.Send( &ndata, 1, MPI::INT, target, 0);
+    MPI_Send( &ndata, 1, MPI_INT, target, 0, MPI_COMM_WORLD);
     if (ndata == 0) {
         return;
     }
-    MPI::COMM_WORLD.Send(&data->front(), ndata, MPI::DOUBLE, target, 0);
+    MPI_Send(&data->front(), ndata, MPI_DOUBLE, target, 0, MPI_COMM_WORLD);
 }
 
 
@@ -216,24 +216,24 @@ void Sorting::recv(int source, vector <vector <Particle>>* rec,
     if(globalframe) {
         shift=0;
     }
-    MPI::Status status;
     int ndata=0;
-    MPI::COMM_WORLD.Recv(&ndata, 1, MPI::INT, source, 0, status);
+    MPI_Recv(&ndata, 1, MPI_INT, source, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
     if (ndata==0) {  // no data received.
         return;
     }
     vector<double> data (ndata);
-    MPI::COMM_WORLD.Recv(&data.front(), ndata, MPI::DOUBLE, source, 0,
-                         status); // geting the particles from adjacent node.
+    // geting the particles from adjacent node.
+    MPI_Recv(&data.front(), ndata, MPI_DOUBLE, source, 0, MPI_COMM_WORLD,
+             MPI_STATUS_IGNORE);
     //Determines whether the data needs to be pushed forward or backwards or stored in the correct slices
-    int np=rec->size();                      // number of slices
-    if (source>rank) {                       // data are coming from higher node -> particles are pushed backward
+    int np=rec->size(); // number of slices
+    if (source>rank) { // data are coming from higher node -> particles are pushed backward
         for (int a=0; a<ndata; a+=6) {
-            double s = s0+slen*(np-1)
-                       +data[a];  // get the actual positionassume that backward the particles are placed in the last slice !
+            // get the actual positionassume that backward the particles are placed in the last slice !
+            double s = s0+slen*(np-1) +data[a];
             if (s<sendmin) {
-                olddata->push_back(data[a]
-                                   +shift*np);  // if the particle isstillpushed through than it phase is adjusted by slen*slicenumber
+                // if the particle isstillpushed through than it phase is adjusted by slen*slicenumber
+                olddata->push_back(data[a] +shift*np);
                 for (int b=1; b<6; b++) {
                     olddata->push_back(data[a+b]);
                 }
@@ -293,7 +293,7 @@ void Sorting::fillPushVectors(vector< vector <Particle>>* rec) {
     }
     int count = 0;
     for (int i = 0; i < nsize; i++) { // loop over slices
-        for (int j = 0; j < rec->at(i).size(); j++) { // loop over particles in slice
+        for (size_t j = 0; j < rec->at(i).size(); j++) { // loop over particles in slice
             double s = s0+slen*i+rec->at(i).at(j).theta;  // get the actual position
             if (s<sendmin) {
                 pushbackward.push_back(rec->at(i).at(j).theta+(i+1)*shift);
@@ -316,7 +316,7 @@ void Sorting::fillPushVectors(vector< vector <Particle>>* rec) {
                 pushforward.push_back(rec->at(i).at(j).py);
             }
         }
-        int j=0;
+        size_t j=0;
         while (j<rec->at(i).size()) {
             double s = s0+slen*i+rec->at(i).at(j).theta;  // get the actual position
             if ((s<keepmin)||(s>keepmax)) {
@@ -347,8 +347,8 @@ int Sorting::centerShift(vector <vector <Particle>>* recdat) {
     double shift = 0;
     double part  = 0;
     // calculate on the node the amount of total transferred particles
-    for (int a=0; a<recdat->size(); a++) { //Run over the slices
-        for (int b=0; b<recdat->at(a).size(); b++) { //Loop over the partiles in the slice
+    for (size_t a=0; a<recdat->size(); a++) { //Run over the slices
+        for (size_t b=0; b<recdat->at(a).size(); b++) { //Loop over the partiles in the slice
             part+=1.0;
             shift+=floor(recdat->at(a).at(
                              b).theta*invslen);   // relative target slice. = 0 -> stays in same slice
@@ -359,15 +359,15 @@ int Sorting::centerShift(vector <vector <Particle>>* recdat) {
         tshift=shift;
         tpart=part;
     } else {
-        MPI::COMM_WORLD.Allreduce(&shift, &tshift, 1, MPI::DOUBLE,
-                                  MPI::SUM); // get the info on total number of particles shifted among nodes
-        MPI::COMM_WORLD.Allreduce(&part, &tpart, 1, MPI::DOUBLE,
-                                  MPI::SUM); // get the info on total number of particles shifted among nodes
+        MPI_Allreduce(&shift, &tshift, 1, MPI_DOUBLE,
+                      MPI_SUM, MPI_COMM_WORLD); // get the info on total number of particles shifted among nodes
+        MPI_Allreduce(&part, &tpart, 1, MPI_DOUBLE,
+                      MPI_SUM, MPI_COMM_WORLD); // get the info on total number of particles shifted among nodes
     }
     int nshift=-static_cast<int>(round(
                                      tshift/tpart));  // instead of moving more than half the particles forward, it is easier to move the field backwards. Also theta needs to be corrected
-    for (int a=0; a<recdat->size(); a++) { //Run over the slices
-        for (int b=0; b<recdat->at(a).size(); b++) { //Loop over the partiles in the slice
+    for (size_t a=0; a<recdat->size(); a++) { //Run over the slices
+        for (size_t b=0; b<recdat->at(a).size(); b++) { //Loop over the partiles in the slice
             recdat->at(a).at(b).theta+=static_cast<double>(nshift)
                                        *slen;   // adjust theta position because the field is moved instead of particles
         }

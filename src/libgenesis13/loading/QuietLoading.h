@@ -33,7 +33,7 @@ using namespace std;
 class QuietLoading  {
 public:
     QuietLoading();
-    ~QuietLoading();
+    virtual ~QuietLoading();
     void loadQuiet(Particle* beam, BeamSlice*, int, int, double, int);
     void init(bool, int*);
 

@@ -7,36 +7,30 @@
 using boost::math::erfc_inv;
 
 QuietLoading::QuietLoading() {
-    sx=nullptr;
-    sy=nullptr;
-    st=nullptr;
-    spx=nullptr;
-    spy=nullptr;
-    sg=nullptr;
+    st  = (Sequence*)new Hammerslay();
+    sg  = (Sequence*)new Hammerslay();
+    sx  = (Sequence*)new Hammerslay();
+    sy  = (Sequence*)new Hammerslay();
+    spx = (Sequence*)new Hammerslay();
+    spy = (Sequence*)new Hammerslay();
 }
-QuietLoading::~QuietLoading() {}
 
-
+QuietLoading::~QuietLoading() {
+    delete sx;
+    delete sy;
+    delete spx;
+    delete spy;
+    delete st;
+    delete sg;
+}
 
 void QuietLoading::init(bool one4one, int* base) {
-    if (sx !=nullptr) {
-        delete sx;
-    }
-    if (sy !=nullptr) {
-        delete sy;
-    }
-    if (spx!=nullptr) {
-        delete spx;
-    }
-    if (spy!=nullptr) {
-        delete spy;
-    }
-    if (st !=nullptr) {
-        delete st;
-    }
-    if (sg !=nullptr) {
-        delete sg;
-    }
+    delete sx;
+    delete sy;
+    delete spx;
+    delete spy;
+    delete st;
+    delete sg;
     if (one4one) {
         RandomU rseed(base[0]);
         double val;

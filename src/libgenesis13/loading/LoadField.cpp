@@ -127,7 +127,7 @@ bool LoadField::init(int rank, int size, map<string, string>* arg,
     // check for existing field record;
     int idx=-1;
     Field* field;
-    for (int i=0; i<fieldin->size(); i++) {
+    for (size_t i=0; i<fieldin->size(); i++) {
         if (fieldin->at(i)->harm==harm) {
             field=fieldin->at(i);
             idx=i;

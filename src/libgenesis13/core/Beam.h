@@ -10,7 +10,7 @@
 #include "Incoherent.h"
 #include "Collective.h"
 
-using namespace std;
+using std::vector;
 
 class Beam {
 public:

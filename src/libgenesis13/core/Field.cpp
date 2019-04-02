@@ -24,12 +24,12 @@ void Field::init(int nsize, int ngrid_in, double dgrid_in, double xlambda0,
     ngrid=ngrid_in;
     gridmax=dgrid_in;
     dgrid=2*gridmax/static_cast<double>(ngrid-1); // grid pointe separation
-    if (field.size()!=nsize) { // allocate the memory in advance
+    if (field.size()!=static_cast<size_t>(nsize)) { // allocate the memory in advance
         field.resize(nsize);
     }
     if (field[0].size()!=ngrid*ngrid) {
         for (int i=0; i<nsize; i++) {
-            field[i].resize(ngrid*ngrid);
+            field[i].resize(static_cast<size_t>(ngrid*ngrid));
         }
     }
     xks=2.*M_PI/xlambda;
@@ -127,7 +127,7 @@ bool Field::subharmonicConversion(int harm_in, bool resample) {
     first=(first-di)/harm_in;
     // step three - average field by the subharmonic number
     field.resize(nsize/harm_in);
-    for (int i=0; i<field.size(); i++) {
+    for (size_t i=0; i<field.size(); i++) {
         double powloc=0;
         for (int k=0; k<ngrid*ngrid; k++) {
             complex<double> loc =field[i].at(k);

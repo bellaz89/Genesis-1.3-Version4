@@ -285,13 +285,13 @@ bool SDDSBeam::init(int inrank, int insize, map<string, string>* arg, Beam* beam
     if (size==1) {
         tmin=tmp;
     } else {
-        MPI::COMM_WORLD.Allreduce(&tmp, &tmin, 1, MPI::DOUBLE, MPI::MIN);
+        MPI_Allreduce(&tmp, &tmin, 1, MPI_DOUBLE, MPI_MIN, MPI_COMM_WORLD);
     }
     tmp=*max_element(t.begin(), t.end());
     if (size==1) {
         tmax=tmp;
     } else {
-        MPI::COMM_WORLD.Allreduce(&tmp, &tmax, 1, MPI::DOUBLE, MPI::MAX);
+        MPI_Allreduce(&tmp, &tmax, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
     }
     double ttotal=tmax-tmin;
     for (int i=0; i<nsize; i++) {
@@ -417,7 +417,7 @@ bool SDDSBeam::init(int inrank, int insize, map<string, string>* arg, Beam* beam
     for (int islice=0; islice<node_len; islice++) {
         // step 1 - select all particles needed for the reconstruction of a given slice
         double sloc=s[islice+node_off];
-        for (int i=0; i<dist[0].size(); i++) {
+        for (size_t i=0; i<dist[0].size(); i++) {
             if ((dist[0].at(i).theta>(sloc-0.5*dslen))&&(dist[0].at(i).theta<(sloc+0.5*dslen))) {
                 beam->beam.at(islice).push_back(dist[0].at(i));
             }
@@ -438,12 +438,13 @@ bool SDDSBeam::init(int inrank, int insize, map<string, string>* arg, Beam* beam
         if (beam->beam.at(islice).size() >= mpart) {
             this->removeParticles(&beam->beam.at(islice), mpart);
         } else {
-            this->addParticles(&beam->beam.at(islice), mpart); // check for empty slices
+            // check for empty slices
+            this->addParticles(&beam->beam.at(islice), mpart);
         }
         // step 4 - refill particle phase completely new
-        for (int i=0; i<beam->beam.at(islice).size(); i++) {
-            beam->beam.at(islice).at(i).theta=
-                theta0*ran->getElement();  // for one2one this should be the correct shot noise
+        for (size_t i=0; i<beam->beam.at(islice).size(); i++) {
+            // for one2one this should be the correct shot noise
+            beam->beam.at(islice).at(i).theta= theta0*ran->getElement();
         }
         if (!one4one) {  // needs mirroring and shotnoise
             mpart=beam->beam.at(islice).size();
@@ -601,7 +602,7 @@ void SDDSBeam::addParticles(vector<Particle>* beam, int mpart) {
         ndist++;
     }
     // step 5 - scale back
-    for (int i=0; i<beam->size(); i++) {
+    for (size_t i=0; i<beam->size(); i++) {
         beam->at(i).gamma=beam->at(i).gamma/g2 + g1;
         beam->at(i).x    =beam->at(i).x/x2 + x1;
         beam->at(i).y    =beam->at(i).y/y2 + y1;
@@ -685,18 +686,18 @@ void SDDSBeam::analyse(double ttotal, int nsize) {
         pyvar=d2;
         ypy=cd;
     } else {
-        MPI::COMM_WORLD.Allreduce(&ncount, &nmean, 1, MPI::INT, MPI::SUM);
-        MPI::COMM_WORLD.Allreduce(&e1, &gavg, 1, MPI::DOUBLE, MPI::SUM);
-        MPI::COMM_WORLD.Allreduce(&a1, &xavg, 1, MPI::DOUBLE, MPI::SUM);
-        MPI::COMM_WORLD.Allreduce(&b1, &pxavg, 1, MPI::DOUBLE, MPI::SUM);
-        MPI::COMM_WORLD.Allreduce(&c1, &yavg, 1, MPI::DOUBLE, MPI::SUM);
-        MPI::COMM_WORLD.Allreduce(&d1, &pyavg, 1, MPI::DOUBLE, MPI::SUM);
-        MPI::COMM_WORLD.Allreduce(&a2, &xvar, 1, MPI::DOUBLE, MPI::SUM);
-        MPI::COMM_WORLD.Allreduce(&b2, &pxvar, 1, MPI::DOUBLE, MPI::SUM);
-        MPI::COMM_WORLD.Allreduce(&ab, &xpx,  1, MPI::DOUBLE, MPI::SUM);
-        MPI::COMM_WORLD.Allreduce(&c2, &yvar, 1, MPI::DOUBLE, MPI::SUM);
-        MPI::COMM_WORLD.Allreduce(&d2, &pyvar, 1, MPI::DOUBLE, MPI::SUM);
-        MPI::COMM_WORLD.Allreduce(&cd, &ypy,  1, MPI::DOUBLE, MPI::SUM);
+        MPI_Allreduce(&ncount, &nmean, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+        MPI_Allreduce(&e1, &gavg, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+        MPI_Allreduce(&a1, &xavg, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+        MPI_Allreduce(&b1, &pxavg, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+        MPI_Allreduce(&c1, &yavg, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+        MPI_Allreduce(&d1, &pyavg, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+        MPI_Allreduce(&a2, &xvar, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+        MPI_Allreduce(&b2, &pxvar, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+        MPI_Allreduce(&ab, &xpx,  1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+        MPI_Allreduce(&c2, &yvar, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+        MPI_Allreduce(&d2, &pyvar, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+        MPI_Allreduce(&cd, &ypy,  1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
     }
     if (nmean>0) {
         double tmp=1./static_cast<double>(nmean);

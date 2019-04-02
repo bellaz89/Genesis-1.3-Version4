@@ -7,7 +7,8 @@
 #include "Beam.h"
 #include "Undulator.h"
 
-using namespace std;
+using std::vector;
+using std::string;
 
 class Control : public HDF5Base {
 public:

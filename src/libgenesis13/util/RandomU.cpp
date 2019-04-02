@@ -36,11 +36,7 @@ RandomU::RandomU(unsigned int istart) {
     iy=iv[0];
 }
 
-RandomU::~RandomU() {}
-
-
-
-void RandomU::set(unsigned int istart) {
+void RandomU::set(int istart) {
     return;
 }
 

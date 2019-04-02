@@ -16,9 +16,9 @@
 class RandomU : public Sequence {
 public:
     RandomU(unsigned int = 0 );
-    ~RandomU();
-    void set(unsigned int);
-    double getElement();
+    virtual ~RandomU() override {};
+    void set(int idx_) override;
+    double getElement() override;
 private:
 
     int iv[32], iy;

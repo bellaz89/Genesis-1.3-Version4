@@ -40,9 +40,9 @@ list(APPEND COMMON_INCLUDE_DIRS ${PROJECT_INCLUDE_DIRS})
 set(COMMON_CFLAGS ${MPI_CXX_COMPILE_OPTIONS})
 set(COMMON_LIB_DIRS ${Boost_INCLUDE_DIRS})
 set(COMMON_LIBRARIES ${MPI_CXX_LIBRARIES} ${HDF5_LIBRARIES} ${Boost_LIBRARIES})
-set(COMMON_LDFLAGS ${MPI_CXX_LINK_FLAGS} ${HDF5_DEFINITIONS})
+set(COMMON_LDFLAGS ${MPI_CXX_LINK_FLAGS})
+add_definitions(${HDF5_DEFINITIONS})
 link_directories(${COMMON_LIB_DIRS})
-
 
 #------------------------------------------------------------------------------
 # Tests
@@ -70,7 +70,7 @@ target_compile_options(genesis13 PUBLIC ${COMMON_CFLAGS} -Wall -Wextra)
 target_link_libraries(genesis13 PRIVATE ${COMMON_LIBRARIES} Eigen3::Eigen) 
 
 add_executable(gencore src/gencore/mainwrap.cpp)
-target_include_directories(gencore  PRIVATE include/libgenesis13 COMMON_INCLUDE_DIRS)
+target_include_directories(gencore  PRIVATE include/libgenesis13 PRIVATE ${COMMON_INCLUDE_DIRS})
 target_compile_definitions(gencore PRIVATE -DMPE)
 target_compile_options(gencore PRIVATE ${COMMON_CFLAGS} -Wall -Wextra)
 target_link_libraries(gencore PUBLIC genesis13)

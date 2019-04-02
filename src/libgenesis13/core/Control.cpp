@@ -1,6 +1,7 @@
 
 #include "Control.h"
 #include <sstream>
+#include <mpi.h>
 #ifdef VTRACE
 #include "vt_user.h"
 #endif
@@ -9,7 +10,6 @@
 #include <libgenesis13/io/WriteBeamHDF5.h>
 #include <libgenesis13/io/Output.h>
 
-using namespace std;
 Control::Control() {
     nwork=0;
 }
@@ -45,7 +45,7 @@ void Control::output(Beam* beam, vector<Field*>* field, Undulator* und) {
     out->writeGlobal(und->getGammaRef(), reflen, sample, slen, one4one, timerun,
                      scanrun);
     out->writeLattice(beam, und);
-    for (int i=0; i<field->size(); i++) {
+    for (size_t i=0; i<field->size(); i++) {
         out->writeFieldBuffer(field->at(i));
     }
     out->writeBeamBuffer(beam);
@@ -91,7 +91,7 @@ bool Control::init(int inrank, int insize, const char* file, Beam* beam,
     beam->initDiagnostics(und->outlength());
     beam->diagnostics(true, 0);
     beam->diagnosticsStart();
-    for (int i=0; i<field->size(); i++) {
+    for (size_t i=0; i<field->size(); i++) {
         field->at(i)->initDiagnostics(und->outlength());
         field->at(i)->diagnostics(true);  // initial values
     }
@@ -112,7 +112,6 @@ void Control::applySlippage(double slippage, Field* field) {
         nwork=field->ngrid*field->ngrid*2;
         work=new double [nwork];
     }
-    MPI::Status status;
     // following routine is applied if the required slippage is alrger than 80%
     // of the sampling size
     int direction=1;
@@ -151,21 +150,21 @@ void Control::applySlippage(double slippage, Field* field) {
                     work[2*i]  =field->field[last].at(i).real();
                     work[2*i+1]=field->field[last].at(i).imag();
                 }
-                MPI::COMM_WORLD.Send(work, nwork, MPI::DOUBLE, rank_next, tag);
-                MPI::COMM_WORLD.Recv(work, nwork, MPI::DOUBLE, rank_prev, tag, status);
+                MPI_Send(work, nwork, MPI_DOUBLE, rank_next, tag, MPI_COMM_WORLD);
+                MPI_Recv(work, nwork, MPI_DOUBLE, rank_prev, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
                 for (int i=0; i<nwork/2; i++) {
                     complex <double> ctemp=complex<double> (work[2*i], work[2*i+1]);
                     field->field[last].at(i)=ctemp;
                 }
             } else { // odd nodes are receiving first and then sending
-                MPI::COMM_WORLD.Recv(work, nwork, MPI::DOUBLE, rank_prev, tag, status);
+                MPI_Recv(work, nwork, MPI_DOUBLE, rank_prev, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
                 for (int i=0; i<nwork/2; i++) {
                     complex <double> ctemp=complex<double> (work[2*i], work[2*i+1]);
                     work[2*i]  =field->field[last].at(i).real();
                     work[2*i+1]=field->field[last].at(i).imag();
                     field->field[last].at(i)=ctemp;
                 }
-                MPI::COMM_WORLD.Send(work, nwork, MPI::DOUBLE, rank_next, tag);
+                MPI_Send(work, nwork, MPI_DOUBLE, rank_next, tag, MPI_COMM_WORLD);
             }
         }
         // first node has emptz field slipped into the time window

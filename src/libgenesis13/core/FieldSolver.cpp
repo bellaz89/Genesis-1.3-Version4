@@ -10,7 +10,7 @@ FieldSolver::FieldSolver() {
 FieldSolver::~FieldSolver() {}
 
 void FieldSolver::advance(double delz, Field* field, Beam* beam, Undulator* und) {
-    for (int ii=0; ii<field->field.size(); ii++) { // ii is index for the beam
+    for (size_t ii=0; ii<field->field.size(); ii++) { // ii is index for the beam
         int i= (ii+field->first) % field->field.size();           // index for the field
         // clear source term
         for (int i=0; i< ngrid*ngrid; i++) {
@@ -24,7 +24,7 @@ void FieldSolver::advance(double delz, Field* field, Beam* beam, Undulator* und)
             complex<double> cpart;
             double part, weight, wx, wy;
             int idx;
-            for (int ip=0; ip<beam->beam.at(ii).size(); ip++) {
+            for (size_t ip=0; ip<beam->beam.at(ii).size(); ip++) {
                 double x    =beam->beam.at(ii).at(ip).x;
                 double y    =beam->beam.at(ii).at(ip).y;
                 double theta=static_cast<double>(harm)*beam->beam.at(ii).at(ip).theta;

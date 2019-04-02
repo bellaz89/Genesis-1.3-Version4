@@ -23,7 +23,7 @@ void StringProcessing::chop(string str, vector<string>* list) {
         str.erase(0, pos+1);
     }
     list->push_back(str);
-    for (int i=0; i<list->size(); i++) {
+    for (size_t i=0; i<list->size(); i++) {
         this->trim(list->at(i));
     }
     return;

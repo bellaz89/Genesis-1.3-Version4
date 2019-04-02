@@ -30,7 +30,7 @@ void Undulator::updateOutput(double zstop_in, int nzout) {
 }
 
 void Undulator::updateMarker(int nfld, int npar, int nsort, double zstop) {
-    for (int i=0; i<marker.size(); i++) {
+    for(size_t i=0; i<marker.size(); i++) {
         if (nfld > 0) { // field dump
             if ((i % nfld) == 0) {
                 marker[i]|=1;

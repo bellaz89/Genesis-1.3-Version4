@@ -1,4 +1,5 @@
 #include "Gencore.h"
+#include <mpi.h>
 #ifdef VTRACE
 #include "vt_user.h"
 #endif
@@ -16,8 +17,8 @@ int Gencore::run(const char* file, Beam* beam, vector<Field*>* field, Undulator*
     int size=1;
     int rank=0;
     if (!MPISingle) {
-        size=MPI::COMM_WORLD.Get_size(); // get size of cluster
-        rank=MPI::COMM_WORLD.Get_rank(); // assign rank to node
+        MPI_Comm_size(MPI_COMM_WORLD, &size);
+        MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     }
     if (rank==0) {
         cout << endl << "Running Core Simulation..." << endl;
@@ -41,25 +42,25 @@ int Gencore::run(const char* file, Beam* beam, vector<Field*>* field, Undulator*
         if (sort) {
             int shift=beam->sort();
             if (shift!=0) {
-                for (int i=0; i<field->size(); i++) {
+                for (size_t i=0; i<field->size(); i++) {
                     control->applySlippage(shift, field->at(i));
                 }
             }
         }
         // ---------------------------------------
         // step 4 - Advance radiation field
-        for (int i=0; i<field->size(); i++) {
+        for (size_t i=0; i<field->size(); i++) {
             field->at(i)->track(delz, beam, und);
         }
         //-----------------------------------------
         // step 5 - Apply slippage
-        for (int i=0; i<field->size(); i++) {
+        for (size_t i=0; i<field->size(); i++) {
             control->applySlippage(und->slippage(), field->at(i));
         }
         //-------------------------------
         // step 6 - Calculate beam parameter stored into a buffer for output
         beam->diagnostics(und->outstep(), und->getz());
-        for (int i=0; i<field->size(); i++) {
+        for (size_t i=0; i<field->size(); i++) {
             field->at(i)->diagnostics(und->outstep());
         }
     }
@@ -70,7 +71,7 @@ int Gencore::run(const char* file, Beam* beam, vector<Field*>* field, Undulator*
     if (sort) {
         int shift=beam->sort();
         if (shift!=0) {
-            for (int i=0; i<field->size(); i++) {
+            for (size_t i=0; i<field->size(); i++) {
                 control->applySlippage(shift, field->at(i));
             }
         }

@@ -1,12 +1,12 @@
 
 #include "HDF5Base.h"
-#include<sstream>
-#include<mpi.h>
+#include <sstream>
+#include <hdf5.h>
+#include <mpi.h>
+
+using std::stringstream;
 
 extern bool MPISingle;
-
-HDF5Base::HDF5Base() {}
-HDF5Base::~HDF5Base() {}
 
 //----------------------------
 // routines taken from Output and writeHDF5
@@ -15,7 +15,7 @@ void HDF5Base::writeBuffer(hid_t gid, string dataset, vector<double>* data) {
     // step 1 - calculate the file space and create dataset
     int size=1;
     if (!MPISingle) {
-        size=MPI::COMM_WORLD.Get_size(); // get size of cluster
+        MPI_Comm_size(MPI_COMM_WORLD, &size);
     }
     hsize_t dz=data->size()/ds;
     hsize_t fblock[2]= {dz, size*ds};

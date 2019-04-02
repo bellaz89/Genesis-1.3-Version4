@@ -6,7 +6,7 @@
 using namespace std;
 
 BeamSolver::BeamSolver(bool _onlyFundamental) : onlyFundamental(_onlyFundamental),
-    tracker(), efield() {}
+    efield(), tracker() {}
 
 void BeamSolver::advance(double delz, Beam* beam, vector< Field*>* field,
                          Undulator* und) const {
@@ -16,7 +16,7 @@ void BeamSolver::advance(double delz, Beam* beam, vector< Field*>* field,
     vector<complex<double>> rpart;
     vector<double> rharm;
     double xks=1.0;  // default value in the case that no field is defined
-    for (int i=0; i < field->size(); i++) {
+    for (size_t i=0; i < field->size(); i++) {
         int harm=field->at(i)->getHarm();
         if ((harm==1) || !onlyFundamental) {
             // fundamental field wavenumber used in ODE below
@@ -37,8 +37,8 @@ void BeamSolver::advance(double delz, Beam* beam, vector< Field*>* field,
     double aw=und->getaw();
     const double autophase=und->autophase();
     // Runge Kutta solver to advance particle
-    for (int is=0; is<beam->beam.size(); is++) {
-        for (int ip=0; ip<beam->beam.at(is).size(); ip++) {
+    for (size_t is=0; is<beam->beam.size(); is++) {
+        for (size_t ip=0; ip<beam->beam.at(is).size(); ip++) {
             SimulationParams sim_params(rharm, rpart);
             sim_params.xku = xku;
             sim_params.xks = xks;
@@ -52,7 +52,7 @@ void BeamSolver::advance(double delz, Beam* beam, vector< Field*>* field,
             const double awloc=und->faw(x, y);
             sim_params.btpar=1+px*px+py*py+aw*aw*awloc*awloc;
             complex<double> cpart=0;
-            for (int ifld=0; ifld<nfld.size(); ifld++) {
+            for (size_t ifld=0; ifld<nfld.size(); ifld++) {
                 int islice=(is+field->at(nfld[ifld])->first) % field->at(nfld[ifld])->field.size();
                 int idx;
                 double wx, wy;
@@ -122,7 +122,7 @@ void BeamSolver::ODE(double &k2gg, double &k2pp,
     // differential equation for longitudinal motion
     const double ztemp1=-2./sim_params.xks;
     complex<double> ctmp=0;
-    for (int i=0; i<sim_params.rpart.size(); i++) {
+    for (size_t i=0; i<sim_params.rpart.size(); i++) {
         const double angle = sim_params.rharm[i]*sim_params.theta;
         ctmp+=sim_params.rpart[i]*complex<double> (cos(angle), -sin(angle));
     }

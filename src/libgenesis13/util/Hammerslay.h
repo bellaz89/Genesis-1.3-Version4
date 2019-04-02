@@ -14,12 +14,12 @@
 
 class Hammerslay : public Sequence {
 public:
-    Hammerslay(unsigned int = 0 );
-    ~Hammerslay();
-    void set(unsigned int);
-    double getElement();
+    Hammerslay(unsigned int base_in = 0);
+    virtual ~Hammerslay() override {};
+    void set(int idx_) override;
+    double getElement() override;
 private:
-    double base;
+    int base;
     unsigned int idx;
 };
 

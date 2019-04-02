@@ -20,7 +20,7 @@ public:
 
 private:
     bool doLoss, doSpread;
-    RandomU* sran;
+    RandomU sran;
 };
 
 #endif

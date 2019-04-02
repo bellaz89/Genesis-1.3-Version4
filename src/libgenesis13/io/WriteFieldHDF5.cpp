@@ -1,23 +1,19 @@
 #include "WriteFieldHDF5.h"
+#include <mpi.h>
 #include <libgenesis13/core/PhysicalConstants.h>
 
 extern bool MPISingle;
 
-// constructor destructor
-WriteFieldHDF5::WriteFieldHDF5() {}
-
-WriteFieldHDF5::~WriteFieldHDF5() {}
-
 void WriteFieldHDF5::write(string fileroot, vector<Field*>* field) {
     string file;
-    MPI::Status status;
-    size=MPI::COMM_WORLD.Get_size(); // get size of cluster
-    rank=MPI::COMM_WORLD.Get_rank(); // assign rank to node
+    int size, rank;
+    MPI_Comm_size(MPI_COMM_WORLD, &size);
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     if (MPISingle) {
         size=1;
         rank=0;
     }
-    for (int i=0; i<field->size(); i++) {
+    for (size_t i=0; i<field->size(); i++) {
         int harm=field->at(i)->harm;
         char charm[10];
         sprintf(charm, ".h%d", harm);
@@ -26,12 +22,12 @@ void WriteFieldHDF5::write(string fileroot, vector<Field*>* field) {
         } else {
             file=fileroot+string(charm);
         }
-        this->writeMain(file, field->at(i));
+        this->writeMain(file, field->at(i), rank, size);
     }
     return;
 }
 
-void WriteFieldHDF5::writeMain(string fileroot, Field* field) {
+void WriteFieldHDF5::writeMain(string fileroot, Field* field, int rank, int size) {
     char filename[100];
     sprintf(filename, "%s.fld.h5", fileroot.c_str());
     if (rank == 0) {
@@ -41,13 +37,13 @@ void WriteFieldHDF5::writeMain(string fileroot, Field* field) {
     if (size>1) {
         H5Pset_fapl_mpio(pid, MPI_COMM_WORLD, MPI_INFO_NULL);
     }
-    fid=H5Fcreate(filename, H5F_ACC_TRUNC, H5P_DEFAULT, pid);
+    hid_t fid=H5Fcreate(filename, H5F_ACC_TRUNC, H5P_DEFAULT, pid);
     H5Pclose(pid);
     s0=rank;
     int ntotal=size*field->field.size();
     // write global data
     this->writeGlobal(field->xlambda, field->slicelength, field->s0, field->dgrid,
-                      field->ngrid, ntotal);
+                      field->ngrid, ntotal, fid);
     // loop through slices
     int smin=rank*field->field.size();
     int smax=smin+field->field.size();
@@ -85,7 +81,7 @@ void WriteFieldHDF5::writeMain(string fileroot, Field* field) {
 }
 
 void WriteFieldHDF5::writeGlobal(double reflen, double slicelen, double s0,
-                                 double dx, int nx, int count) {
+                                 double dx, int nx, int count, hid_t fid) {
     vector<double> tmp;
     tmp.resize(1);
     tmp[0]=reflen;

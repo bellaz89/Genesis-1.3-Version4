@@ -58,8 +58,8 @@ void TrackBeam::track(double delz, Beam* beam, Undulator* und, bool lastStep=tru
             this->ApplyY=&TrackBeam::applyDQuad;
         }
     }
-    for (int i=0; i<beam->beam.size(); i++) {
-        for (int j=0; j<beam->beam.at(i).size(); j++) {
+    for (size_t i=0; i<beam->beam.size(); i++) {
+        for (size_t j=0; j<beam->beam.at(i).size(); j++) {
             Particle* p=&beam->beam.at(i).at(j);
             double gammaz=sqrt(p->gamma*p->gamma-1- aw*aw - p->px*p->px - p->py*p->py);
             (this->*ApplyX)(delz, qx, &(p->x), &(p->px), gammaz, xoff);
@@ -103,8 +103,8 @@ void TrackBeam::applyDQuad(double delz, double qf, double* x, double* px,
 }
 
 void TrackBeam::applyCorrector(Beam* beam, double cx, double cy) {
-    for (int i=0; i<beam->beam.size(); i++) {
-        for (int j=0; j<beam->beam.at(i).size(); j++) {
+    for (size_t i=0; i<beam->beam.size(); i++) {
+        for (size_t j=0; j<beam->beam.at(i).size(); j++) {
             beam->beam.at(i).at(j).px+=cx;
             beam->beam.at(i).at(j).py+=cy;
         }
@@ -122,20 +122,17 @@ void TrackBeam::applyChicane(Beam* beam, double angle, double lb, double ld,
     // longitudinal position
     // the transfer matrix order is
     //  m -> bp -> ep -> d1 -> en -> bn -> d2 -> bn -> en-> d1 -> ep-> bp ->d3
-    
     Eigen::Matrix4d m;
     Eigen::Matrix4d d1 = Eigen::Matrix4d::Identity();
     Eigen::Matrix4d d2 = Eigen::Matrix4d::Identity();
     Eigen::Matrix4d d3 = Eigen::Matrix4d::Identity();
     Eigen::Matrix4d bpn = Eigen::Matrix4d::Identity();
     Eigen::Matrix4d epn = Eigen::Matrix4d::Identity();
-   
     double cos_angle = cos(angle);
     double sin_angle = sin(angle);
     double R=lb/sin_angle;
     double Lpath=R*angle;
     double efoc=tan(angle)/R;
-
     d1(0, 1)=ld/cos_angle;  // drift between dipoles
     d1(2, 3)=ld/cos_angle;
     d2(0, 1)=lt-4*lb-2*ld;   // drift in the middle
@@ -149,11 +146,9 @@ void TrackBeam::applyChicane(Beam* beam, double angle, double lb, double ld,
     bpn(1, 1)=cos_angle;
     epn(1, 0)=efoc;
     epn(3, 2)=-efoc;
-   
     m = bpn*epn*d1*epn*bpn*d2*bpn*epn*d1*epn*bpn;
-
-    for (int i=0; i<beam->beam.size(); i++) {
-        for (int j=0; j<beam->beam.at(i).size(); j++) {
+    for (size_t i=0; i<beam->beam.size(); i++) {
+        for (size_t j=0; j<beam->beam.at(i).size(); j++) {
             Particle* p=&beam->beam.at(i).at(j);
             double gammaz=sqrt(p->gamma*p->gamma-1- p->px*p->px -
                                p->py*p->py); // = gamma*betaz=gamma*(1-(1+aw*aw)/gamma^2);
@@ -178,8 +173,8 @@ void TrackBeam::applyR56(Beam* beam, Undulator* und, double lambda0) {
     double R56=(4*lb/sin(angle)*(1-angle/tan(angle))+2*ld*tan(angle)/cos(angle))*angle;
     //    cout << "R56: " << R56 << endl;
     R56=R56*2.*M_PI/lambda0/gamma0;
-    for (int i=0; i<beam->beam.size(); i++) {
-        for (int j=0; j<beam->beam.at(i).size(); j++) {
+    for (size_t i=0; i<beam->beam.size(); i++) {
+        for (size_t j=0; j<beam->beam.at(i).size(); j++) {
             beam->beam.at(i).at(j).theta+=R56*(beam->beam.at(i).at(j).gamma-gamma0);
         }
     }

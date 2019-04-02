@@ -3,11 +3,7 @@
 #include "Incoherent.h"
 #include "Beam.h"
 
-Incoherent::Incoherent() {
-    sran=nullptr;
-    doLoss=false;
-    doSpread=false;
-}
+Incoherent::Incoherent() : doLoss(false), doSpread(false), sran() {}
 
 Incoherent::~Incoherent() {}
 
@@ -21,10 +17,7 @@ void Incoherent::init(int base, int rank, bool doLoss_in, bool doSpread_in) {
     }
     val*=1e9;
     int locseed=static_cast<int> (round(val));
-    if (sran !=nullptr) {
-        delete sran;
-    }
-    sran  = new RandomU (locseed);
+    sran = RandomU(locseed);
     return;
 }
 
@@ -59,11 +52,11 @@ void Incoherent::apply(Beam* beam, Undulator* und, double delz) {
         nbins=1;
     }
     double dg=0;
-    for (int islice=0; islice< beam->beam.size(); islice++) {
+    for (unsigned int islice=0; islice< beam->beam.size(); islice++) {
         int npart=beam->beam.at(islice).size();
         for (int ip=0; ip<npart; ip++) {
             if ((ip % nbins) == 0) {
-                dg=-dgamavg+dgamsig*(2*sran->getElement()-1);
+                dg=-dgamavg+dgamsig*(2*sran.getElement()-1);
             }
             beam->beam.at(islice).at(ip).gamma+=dg;
         }

@@ -4,7 +4,8 @@
 #include "LatticeParser.h"
 #include "Optics.h"
 
-using namespace std;
+using std::cout;
+using std::endl;
 
 Lattice::Lattice() {
     matched=false;
@@ -12,7 +13,7 @@ Lattice::Lattice() {
 
 
 Lattice::~Lattice() {
-    for (int i=0; i<lat.size(); i++) {
+    for (size_t i=0; i<lat.size(); i++) {
         delete lat[i];
     }
     lat.clear();
@@ -21,7 +22,7 @@ Lattice::~Lattice() {
 
 bool Lattice::parse(string filename, string beamline, int rank, bool streaming) {
     // release old lattice
-    for (int i=0; i<lat.size(); i++) {
+    for (size_t i=0; i<lat.size(); i++) {
         delete lat[i];
     }
     lat.clear();
@@ -35,7 +36,7 @@ bool Lattice::parse(string filename, string beamline, int rank, bool streaming) 
         return err;
     }
     layout.clear();  // layout holds start and end point of each value
-    for(int i=0; i<lat.size(); i++) {
+    for(size_t i=0; i<lat.size(); i++) {
         double z0=lat[i]->z;
         layout[z0]=1;
         layout[z0+lat[i]->l]=1;
@@ -173,7 +174,7 @@ void Lattice::calcSlippage(double lambda, double gamma) {
 
 int Lattice::findElement(double z0, double z1, string type) {
     double zmid=0.5*(z0+z1);
-    for(int i=0; i<lat.size(); i++) {
+    for(size_t i=0; i<lat.size(); i++) {
         double zz0 =lat[i]->z;
         double zz1 =zz0+lat[i]->l;
         if ((zmid>zz0)&&(zmid<zz1)&&(lat[i]->type.compare(type)==0)) {
@@ -184,7 +185,7 @@ int Lattice::findElement(double z0, double z1, string type) {
 }
 
 int Lattice::findMarker(double z0, string type) {
-    for(int i=0; i<lat.size(); i++) {
+    for(size_t i=0; i<lat.size(); i++) {
         double zz0 =lat[i]->z-z0;
         if ((zz0*zz0<1e-6) && (lat[i]->type.compare(type)==0)) {
             return i;
@@ -212,7 +213,7 @@ void Lattice::match(int rank, double z0, double gammaref) {
     this->unrollLattice(20);
     Optics opt;
     opt.init();
-    int i=0;
+    size_t i=0;
     while((lat_z[i]<z0)&&(i<lat_z.size())) {
         double qf=lat_qf[i];
         double qx=lat_aw[i]*lat_aw[i]/gammaref/gammaref;
@@ -233,7 +234,7 @@ void Lattice::match(int rank, double z0, double gammaref) {
         matched=false;
         return;
     }
-    if (matched=opt.match(&mbetax, &malphax, &mbetay, &malphay, &phix, &phiy)) {
+    if ((matched=opt.match(&mbetax, &malphax, &mbetay, &malphay, &phix, &phiy))) {
         if (rank==0) {
             cout << "Matching for periodic solution between z = 0 and z = "<<z0 << " :" << endl;
             cout << "   betax (m) : " << mbetax  << endl;

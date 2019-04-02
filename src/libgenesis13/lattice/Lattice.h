@@ -8,7 +8,9 @@
 #include <libgenesis13/lattice/LatticeElements.h>
 #include <libgenesis13/core/Undulator.h>
 
-using namespace std;
+using std::vector;
+using std::string;
+using std::map;
 
 class AlterLattice;
 

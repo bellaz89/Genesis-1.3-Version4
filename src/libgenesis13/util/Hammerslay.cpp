@@ -12,32 +12,26 @@
 // constructor/destructor
 
 Hammerslay::Hammerslay(unsigned int base_in) {
-    double bases[26] = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29,
-                        31, 37, 41, 43, 47, 53, 59, 61, 67,
-                        71, 73, 79, 83, 89, 97, 101
-                       };
+    int bases[26] = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29,
+                     31, 37, 41, 43, 47, 53, 59, 61, 67,
+                     71, 73, 79, 83, 89, 97, 101
+                    };
     base=bases[base_in];
     idx=0;
 }
 
-Hammerslay::~Hammerslay() {}
-
-
-void Hammerslay::set(unsigned int i) {
-    idx=i;
-    if (idx<0) {
-        idx=0;
-    }
+void Hammerslay::set(int idx_) {
+    idx= (idx_>=0) ? idx_ : 0;
 }
 
 double Hammerslay::getElement() {
     double xs=0;
     double xsi=1.0;
-    unsigned int    i1;
-    unsigned int i2=++idx;
+    int i1;
+    int i2=++idx;
     do {
         xsi=xsi/base;
-        i1=i2/static_cast< unsigned int > (base);
+        i1=i2/base;
         xs+=(i2-base*i1)*xsi;
         i2=i1;
     } while(i2>0);

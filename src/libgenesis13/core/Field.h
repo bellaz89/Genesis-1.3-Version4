@@ -6,7 +6,8 @@
 #include "Undulator.h"
 #include "FieldSolver.h"
 
-using namespace std;
+using std::vector;
+using std::complex;
 
 class Beam;
 

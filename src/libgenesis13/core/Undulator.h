@@ -4,7 +4,7 @@
 #include <vector>
 #include <libgenesis13/io/HDF5Base.h>
 
-using namespace std;
+using std::vector;
 
 class Undulator: public HDF5Base {
 public:

@@ -73,7 +73,7 @@ int Beam::sort() {
     int shift=0;
     if (one4one) {
         shift= sorting.sort(&beam);
-        for (int i=0; i<beam.size(); i++) {  // correct the local current
+        for (size_t i=0; i<beam.size(); i++) {  // correct the local current
             int np=beam.at(i).size();
             current.at(i)=static_cast<double>(np)*ELECTRON_CHARGE_X_C/slicelength;
         }
@@ -86,7 +86,7 @@ void Beam::track(double delz, vector<Field*>* field, Undulator* und) {
 #ifdef VTRACE
     VT_TRACER("Beam_Tracking");
 #endif
-    for (int i=0; i<field->size(); i++) {
+    for (size_t i=0; i<field->size(); i++) {
         field->at(i)->setStepsize(delz);
     }
     solver.track(delz*0.5, this, und,
@@ -109,8 +109,8 @@ bool Beam::harmonicConversion(int harmonic, bool resample) {
     if (resample) {
         slicelength=slicelength/static_cast<double>(harmonic);
     }
-    for (int i=0; i<beam.size(); i++) {
-        for (int j=0; j<beam[i].size(); j++) {
+    for (size_t i=0; i<beam.size(); i++) {
+        for (size_t j=0; j<beam[i].size(); j++) {
             beam[i].at(j).theta*=static_cast<double>(harmonic);
         }
     }
@@ -130,8 +130,8 @@ bool Beam::harmonicConversion(int harmonic, bool resample) {
     }
     // second copy the old slices 0,1,.. n-1 to h*0,h*1,... h*(n-1)
     Particle p;
-    for (int i=nsize-1; i>0;
-            i--) { // runs down to 1 only because there is no need to copy from 0 to h*0 = 0
+    // runs down to 1 only because there is no need to copy from 0 to h*0 = 0
+    for (int i=nsize-1; i>0; i--) {
         int nloc=beam[i].size();
         for (int j=0; j<nloc; j++) {
             p.gamma=beam[i].at(j).gamma;
@@ -157,8 +157,8 @@ bool Beam::subharmonicConversion(int harmonic, bool resample) {
     if (resample) { // needs a lot of working here............
         slicelength=slicelength*static_cast<double>(harmonic);
     }
-    for (int i=0; i<beam.size(); i++) {
-        for (int j=0; j<beam[i].size(); j++) {
+    for (size_t i=0; i<beam.size(); i++) {
+        for (size_t j=0; j<beam[i].size(); j++) {
             beam[i].at(j).theta/=static_cast<double>
                                  (harmonic);   // preparing to push everything into first slice
         }
@@ -175,7 +175,7 @@ bool Beam::subharmonicConversion(int harmonic, bool resample) {
     //return true;
     double dtheta=2.*M_PI*slicelength/reflength/static_cast<double>(harmonic);
     for (int i=1; i<nsize; i++) {
-        for (int k=0; k<beam.at(i).size(); k++) {
+        for (size_t k=0; k<beam.at(i).size(); k++) {
             p.gamma=beam[i].at(k).gamma;
             p.theta=beam[i].at(k).theta+i*dtheta;
             p.x    =beam[i].at(k).x;
@@ -216,8 +216,8 @@ void Beam::diagnostics(bool output, double z) {
         double bi=0;
         double bbavg=0;
         double bbphi=0;
-        unsigned int nsize=beam.at(is).size();
-        for (int i=0; i < nsize; i++) {
+        size_t nsize=beam.at(is).size();
+        for (size_t i=0; i < nsize; i++) {
             double xtmp=beam.at(is).at(i).x;
             double ytmp=beam.at(is).at(i).y;
             double pxtmp=beam.at(is).at(i).px;
@@ -266,7 +266,7 @@ void Beam::diagnostics(bool output, double z) {
         for (int ih=1; ih<bharm; ih++) { // calculate the harmonics of the bunching
             br=0;
             bi=0;
-            for (int i=0; i < nsize; i++) {
+            for (size_t i=0; i < nsize; i++) {
                 double btmp=static_cast<double>(ih+1)*beam.at(is).at(i).theta;
                 br+=cos(btmp);
                 bi+=sin(btmp);
@@ -295,8 +295,8 @@ void Beam::diagnosticsStart() {
         xpx=0;
         ypy=0;
         g1=0;
-        unsigned int nsize=beam.at(is).size();
-        for (int i=0; i < nsize; i++) {
+        size_t nsize=beam.at(is).size();
+        for (size_t i=0; i < nsize; i++) {
             double xtmp=beam.at(is).at(i).x;
             double ytmp=beam.at(is).at(i).y;
             double pxtmp=beam.at(is).at(i).px;

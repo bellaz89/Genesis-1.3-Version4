@@ -110,7 +110,7 @@ bool AlterSetup::init(int inrank, map<string, string>* arg, Setup* setup,
             return false;
         }
         // step 3.3 - field
-        for (int i=0; i<field->size(); i++) {
+        for (size_t i=0; i<field->size(); i++) {
             if (field->at(i)->getHarm()!=1) {
                 if (rank==0) {
                     cout << "Deleting higher radiation harmonic: " << field->at(i)->getHarm();
@@ -153,7 +153,7 @@ bool AlterSetup::init(int inrank, map<string, string>* arg, Setup* setup,
             return false;
         }
         // step 4.3 - field
-        for (int i=0; i<field->size(); i++) {
+        for (size_t i=0; i<field->size(); i++) {
             if (field->at(i)->getHarm()!=harmonic) {
                 if (disable) {
                     if (rank==0) {
