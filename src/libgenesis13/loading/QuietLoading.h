@@ -1,11 +1,9 @@
 #ifndef __GENESIS_QUIETLOADING__
 #define __GENESIS_QUIETLOADING__
 
+#include <memory>
 #include <libgenesis13/core/Particle.h>
 #include <libgenesis13/util/Sequence.h>
-
-extern const double vacimp;
-extern const double eev;
 
 typedef struct {
     double gamma;
@@ -27,19 +25,13 @@ typedef struct {
     double emodphase;
 } BeamSlice;
 
-
-using namespace std;
-
 class QuietLoading  {
 public:
-    QuietLoading();
-    virtual ~QuietLoading();
     void loadQuiet(Particle* beam, BeamSlice*, int, int, double, int);
     void init(bool, int*);
 
-
 private:
-    Sequence* sx, *sy, *st, *spx, *spy, *sg;
+    std::shared_ptr<Sequence> sx, sy, st, spx, spy, sg;
 };
 
 #endif

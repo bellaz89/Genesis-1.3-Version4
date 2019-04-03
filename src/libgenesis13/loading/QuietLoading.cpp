@@ -4,33 +4,11 @@
 #include <libgenesis13/util/RandomU.h>
 #include <libgenesis13/util/Hammerslay.h>
 
+using std::make_shared;
 using boost::math::erfc_inv;
 
-QuietLoading::QuietLoading() {
-    st  = (Sequence*)new Hammerslay();
-    sg  = (Sequence*)new Hammerslay();
-    sx  = (Sequence*)new Hammerslay();
-    sy  = (Sequence*)new Hammerslay();
-    spx = (Sequence*)new Hammerslay();
-    spy = (Sequence*)new Hammerslay();
-}
-
-QuietLoading::~QuietLoading() {
-    delete sx;
-    delete sy;
-    delete spx;
-    delete spy;
-    delete st;
-    delete sg;
-}
-
 void QuietLoading::init(bool one4one, int* base) {
-    delete sx;
-    delete sy;
-    delete spx;
-    delete spy;
-    delete st;
-    delete sg;
+    
     if (one4one) {
         RandomU rseed(base[0]);
         double val;
@@ -39,27 +17,27 @@ void QuietLoading::init(bool one4one, int* base) {
         }
         val*=1e9;
         int locseed=static_cast<int> (round(val));
-        st  = (Sequence* ) new RandomU (locseed);
+        st  = make_shared<RandomU>(RandomU(locseed));
         sg  = st;
         sx  = st;
         sy  = st;
         spx = st;
         spy = st;
     } else {
-        st  = (Sequence* ) new Hammerslay (base[0]);
-        sg  = (Sequence* ) new Hammerslay (base[1]);
-        sx  = (Sequence* ) new Hammerslay (base[2]);
-        sy  = (Sequence* ) new Hammerslay (base[3]);
-        spx = (Sequence* ) new Hammerslay (base[4]);
-        spy = (Sequence* ) new Hammerslay (base[5]);
+        st  = make_shared<Hammerslay>(Hammerslay(base[0]));
+        sg  = make_shared<Hammerslay>(Hammerslay(base[1]));
+        sx  = make_shared<Hammerslay>(Hammerslay(base[2]));
+        sy  = make_shared<Hammerslay>(Hammerslay(base[3]));
+        spx = make_shared<Hammerslay>(Hammerslay(base[4]));
+        spy = make_shared<Hammerslay>(Hammerslay(base[5]));
     }
 }
 
 void QuietLoading::loadQuiet(Particle* beam, BeamSlice* slice, int npart, int nbins,
                              double theta0, int islice) {
     // resets Hammersley sequence but does nothing for random sequence;
-    Sequence* seed = (Sequence* ) new RandomU(islice);
-    int iseed=static_cast<int>(round(seed->getElement()*1e9));
+    RandomU seed = RandomU(islice);
+    int iseed=static_cast<int>(round(seed.getElement()*1e9));
     // initialize the sequence to new values to avoid that all core shave the same distribution
     st->set(iseed);
     sg->set(iseed);

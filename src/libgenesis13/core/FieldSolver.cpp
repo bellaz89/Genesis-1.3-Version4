@@ -126,11 +126,11 @@ void FieldSolver::getDiag(double delz, double dgrid, double xks, int ngrid_in) {
     ngrid=ngrid_in;
     double rtmp=0.25*delz/(xks*dgrid*dgrid); //factor dz/(4 ks dx^2)
     cstep = complex<double> ( 0, rtmp );
-    double* mupp = new double[ngrid];
-    double* mmid = new double[ngrid];
-    double* mlow = new double[ngrid];
-    complex<double>* cwrk1= new complex<double>[ngrid];
-    complex<double>* cwrk2= new complex<double>[ngrid];
+    double mupp[ngrid];
+    double mmid[ngrid];
+    double mlow[ngrid];
+    complex<double> cwrk1[ngrid];
+    complex<double> cwrk2[ngrid];
     if (c.size()!=ngrid) {
         c.resize(ngrid);
         r.resize(ngrid*ngrid);
@@ -160,9 +160,4 @@ void FieldSolver::getDiag(double delz, double dgrid, double xks, int ngrid_in) {
         cwet[i]=cwrk1[i-1]*cbet[i-1];
         cbet[i]=1./(cwrk2[i]-c[i]*cwet[i]);
     }
-    delete[] mupp;
-    delete[] mmid;
-    delete[] mlow;
-    delete[] cwrk1;
-    delete[] cwrk2;
 }
