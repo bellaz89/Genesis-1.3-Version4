@@ -45,22 +45,7 @@ add_definitions(${HDF5_DEFINITIONS})
 link_directories(${COMMON_LIB_DIRS})
 
 #------------------------------------------------------------------------------
-# Tests
-#------------------------------------------------------------------------------
-
-find_package(GTest)
-if(GTest_FOUND)
-    enable_testing()
-    file(GLOB TEST_SOURCES test/*.cpp)
-    foreach(testsource ${TEST_SOURCES})
-        get_filename_component(testname ${testsource} NAME_WE)
-        add_executable("${testname}.test" ${testsource})
-        target_link_libraries ("${testname}.test" genesis13 GTest::Main GTest::GTest)
-        gtest_add_tests(TARGET "${testname}.test")
-    endforeach(testsource)
-endif()
-#------------------------------------------------------------------------------
-# Genesis support
+# Genesis13V4
 #------------------------------------------------------------------------------
 
 add_library(genesis13 ${COMMON_SOURCES})
@@ -80,6 +65,26 @@ install(TARGETS genesis13
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib
     PUBLIC_HEADER DESTINATION include)
+
+#------------------------------------------------------------------------------
+# Tests
+#------------------------------------------------------------------------------
+
+find_package(GTest)
+if(GTest_FOUND)
+    enable_testing()
+    file(GLOB TEST_SOURCES test/*.cpp)
+    foreach(testsource ${TEST_SOURCES})
+        get_filename_component(testname ${testsource} NAME_WE)
+        add_executable("${testname}.test" ${testsource})
+        target_include_directories("${testname}.test"  PRIVATE include/libgenesis13 
+                                                       PRIVATE ${COMMON_INCLUDE_DIRS})
+        target_link_libraries ("${testname}.test" genesis13 Eigen3::Eigen 
+                                                       GTest::Main GTest::GTest)
+        gtest_add_tests(TARGET "${testname}.test")
+    endforeach(testsource)
+endif()
+
 
 #------------------------------------------------------------------------------
 # Packaging support

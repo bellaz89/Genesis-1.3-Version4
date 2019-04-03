@@ -3,10 +3,6 @@
 #include <Eigen/Dense>
 #include "Beam.h"
 
-TrackBeam::TrackBeam() {}
-TrackBeam::~TrackBeam() {}
-
-
 void TrackBeam::track(double delz, Beam* beam, Undulator* und, bool lastStep=true) {
     // get undulator parameter for the given step
     double aw, dax, day, ku, kx, ky;
@@ -14,6 +10,11 @@ void TrackBeam::track(double delz, Beam* beam, Undulator* und, bool lastStep=tru
     double cx, cy;
     double angle, lb, ld, lt;
     double gamma0=und->getGammaRef();
+
+    // function pointer to the operation to do on the beam
+    void (*ApplyX)(double delz, double qf, double* x, double* px, double gammaz, double dx);
+    void (*ApplyY)(double delz, double qf, double* x, double* px, double gammaz, double dx);
+
     und->getUndulatorParameters( &aw, &dax, &day, &ku, &kx, &ky);
     und->getQuadrupoleParameters(&qf, &dqx, &dqy);
     und->getCorrectorParameters(&cx, &cy);
@@ -30,40 +31,40 @@ void TrackBeam::track(double delz, Beam* beam, Undulator* und, bool lastStep=tru
     // cout << "qnaty: " << qnaty/gamma0 << " Gamma0: " << gamma0 << endl;
     if (lastStep) {
         if ((cx!=0) || (cy!=0)) {
-            this->applyCorrector(beam, cx*gamma0, cy*gamma0);
+            applyCorrector(beam, cx*gamma0, cy*gamma0);
         }
     } else {
         if (angle!=0) {
-            this->applyChicane(beam, angle, lb, ld, lt, gamma0);
+            applyChicane(beam, angle, lb, ld, lt, gamma0);
         }
     }
     // handle the different cases (drift, focusing and defocusing) with function pointers to member functions
     if (qx==0) {
-        this->ApplyX=&TrackBeam::applyDrift;
+        ApplyX=&TrackBeam::applyDrift;
     } else {
         xoff=xoff/qx;
         if (qx>0) {
-            this->ApplyX=&TrackBeam::applyFQuad;
+            ApplyX=&TrackBeam::applyFQuad;
         } else {
-            this->ApplyX=&TrackBeam::applyDQuad;
+            ApplyX=&TrackBeam::applyDQuad;
         }
     }
     if (qy==0) {
-        this->ApplyY=&TrackBeam::applyDrift;
+        ApplyY=&TrackBeam::applyDrift;
     } else {
         yoff=yoff/qy;
         if (qy>0) {
-            this->ApplyY=&TrackBeam::applyFQuad;
+            ApplyY=&TrackBeam::applyFQuad;
         } else {
-            this->ApplyY=&TrackBeam::applyDQuad;
+            ApplyY=&TrackBeam::applyDQuad;
         }
     }
     for (size_t i=0; i<beam->beam.size(); i++) {
         for (size_t j=0; j<beam->beam.at(i).size(); j++) {
             Particle* p=&beam->beam.at(i).at(j);
             double gammaz=sqrt(p->gamma*p->gamma-1- aw*aw - p->px*p->px - p->py*p->py);
-            (this->*ApplyX)(delz, qx, &(p->x), &(p->px), gammaz, xoff);
-            (this->*ApplyY)(delz, qy, &(p->y), &(p->py), gammaz, yoff);
+            (*ApplyX)(delz, qx, &(p->x), &(p->px), gammaz, xoff);
+            (*ApplyY)(delz, qy, &(p->y), &(p->py), gammaz, yoff);
         }
     }
     return;
@@ -120,14 +121,39 @@ void TrackBeam::applyChicane(Beam* beam, double angle, double lb, double ld,
     // the effect of the R56 is applied here to the particle phase.
     //Then the normal tracking should do the momentum dependent change in the
     // longitudinal position
+    
+    // The transfer matrix
+    Eigen::Matrix4d tmatrix;
+    chicaneTransferMatrix(tmatrix, angle, lb, ld, lt);
+
+    for (size_t i=0; i<beam->beam.size(); i++) {
+        for (size_t j=0; j<beam->beam.at(i).size(); j++) {
+            Particle* p=&beam->beam.at(i).at(j);
+            double gammaz=sqrt(p->gamma*p->gamma-1- p->px*p->px -
+                               p->py*p->py); // = gamma*betaz=gamma*(1-(1+aw*aw)/gamma^2);
+            double tmp=p->x;
+            p->x =tmatrix(0, 0)*tmp        + tmatrix(0, 1)*p->px/gammaz;
+            p->px=tmatrix(1, 0)*tmp*gammaz + tmatrix(1, 1)*p->px;
+            tmp=p->y;
+            p->y =tmatrix(2, 2)*tmp        + tmatrix(2, 3)*p->py/gammaz;
+            p->py=tmatrix(3, 2)*tmp*gammaz + tmatrix(3, 3)*p->py;
+        }
+    }
+    return;
+}
+
+void TrackBeam::chicaneTransferMatrix(Ref<Matrix4d> tmatrix, double angle, 
+        double lb, double ld, double lt) {
     // the transfer matrix order is
     //  m -> bp -> ep -> d1 -> en -> bn -> d2 -> bn -> en-> d1 -> ep-> bp ->d3
-    Eigen::Matrix4d m;
+
+    tmatrix = Eigen::Matrix4d::Identity();
     Eigen::Matrix4d d1 = Eigen::Matrix4d::Identity();
     Eigen::Matrix4d d2 = Eigen::Matrix4d::Identity();
     Eigen::Matrix4d d3 = Eigen::Matrix4d::Identity();
     Eigen::Matrix4d bpn = Eigen::Matrix4d::Identity();
     Eigen::Matrix4d epn = Eigen::Matrix4d::Identity();
+
     double cos_angle = cos(angle);
     double sin_angle = sin(angle);
     double R=lb/sin_angle;
@@ -146,21 +172,8 @@ void TrackBeam::applyChicane(Beam* beam, double angle, double lb, double ld,
     bpn(1, 1)=cos_angle;
     epn(1, 0)=efoc;
     epn(3, 2)=-efoc;
-    m = bpn*epn*d1*epn*bpn*d2*bpn*epn*d1*epn*bpn;
-    for (size_t i=0; i<beam->beam.size(); i++) {
-        for (size_t j=0; j<beam->beam.at(i).size(); j++) {
-            Particle* p=&beam->beam.at(i).at(j);
-            double gammaz=sqrt(p->gamma*p->gamma-1- p->px*p->px -
-                               p->py*p->py); // = gamma*betaz=gamma*(1-(1+aw*aw)/gamma^2);
-            double tmp=p->x;
-            p->x =m(0, 0)*tmp        +m(0, 1)*p->px/gammaz;
-            p->px=m(1, 0)*tmp*gammaz +m(1, 1)*p->px;
-            tmp=p->y;
-            p->y =m(2, 2)*tmp        +m(2, 3)*p->py/gammaz;
-            p->py=m(3, 2)*tmp*gammaz +m(3, 3)*p->py;
-        }
-    }
-    return;
+
+    tmatrix = d3*(bpn*(epn*(d1*(epn*(bpn*(d2*(bpn*(epn*(d1*(epn*bpn))))))))));  
 }
 
 void TrackBeam::applyR56(Beam* beam, Undulator* und, double lambda0) {
@@ -180,3 +193,6 @@ void TrackBeam::applyR56(Beam* beam, Undulator* und, double lambda0) {
     }
     return;
 }
+
+
+

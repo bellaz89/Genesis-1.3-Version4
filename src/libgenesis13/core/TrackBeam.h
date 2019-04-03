@@ -1,27 +1,27 @@
 #ifndef __GENESIS_TRACKBEAM__
 #define __GENESIS_TRACKBEAM__
 
+#include <Eigen/Core>
 #include "Undulator.h"
 #include "Particle.h"
+
+using Eigen::Matrix4d;
+using Eigen::MatrixXd;
+using Eigen::Ref;
 
 class Beam;
 
 class TrackBeam {
 public:
-    TrackBeam();
-    virtual ~TrackBeam();
-    void track(double, Beam*, Undulator*, bool);
-
-    void (TrackBeam::*ApplyX) (double, double, double*, double*, double, double);
-    void (TrackBeam::*ApplyY) (double, double, double*, double*, double, double);
-    void applyDrift(double, double, double*, double*, double, double);
-    void applyFQuad(double, double, double*, double*, double, double);
-    void applyDQuad(double, double, double*, double*, double, double);
-    void applyCorrector(Beam*, double, double);
-    void applyChicane(Beam*, double, double, double, double, double);
-    void applyR56(Beam*, Undulator*, double);
-
+    static void track(double, Beam*, Undulator*, bool);
+    static void applyDrift(double, double, double*, double*, double, double);
+    static void applyFQuad(double, double, double*, double*, double, double);
+    static void applyDQuad(double, double, double*, double*, double, double);
+    static void applyCorrector(Beam*, double, double);
+    static void applyChicane(Beam*, double, double, double, double, double);
+    static void chicaneTransferMatrix(Ref<Matrix4d> tmatrix, double angle, 
+            double lb, double ld, double lt); 
+    static void applyR56(Beam*, Undulator*, double);
 };
-
 
 #endif
