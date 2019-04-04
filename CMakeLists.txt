@@ -15,10 +15,7 @@ add_definitions(
     -DVERSIONBETA=true)
 
 set (CMAKE_CXX_STANDARD 11)
-include(CheckLanguage)
 
-
-# default build type
 if (NOT EXISTS ${CMAKE_BINARY_DIR}/CMakeCache.txt)
     if (NOT CMAKE_BUILD_TYPE)
         set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
@@ -44,33 +41,6 @@ set(COMMON_LIBRARIES ${MPI_CXX_LIBRARIES} ${HDF5_LIBRARIES} ${Boost_LIBRARIES})
 set(COMMON_LDFLAGS ${MPI_CXX_LINK_FLAGS})
 add_definitions(${HDF5_DEFINITIONS})
 link_directories(${COMMON_LIB_DIRS})
-set(COMMON_INCLUDE_DIRS src/)
-file(GLOB COMMON_SOURCES src/libgenesis13/*/*.cpp)
-
-# find libraries
-set(HDF5_PREFER_PARALLEL TRUE)
-find_package(HDF5 COMPONENTS CXX HL)
-
-if(${HDF5_FOUND} AND ${HDF5_IS_PARALLEL})
-    find_package(MPI REQUIRED COMPONENTS CXX)
-    set(PROJECT_INCLUDE_DIRS ${MPI_CXX_INCLUDE_PATH} ${HDF5_INCLUDE_DIRS})
-    list(APPEND COMMON_INCLUDE_DIRS ${PROJECT_INCLUDE_DIRS})
-    set(COMMON_CFLAGS ${MPI_CXX_COMPILE_FLAGS})
-    set(COMMON_LIB_DIRS "")
-    set(COMMON_LIBRARIES ${MPI_CXX_LIBRARIES} ${HDF5_LIBRARIES} ${HDF5_HL_LIBRARIES})
-    set(COMMON_LDFLAGS ${MPI_CXX_LINK_FLAGS})
-    add_definitions(${HDF5_DEFINITIONS})
-else()
-    find_package(PkgConfig REQUIRED)
-    pkg_check_modules(MPI REQUIRED ompi-cxx)
-    pkg_check_modules(HDF5 REQUIRED hdf5-openmpi)
-    set(PROJECT_INCLUDE_DIRS ${MPI_INCLUDE_DIRS} ${HDF5_INCLUDE_DIRS})
-    list(APPEND COMMON_INCLUDE_DIRS ${PROJECT_INCLUDE_DIRS})
-    set(COMMON_CFLAGS ${MPI_CFLAGS} ${HDF5_CFLAGS})
-    set(COMMON_LIB_DIRS ${MPI_LIBRARY_DIRS} ${HDF5_LIBRARY_DIRS})
-    set(COMMON_LIBRARIES ${MPI_LIBRARIES} ${HDF5_LIBRARIES})
-    set(COMMON_LDFLAGS ${MPI_LDFLAGS} ${HDF5_LDFLAGS})
-endif()
 
 #------------------------------------------------------------------------------
 # Genesis13V4
