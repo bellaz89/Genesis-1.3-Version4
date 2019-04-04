@@ -12,11 +12,7 @@
 
 #include <complex>
 
-extern const double vacimp;
-extern const double eev;
-
-typedef struct
-{
+typedef struct {
     double lambda;
     double power;
     double z0;
@@ -35,15 +31,15 @@ typedef struct
 using namespace std;
 
 class GaussHermite  {
-    public:
-        GaussHermite();
-        ~GaussHermite();
+public:
+    GaussHermite();
+    ~GaussHermite();
 
-        void loadGauss(complex<double> *field, FieldSlice *, double, int);
+    void loadGauss(complex<double>* field, FieldSlice*, double, int);
 
-    private:
-        double Hn(double, int);
-        int fac(int);
+private:
+    double Hn(double, int);
+    int fac(int);
 };
 
 

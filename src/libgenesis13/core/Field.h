@@ -6,71 +6,62 @@
 #include "Undulator.h"
 #include "FieldSolver.h"
 
-using namespace std;
-
-extern const double vacimp;
-extern const double eev;
+using std::vector;
+using std::complex;
 
 class Beam;
 
-class Field{
-    public:
+class Field {
+public:
 
-        Field();
-        virtual ~Field();
-        void initDiagnostics(int);
-        void diagnostics(bool);
-        void init(int, int, double, double, double, double,int);
-        bool harmonicConversion(int, bool);
-        bool subharmonicConversion(int, bool);
-        void track(double, Beam *, Undulator *);
-        bool getLLGridpoint(double, double, double *, double *,int *);
-        void setStepsize(double);
-        void disable(double);
-        bool isEnabled();
-        int getHarm();
-        double getRHarm();
+    Field();
+    virtual ~Field();
+    void initDiagnostics(int);
+    void diagnostics(bool);
+    void init(int, int, double, double, double, double, int);
+    bool harmonicConversion(int, bool);
+    bool subharmonicConversion(int, bool);
+    void track(double, Beam*, Undulator*);
+    bool getLLGridpoint(double, double, double*, double*, int*);
+    void setStepsize(double);
+    void disable(double);
+    bool isEnabled();
+    int getHarm();
+    double getRHarm();
 
-        vector< vector< complex<double> > > field;
-        double xlambda,dgrid,xks,gridmax,dz_save;
-        int ngrid, first;  // first points to first slice due to slippage
-        int harm;
-        bool polarization;
-        double slicelength,s0;
+    vector< vector< complex<double>>> field;
+    double xlambda, dgrid, xks, gridmax, dz_save;
+    int ngrid, first;  // first points to first slice due to slippage
+    int harm;
+    bool polarization;
+    double slicelength, s0;
 
-        vector<double> power,xsig,xavg,ysig,yavg ;  // buffer to accumulate before writing it out
-        vector<double> nf_intensity,nf_phi,ff_intensity,ff_phi;
+    vector<double> power, xsig, xavg, ysig,
+           yavg ; // buffer to accumulate before writing it out
+    vector<double> nf_intensity, nf_phi, ff_intensity, ff_phi;
 
-    private:
-        int idx;
-        bool disabled;
-        double rharm;
-        double accuslip;
+private:
+    int idx;
+    bool disabled;
+    double rharm;
+    double accuslip;
 
-        FieldSolver solver;
+    FieldSolver solver;
 };
 
-inline void Field::disable(double conv) {
-    if (disabled==false){  // check whether it hasn't been disabled before
-        rharm=harm;         // assign current double harmonic with the given harmonic
+inline bool Field::getLLGridpoint(double x, double y, double* wx, double* wy,
+                                  int* idx) {
+    if ((x>-gridmax) && (x < gridmax) && (y>-gridmax) && (y < gridmax)) {
+        *wx = (x+gridmax)/dgrid;
+        *wy = (y+gridmax)/dgrid;
+        int ix= static_cast<int> (floor(*wx));
+        int iy= static_cast<int> (floor(*wy));
+        *wx=1+floor(*wx)-*wx;
+        *wy=1+floor(*wy)-*wy;
+        *idx=ix+iy*ngrid;
+        return true;
     }
-    rharm=rharm*conv;     // convert to new harmonic, might be even a non-integer.
-    disabled=true;         // disbable it.
-
-}
-
-inline bool Field::isEnabled() {
-    return !disabled;
-}
-
-
-inline double Field::getRHarm() {
-    return rharm;
-}
-
-
-inline int Field::getHarm() {
-    return harm;
+    return false;
 }
 
 #endif

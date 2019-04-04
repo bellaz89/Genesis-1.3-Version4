@@ -1,7 +1,7 @@
 #ifndef __GENESIS_PARTICLE__
 #define __GENESIS_PARTICLE__
 
-typedef struct{
+typedef struct {
     double gamma;
     double theta;
     double x;

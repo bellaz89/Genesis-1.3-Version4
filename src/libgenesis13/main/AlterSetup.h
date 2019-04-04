@@ -16,17 +16,18 @@ using namespace std;
 class Lattice;
 
 class AlterSetup: public StringProcessing, public HDF5Base {
-    public:
-        AlterSetup();
-        virtual ~AlterSetup();
-        bool init(int, map<string,string>*, Setup*, Lattice*, Time*, Beam*, vector<Field*>*);
+public:
+    AlterSetup();
+    virtual ~AlterSetup();
+    bool init(int, map<string, string>*, Setup*, Lattice*, Time*, Beam*,
+              vector<Field*>*);
 
-    private:
-        void usage();
-        string rootname,lattice,beamline;
-        double delz;
-        bool resample,disable;
-        int harmonic,subharmonic,rank;
+private:
+    void usage();
+    string rootname, lattice, beamline;
+    double delz;
+    bool resample, disable;
+    int harmonic, subharmonic, rank;
 };
 
 

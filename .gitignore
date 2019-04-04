@@ -1,6 +1,9 @@
+callgrind.*
 build
 benchmark/*/*.h5
 *.swp
 *.o
+*.orig
 lib
 __pycache__/
+*.sw*

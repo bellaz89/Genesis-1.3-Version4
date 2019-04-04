@@ -5,71 +5,46 @@
 
 using namespace std;
 
-class Element
-{
-    public:
-        Element(){};
-        ~Element(){};
-        double z,l;
-        string type;
-        //enum LatticeElement type;
+class Element {
+public:
+    double z, l;
+    string type;
+    //enum LatticeElement type;
 };
 
-class ID : public Element
-{
-    public:
-        ID(){};
-        ~ID(){};
-        double aw,lambdau,kx,ky,nwig,ax,ay;
-        double gradx,grady,pdadx,pdady; // gradients
-        double paw,pkx,pky,phase;   // perpendicular phase
-        bool helical;
+class ID : public Element {
+public:
+    double aw, lambdau, kx, ky, nwig, ax, ay;
+    double gradx, grady, pdadx, pdady; // gradients
+    double paw, pkx, pky, phase; // perpendicular phase
+    bool helical;
 };
 
-class Phaseshifter : public Element
-{
-    public:
-        Phaseshifter(){};
-        ~Phaseshifter(){};
-        double phi;
-};
-class Quadrupole : public Element
-{
-    public:
-        Quadrupole(){};
-        ~Quadrupole(){};
-        double k1,dx,dy;
+class Phaseshifter : public Element {
+public:
+    double phi;
 };
 
-class Drift : public Element
-{
-    public:
-        Drift(){};
-        ~Drift(){};
+class Quadrupole : public Element {
+public:
+    double k1, dx, dy;
 };
 
-class Marker : public Element
-{
-    public:
-        Marker(){};
-        ~Marker(){};
-        int action;  // this is a bitwise coded element
+class Drift : public Element {};
+
+class Marker : public Element {
+public:
+    int action;  // this is a bitwise coded element
 };
 
-class Chicane : public Element
-{
-    public:
-        Chicane(){};
-        ~Chicane(){};
-        double lb,ld,delay;
-}; 
+class Chicane : public Element {
+public:
+    double lb, ld, delay;
+};
 
-class Corrector : public Element
-{
-    public:
-        Corrector(){};
-        ~Corrector(){};
-        double cx,cy;
-}; 
+class Corrector : public Element {
+public:
+    double cx, cy;
+};
 
 #endif

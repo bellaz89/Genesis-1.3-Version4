@@ -16,14 +16,14 @@
 using namespace std;
 
 class StringProcessing {
-    public:
-        StringProcessing();
-        ~StringProcessing();
-    protected:
-        void trim(string &); 
-        void chop(string, vector<string> *);  
-        bool atob(string);
-        void reference(string, double *, string *);
-        vector<string> slist;   // temporary working array
+public:
+    StringProcessing();
+    ~StringProcessing();
+protected:
+    void trim(string &);
+    void chop(string, vector<string>*);
+    bool atob(string);
+    void reference(string, double*, string*);
+    vector<string> slist;   // temporary working array
 };
 #endif

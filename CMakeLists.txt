@@ -1,9 +1,11 @@
 # Compilation script for Genesis 1.3
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.3)
 
 project(Genesis13 
     VERSION 4.3.0
     LANGUAGES C CXX)
+
+set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 # pass the project version as compile time preprocessor flags
 add_definitions(
@@ -18,12 +20,29 @@ include(CheckLanguage)
 
 # default build type
 if (NOT EXISTS ${CMAKE_BINARY_DIR}/CMakeCache.txt)
-  if (NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
-  endif()
+    if (NOT CMAKE_BUILD_TYPE)
+        set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
+    endif()
 endif()
 
-# common src and includes
+# openmpi, boost, hdf5, eigen libraries
+set(BUILD_MULTITHREADED OFF)
+set(Boost_USE_MULTITHREADED ${BUILD_MULTITHREADED})
+set(HDF5_PREFER_PARALLEL TRUE)
+find_package(Boost 1.65 REQUIRED COMPONENTS random mpi unit_test_framework)
+find_package(MPI REQUIRED COMPONENTS CXX)
+find_package(HDF5 REQUIRED COMPONENTS C)
+find_package(Eigen3 3.3 REQUIRED NO_MODULE)
+
+file(GLOB COMMON_SOURCES src/libgenesis13/*/*.cpp)
+set(COMMON_INCLUDE_DIRS src/)
+set(PROJECT_INCLUDE_DIRS ${MPI_CXX_INCLUDE_DIRS} ${HDF5_INCLUDE_DIRS})
+list(APPEND COMMON_INCLUDE_DIRS ${PROJECT_INCLUDE_DIRS})
+set(COMMON_CFLAGS ${MPI_CXX_COMPILE_OPTIONS})
+set(COMMON_LIB_DIRS ${Boost_INCLUDE_DIRS})
+set(COMMON_LIBRARIES ${MPI_CXX_LIBRARIES} ${HDF5_LIBRARIES} ${Boost_LIBRARIES})
+set(COMMON_LDFLAGS ${MPI_CXX_LINK_FLAGS})
+add_definitions(${HDF5_DEFINITIONS})
 link_directories(${COMMON_LIB_DIRS})
 set(COMMON_INCLUDE_DIRS src/)
 file(GLOB COMMON_SOURCES src/libgenesis13/*/*.cpp)
@@ -54,78 +73,57 @@ else()
 endif()
 
 #------------------------------------------------------------------------------
-# Genesis 1.3 C++ build rules
+# Genesis13V4
 #------------------------------------------------------------------------------
 
-file(GLOB CPP_SOURCES src/libgenesis13/*/cpp/*.cpp)
-
-add_library(genesis13 ${COMMON_SOURCES} ${CPP_SOURCES})
-target_include_directories(genesis13 PUBLIC include PRIVATE ${COMMON_INCLUDE_DIRS}) 
+add_library(genesis13 ${COMMON_SOURCES})
+target_include_directories(genesis13 PUBLIC include/libgenesis13 PRIVATE ${COMMON_INCLUDE_DIRS}) 
 target_compile_definitions(genesis13 PUBLIC -DMPE)
-target_compile_options(genesis13 PUBLIC ${COMMON_CFLAGS})
-target_link_libraries(genesis13 PRIVATE ${COMMON_LIBRARIES}) 
+target_compile_options(genesis13 PUBLIC ${COMMON_CFLAGS} -Wall -Wextra)
+target_link_libraries(genesis13 PRIVATE ${COMMON_LIBRARIES} Eigen3::Eigen) 
 
 add_executable(gencore src/gencore/mainwrap.cpp)
-target_include_directories(gencore  PRIVATE include COMMON_INCLUDE_DIRS)
+target_include_directories(gencore  PRIVATE include/libgenesis13 PRIVATE ${COMMON_INCLUDE_DIRS})
 target_compile_definitions(gencore PRIVATE -DMPE)
-target_compile_options(gencore PRIVATE ${COMMON_CFLAGS})
+target_compile_options(gencore PRIVATE ${COMMON_CFLAGS} -Wall -Wextra)
 target_link_libraries(gencore PUBLIC genesis13)
 
 install(TARGETS gencore DESTINATION bin)
 install(TARGETS genesis13 
-        ARCHIVE DESTINATION lib
-        LIBRARY DESTINATION lib
-        PUBLIC_HEADER DESTINATION include)
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+    PUBLIC_HEADER DESTINATION include)
 
 #------------------------------------------------------------------------------
-# Genesis 1.3 CUDA build rules
+# Tests
 #------------------------------------------------------------------------------
 
-check_language(CUDA)
-if(FALSE)
+find_package(GTest)
+if(GTest_FOUND)
+    enable_testing()
+    file(GLOB TEST_SOURCES test/*.cpp)
+    foreach(testsource ${TEST_SOURCES})
+        get_filename_component(testname ${testsource} NAME_WE)
+        add_executable("${testname}.test" ${testsource})
+        target_include_directories("${testname}.test"  PRIVATE include/libgenesis13 
+                                                       PRIVATE ${COMMON_INCLUDE_DIRS})
+        target_link_libraries ("${testname}.test" genesis13 Eigen3::Eigen 
+                                                       GTest::Main GTest::GTest)
+        gtest_add_tests(TARGET "${testname}.test")
+    endforeach(testsource)
+endif()
 
-    enable_language(CUDA)
 
-    file(GLOB CUDA_SOURCES src/libgenesis13/*/cuda/*.cpp src/libgenesis13/*/cuda/*.cu)
-
-    add_library(genesis13-cuda ${COMMON_SOURCES} ${CUDA_SOURCES})
-    set_target_properties(genesis13-cuda PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
-    target_include_directories(genesis13-cuda PUBLIC include PRIVATE ${COMMON_INCLUDE_DIRS}) 
-    target_compile_definitions(genesis13-cuda PUBLIC -DMPE)
-
-    if("-pthread" IN_LIST COMMON_CFLAGS) 
-        # Delete -pthread because it is unsupported by nvcc
-
-        list(REMOVE_ITEM COMMON_CFLAGS -pthread)
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pthread")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
-        set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -Xcompiler -pthread")
-
-    endif()
-
-    target_compile_options(genesis13-cuda PUBLIC ${COMMON_CFLAGS})
-    target_link_libraries(genesis13-cuda PRIVATE ${COMMON_LIBRARIES}) 
-
-    add_executable(gencore-cuda src/gencore/mainwrap.cpp)
-    target_include_directories(gencore-cuda  PRIVATE include ${COMMON_INCLUDE_DIRS})
-    target_compile_definitions(gencore-cuda PRIVATE -DMPE)
-    target_compile_options(gencore-cuda PRIVATE ${COMMON_CFLAGS})
-    target_link_libraries(gencore-cuda PUBLIC genesis13-cuda)
-
-    install(TARGETS gencore-cuda DESTINATION bin)
-    install(TARGETS genesis13-cuda 
-            LIBRARY DESTINATION lib
-            ARCHIVE DESTINATION lib
-            PUBLIC_HEADER DESTINATION include)
-endif()    
-
+#------------------------------------------------------------------------------
 # Packaging support
+#------------------------------------------------------------------------------
+
 set(CPACK_PACKAGE_NAME "genesis13v4")
 set(CPACK_PACKAGE_VENDOR "Andrea Bellandi")
 set(CPACK_PACKAGE_CONTACT "bellaz89@gmail.com")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "FEL simulator")
 set(CPACK_PACKAGE_DESCRIPTION "Genesis 1.3 V4. Tool to simulate beam-field interaction \
-                              in Free Electron Lasers")
+in Free Electron Lasers")
 set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
 set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
 set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
@@ -136,15 +134,13 @@ set(CPACK_SOURCE_IGNORE_FILES
     /dist
     /.*build.*
     /\\\\.DS_Store
-)
+    )
 
 set(CPACK_SOURCE_GENERATOR "TGZ;RPM;DEB")
 
-set(CPACK_BINARY_RPM TRUE)
 set(CPACK_RPM_PACKAGE_GROUP "General")
 set(CPACK_RPM_PACKAGE_DEPENDS "openmpi-devel, hdf5-openmpi-devel, cmake (>= 3.13), gcc, gcc-c++")
 
-set(CPACK_BINARY_DEBIAN TRUE)
 set(CPACK_DEBIAN_PACKAGE_GROUP "General")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "libopenmpi-dev, libhdf5-openmpi-dev, cmake (>= 3.13), build-essential")
 set(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")

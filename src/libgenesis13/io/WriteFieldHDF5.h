@@ -7,23 +7,17 @@
 #include <libgenesis13/core/Field.h>
 #include "HDF5Base.h"
 
-using namespace std;
-
-extern const double vacimp;
-extern const double eev;
+using std::string;
+using std::vector;
 
 class WriteFieldHDF5 : public HDF5Base {
-    public:
-        WriteFieldHDF5();
-        virtual ~WriteFieldHDF5();
-        void write(string fileroot, vector<Field *> *field);
+public:
+    void write(string fileroot, vector<Field*>* field);
 
-    private:
-        void writeMain(string fileroot, Field *field);
-        void writeGlobal(double, double, double, double, int, int);
-        hid_t fid;
-        int rank, size;
+private:
+    void writeMain(string fileroot, Field* field, int rank, int size);
+    void writeGlobal(double reflen, double slicelen, double s0,
+                     double dx, int nx, int count, hid_t fid);
 };
-
 #endif
 

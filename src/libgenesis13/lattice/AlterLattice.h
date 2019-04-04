@@ -11,16 +11,16 @@ class Lattice;
 
 using namespace std;
 
-class AlterLattice{
-    public:
-        AlterLattice();
-        virtual ~AlterLattice();
-        bool init(int, int, map<string,string>*, Lattice*, Setup*);
-    private:
-        void usage();
-        double err_aw,err_ax,err_ay,err_qx,err_qy;
-        double zmatch;
-        int rank, size,nlat;
+class AlterLattice {
+public:
+    AlterLattice();
+    virtual ~AlterLattice();
+    bool init(int, int, map<string, string>*, Lattice*, Setup*);
+private:
+    void usage();
+    double err_aw, err_ax, err_ay, err_qx, err_qy;
+    double zmatch;
+    int rank, size, nlat;
 };
 
 
