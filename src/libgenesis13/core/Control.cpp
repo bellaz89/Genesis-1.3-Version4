@@ -113,7 +113,6 @@ void Control::applySlippage(double slippage, Field* field) {
     }
     // update accumulated slippage
     accushift+=slippage;
-    
     // following routine is applied if the required slippage is alrger than 80%
     // of the sampling size
     int direction=1;
@@ -126,31 +125,27 @@ void Control::applySlippage(double slippage, Field* field) {
         // get adjacent node before and after in chain
         int rank_next=(rank==size-1) ? MPI_PROC_NULL : rank+1;
         int rank_prev=(rank==0) ? MPI_PROC_NULL :rank-1;
-
         // for inverse direction swap targets
-        if (direction<0) swap(rank_next,rank_prev);
-        
+        if (direction<0) {
+            swap(rank_next, rank_prev);
+        }
         // get slice which is transmitted
         int last=(field->first+field->field.size()-1)  %  field->field.size();
         // get first slice for inverse direction
         if (direction<0) {
             //  this actually first because it is sent backwards
-            last=(last+1) % field->field.size();  
+            last=(last+1) % field->field.size();
         }
-
         // allocate receive buffer
         receive_buffer.resize(field->field[last].size());
-
         if (size>1) {
-            MPI_Sendrecv(field->field[last].data(), field->field[last].size(), 
-                         MPI_DOUBLE_COMPLEX, rank_next, PROCESS_TAG, 
-                         receive_buffer.data(), field->field[last].size(),        
+            MPI_Sendrecv(field->field[last].data(), field->field[last].size(),
+                         MPI_DOUBLE_COMPLEX, rank_next, PROCESS_TAG,
+                         receive_buffer.data(), field->field[last].size(),
                          MPI_DOUBLE_COMPLEX, rank_prev, PROCESS_TAG,
-                         MPI_COMM_WORLD,  MPI_STATUS_IGNORE); 
-            
+                         MPI_COMM_WORLD,  MPI_STATUS_IGNORE);
             swap(field->field[last], receive_buffer);
         }
-        
         // first node has emptz field slipped into the time window
         // last was the last slice to be transmitted to the succeding node
         // and then filled with the

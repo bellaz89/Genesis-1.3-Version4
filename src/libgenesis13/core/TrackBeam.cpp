@@ -10,11 +10,11 @@ void TrackBeam::track(double delz, Beam* beam, Undulator* und, bool lastStep=tru
     double cx, cy;
     double angle, lb, ld, lt;
     double gamma0=und->getGammaRef();
-
     // function pointer to the operation to do on the beam
-    void (*ApplyX)(double delz, double qf, double* x, double* px, double gammaz, double dx);
-    void (*ApplyY)(double delz, double qf, double* x, double* px, double gammaz, double dx);
-
+    void (*ApplyX)(double delz, double qf, double* x, double* px, double gammaz,
+                   double dx);
+    void (*ApplyY)(double delz, double qf, double* x, double* px, double gammaz,
+                   double dx);
     und->getUndulatorParameters( &aw, &dax, &day, &ku, &kx, &ky);
     und->getQuadrupoleParameters(&qf, &dqx, &dqy);
     und->getCorrectorParameters(&cx, &cy);
@@ -121,11 +121,9 @@ void TrackBeam::applyChicane(Beam* beam, double angle, double lb, double ld,
     // the effect of the R56 is applied here to the particle phase.
     //Then the normal tracking should do the momentum dependent change in the
     // longitudinal position
-    
     // The transfer matrix
     Eigen::Matrix4d tmatrix;
     chicaneTransferMatrix(tmatrix, angle, lb, ld, lt);
-
     for (size_t i=0; i<beam->beam.size(); i++) {
         for (size_t j=0; j<beam->beam.at(i).size(); j++) {
             Particle* p=&beam->beam.at(i).at(j);
@@ -142,18 +140,16 @@ void TrackBeam::applyChicane(Beam* beam, double angle, double lb, double ld,
     return;
 }
 
-void TrackBeam::chicaneTransferMatrix(Ref<Matrix4d> tmatrix, double angle, 
-        double lb, double ld, double lt) {
+void TrackBeam::chicaneTransferMatrix(Ref<Matrix4d> tmatrix, double angle,
+                                      double lb, double ld, double lt) {
     // the transfer matrix order is
     //  m -> bp -> ep -> d1 -> en -> bn -> d2 -> bn -> en-> d1 -> ep-> bp ->d3
-
     tmatrix = Eigen::Matrix4d::Identity();
     Eigen::Matrix4d d1 = Eigen::Matrix4d::Identity();
     Eigen::Matrix4d d2 = Eigen::Matrix4d::Identity();
     Eigen::Matrix4d d3 = Eigen::Matrix4d::Identity();
     Eigen::Matrix4d bpn = Eigen::Matrix4d::Identity();
     Eigen::Matrix4d epn = Eigen::Matrix4d::Identity();
-
     double cos_angle = cos(angle);
     double sin_angle = sin(angle);
     double R=lb/sin_angle;
@@ -172,8 +168,7 @@ void TrackBeam::chicaneTransferMatrix(Ref<Matrix4d> tmatrix, double angle,
     bpn(1, 1)=cos_angle;
     epn(1, 0)=efoc;
     epn(3, 2)=-efoc;
-
-    tmatrix = d3*(bpn*(epn*(d1*(epn*(bpn*(d2*(bpn*(epn*(d1*(epn*bpn))))))))));  
+    tmatrix = d3*(bpn*(epn*(d1*(epn*(bpn*(d2*(bpn*(epn*(d1*(epn*bpn))))))))));
 }
 
 void TrackBeam::applyR56(Beam* beam, Undulator* und, double lambda0) {

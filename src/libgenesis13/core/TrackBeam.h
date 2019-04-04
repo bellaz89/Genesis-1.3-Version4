@@ -19,8 +19,8 @@ public:
     static void applyDQuad(double, double, double*, double*, double, double);
     static void applyCorrector(Beam*, double, double);
     static void applyChicane(Beam*, double, double, double, double, double);
-    static void chicaneTransferMatrix(Ref<Matrix4d> tmatrix, double angle, 
-            double lb, double ld, double lt); 
+    static void chicaneTransferMatrix(Ref<Matrix4d> tmatrix, double angle,
+                                      double lb, double ld, double lt);
     static void applyR56(Beam*, Undulator*, double);
 };
 

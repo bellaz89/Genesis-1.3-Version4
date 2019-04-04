@@ -71,7 +71,8 @@ void Sorting::localSort(vector <vector <Particle>>*
         size_t b=0;
         while ( b < recdat->at(a).size()) {
             double theta=recdat->at(a).at(b).theta;
-            int atar=static_cast<int>(floor(theta*invslen));   // relative target slice. atar = 0 -> stays in same slice
+            int atar=static_cast<int>(floor(
+                                          theta*invslen));   // relative target slice. atar = 0 -> stays in same slice
             if (atar!=0) {     // particle not in the same slice
                 p = recdat->at(a).at(b);
                 p.theta -= slen*(atar);
@@ -80,7 +81,6 @@ void Sorting::localSort(vector <vector <Particle>>*
                 count2[a]-=1;
                 // eliminating the current particle
                 int ilast=recdat->at(a).size()-1;
-                
                 recdat->at(a).at(b) = recdat->at(a).at(ilast);
                 recdat->at(a).pop_back();
             } else {
@@ -100,15 +100,17 @@ void Sorting::localSort(vector <vector <Particle>>*
 // the methods is an iterative bubble sort, pushing excess particles to next node. There the fitting particles are collected the rest moved further.
 
 void Sorting::globalSort(vector <vector <Particle>>* rec) {
-   // here is the actual sorting to fill the vectore pushforward and pushbackward
+    // here is the actual sorting to fill the vectore pushforward and pushbackward
     this->fillPushVectors(rec);
-    
-    if (rank==(size-1)) pushforward.clear();
-    
-    if (rank==0) pushbackward.clear();
-    
-    if (size==1) return;    // no need to transfer if only one node is used.
-    
+    if (rank==(size-1)) {
+        pushforward.clear();
+    }
+    if (rank==0) {
+        pushbackward.clear();
+    }
+    if (size==1) {
+        return;    // no need to transfer if only one node is used.
+    }
     cout << "Rank: " << rank << " - Forward: " << pushforward.size()/6 << " - Backward: "
          << pushbackward.size()/6 << endl;
     int maxiter=size-1;
@@ -131,21 +133,21 @@ void Sorting::globalSort(vector <vector <Particle>>* rec) {
         bool transfer = true;
         if (((rank % 2) == 0) && (rank == (size -1))) {
             // last rank for an uneven count of cores -> no forward transmission
-            transfer = false;    
+            transfer = false;
         }
         if ((rank % 2)==0) {   // even ranks sending
             if (transfer) {
                 // sends its forward particles to higher node
-                this->send(rank+1, &pushforward);  
+                this->send(rank+1, &pushforward);
             }
             // no need for the record, data has been sent
-            pushforward.clear();                                    
+            pushforward.clear();
             if (transfer) {
-                // catch particles which are sent back. 
+                // catch particles which are sent back.
                 // In self->recv either get the particles or put them in backword array
-                this->recv(rank+1, rec, &pushbackward); 
+                this->recv(rank+1, rec, &pushbackward);
             }
-        }  else {   
+        }  else {
             // odd ranks receiving -
             // there will be always a smaller even rank therefore always receiving
             this->recv(rank-1, rec, &pushforward);
@@ -175,8 +177,6 @@ void Sorting::globalSort(vector <vector <Particle>>* rec) {
                 pushbackward.clear();
             }
         }
-        
-
         maxiter--;
         nforward=pushforward.size();
         nbackward=pushbackward.size();

@@ -8,7 +8,6 @@ using std::make_shared;
 using boost::math::erfc_inv;
 
 void QuietLoading::init(bool one4one, int* base) {
-    
     if (one4one) {
         RandomU rseed(base[0]);
         double val;
