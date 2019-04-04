@@ -1,3 +1,4 @@
+callgrind.*
 build
 benchmark/*/*.h5
 *.swp

@@ -14,8 +14,6 @@ using std::complex;
 
 class Control : public HDF5Base {
 public:
-    Control();
-    virtual ~Control();
     void applySlippage(double, Field*);
     bool applyMarker(Beam*, vector<Field*>*, Undulator*);
     bool init(int, int, const char*, Beam*, vector<Field*>*, Undulator*, bool, bool);

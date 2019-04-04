@@ -16,12 +16,6 @@
 using std::swap;
 using std::fill;
 
-Control::Control() {
-    nwork=0;
-}
-
-Control::~Control() {}
-
 bool Control::applyMarker(Beam* beam, vector<Field*>* field, Undulator* und) {
     bool sort=false;
     int marker=und->getMarker();
