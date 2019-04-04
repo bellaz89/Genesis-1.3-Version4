@@ -45,8 +45,6 @@ int Sorting::sort(vector <vector <Particle>>* recdat) {
         cout << "Sorting..." << endl;
     }
     int shift =0;
-    // step one - calculate global shift and see whether it can be adjusted by shifting radiation instead
-    //////  int shift = this->centerShift(recdat);
     // step two - push outside particles to other nodes
     this->globalSort(recdat);
     // step three - sort within the given node
@@ -73,26 +71,17 @@ void Sorting::localSort(vector <vector <Particle>>*
         size_t b=0;
         while ( b < recdat->at(a).size()) {
             double theta=recdat->at(a).at(b).theta;
-            int atar=static_cast<int>(floor(
-                                          theta*invslen));   // relative target slice. atar = 0 -> stays in same slice
+            int atar=static_cast<int>(floor(theta*invslen));   // relative target slice. atar = 0 -> stays in same slice
             if (atar!=0) {     // particle not in the same slice
-                p.theta=recdat->at(a).at(b).theta-slen*(atar);
-                p.gamma=recdat->at(a).at(b).gamma;
-                p.x    =recdat->at(a).at(b).x;
-                p.y    =recdat->at(a).at(b).y;
-                p.px   =recdat->at(a).at(b).px;
-                p.py   =recdat->at(a).at(b).py;
+                p = recdat->at(a).at(b);
+                p.theta -= slen*(atar);
                 recdat->at(a+atar).push_back(p);  // pushing particle in correct slice
                 count[a+atar]+=1;
                 count2[a]-=1;
                 // eliminating the current particle
                 int ilast=recdat->at(a).size()-1;
-                recdat->at(a).at(b).theta=recdat->at(a).at(ilast).theta;
-                recdat->at(a).at(b).gamma=recdat->at(a).at(ilast).gamma;
-                recdat->at(a).at(b).x    =recdat->at(a).at(ilast).x;
-                recdat->at(a).at(b).y    =recdat->at(a).at(ilast).y;
-                recdat->at(a).at(b).px   =recdat->at(a).at(ilast).px;
-                recdat->at(a).at(b).py   =recdat->at(a).at(ilast).py;
+                
+                recdat->at(a).at(b) = recdat->at(a).at(ilast);
                 recdat->at(a).pop_back();
             } else {
                 b++;
@@ -107,23 +96,19 @@ void Sorting::localSort(vector <vector <Particle>>*
     return;
 }
 
-
-
 // routine which moves all particles, which are misplaced in the given domain of the node to other nodes.
 // the methods is an iterative bubble sort, pushing excess particles to next node. There the fitting particles are collected the rest moved further.
 
 void Sorting::globalSort(vector <vector <Particle>>* rec) {
-    this->fillPushVectors(
-        rec);   // here is the actual sorting to fill the vectore pushforward and pushbackward
-    if (rank==(size-1)) {
-        pushforward.clear();
-    }
-    if (rank==0) {
-        pushbackward.clear();
-    }
-    if (size==1) {
-        return;    // no need to transfer if only one node is used.
-    }
+   // here is the actual sorting to fill the vectore pushforward and pushbackward
+    this->fillPushVectors(rec);
+    
+    if (rank==(size-1)) pushforward.clear();
+    
+    if (rank==0) pushbackward.clear();
+    
+    if (size==1) return;    // no need to transfer if only one node is used.
+    
     cout << "Rank: " << rank << " - Forward: " << pushforward.size()/6 << " - Backward: "
          << pushbackward.size()/6 << endl;
     int maxiter=size-1;
@@ -141,22 +126,28 @@ void Sorting::globalSort(vector <vector <Particle>>* rec) {
             cout << "Sorting: Transferring " << nreduce/6 <<
                  " particles to other nodes at iteration " << size-maxiter << endl;
         }
-        // step one - pairing ranks (0,1) (2,3) etc, the last rank, if uneven last element should clear its pushforward.
+        // step one - pairing ranks (0,1) (2,3) etc, the last rank,
+        // if uneven last element should clear its pushforward.
         bool transfer = true;
         if (((rank % 2) == 0) && (rank == (size -1))) {
-            transfer =
-                false;    // last rank for an uneven count of cores -> no forward transmission
+            // last rank for an uneven count of cores -> no forward transmission
+            transfer = false;    
         }
         if ((rank % 2)==0) {   // even ranks sending
             if (transfer) {
-                this->send(rank+1, &pushforward);  // sends its forward particles to higher node
+                // sends its forward particles to higher node
+                this->send(rank+1, &pushforward);  
             }
-            pushforward.clear();                                    // no need for the record, data has been sent
+            // no need for the record, data has been sent
+            pushforward.clear();                                    
             if (transfer) {
-                this->recv(rank+1, rec,
-                           &pushbackward); // catch particles which are sent back. In self->recv either get the particles or put them in backword array
+                // catch particles which are sent back. 
+                // In self->recv either get the particles or put them in backword array
+                this->recv(rank+1, rec, &pushbackward); 
             }
-        }  else {   // odd ranks receiving - there will be always a smaller even rank therefore always receiving
+        }  else {   
+            // odd ranks receiving -
+            // there will be always a smaller even rank therefore always receiving
             this->recv(rank-1, rec, &pushforward);
             this->send(rank-1, &pushbackward);
             pushbackward.clear();
@@ -184,6 +175,8 @@ void Sorting::globalSort(vector <vector <Particle>>* rec) {
                 pushbackward.clear();
             }
         }
+        
+
         maxiter--;
         nforward=pushforward.size();
         nbackward=pushbackward.size();
@@ -322,12 +315,7 @@ void Sorting::fillPushVectors(vector< vector <Particle>>* rec) {
             if ((s<keepmin)||(s>keepmax)) {
                 count++;
                 int ilast=rec->at(i).size()-1;
-                rec->at(i).at(j).theta=rec->at(i).at(ilast).theta;
-                rec->at(i).at(j).gamma=rec->at(i).at(ilast).gamma;
-                rec->at(i).at(j).x    =rec->at(i).at(ilast).x;
-                rec->at(i).at(j).y    =rec->at(i).at(ilast).y;
-                rec->at(i).at(j).px   =rec->at(i).at(ilast).px;
-                rec->at(i).at(j).py   =rec->at(i).at(ilast).py;
+                rec->at(i).at(j) =rec->at(i).at(ilast);
                 rec->at(i).pop_back();
             } else {
                 j++;
@@ -338,39 +326,3 @@ void Sorting::fillPushVectors(vector< vector <Particle>>* rec) {
          pushforward.size()/6 << " Backward: " <<pushbackward.size()/6 << endl;
 }
 
-
-int Sorting::centerShift(vector <vector <Particle>>* recdat) {
-    if (!doshift) {
-        return 0;
-    }
-    double invslen=1./slen;
-    double shift = 0;
-    double part  = 0;
-    // calculate on the node the amount of total transferred particles
-    for (size_t a=0; a<recdat->size(); a++) { //Run over the slices
-        for (size_t b=0; b<recdat->at(a).size(); b++) { //Loop over the partiles in the slice
-            part+=1.0;
-            shift+=floor(recdat->at(a).at(
-                             b).theta*invslen);   // relative target slice. = 0 -> stays in same slice
-        }
-    }
-    double tshift, tpart;
-    if (MPISingle) {
-        tshift=shift;
-        tpart=part;
-    } else {
-        MPI_Allreduce(&shift, &tshift, 1, MPI_DOUBLE,
-                      MPI_SUM, MPI_COMM_WORLD); // get the info on total number of particles shifted among nodes
-        MPI_Allreduce(&part, &tpart, 1, MPI_DOUBLE,
-                      MPI_SUM, MPI_COMM_WORLD); // get the info on total number of particles shifted among nodes
-    }
-    int nshift=-static_cast<int>(round(
-                                     tshift/tpart));  // instead of moving more than half the particles forward, it is easier to move the field backwards. Also theta needs to be corrected
-    for (size_t a=0; a<recdat->size(); a++) { //Run over the slices
-        for (size_t b=0; b<recdat->at(a).size(); b++) { //Loop over the partiles in the slice
-            recdat->at(a).at(b).theta+=static_cast<double>(nshift)
-                                       *slen;   // adjust theta position because the field is moved instead of particles
-        }
-    }
-    return nshift;
-}

@@ -49,4 +49,20 @@ private:
     FieldSolver solver;
 };
 
+inline bool Field::getLLGridpoint(double x, double y, double* wx, double* wy, int* idx) {
+
+    if ((x>-gridmax) && (x < gridmax) && (y>-gridmax) && (y < gridmax)) {
+        *wx = (x+gridmax)/dgrid;
+        *wy = (y+gridmax)/dgrid;
+        int ix= static_cast<int> (floor(*wx));
+        int iy= static_cast<int> (floor(*wy));
+        *wx=1+floor(*wx)-*wx;
+        *wy=1+floor(*wy)-*wy;
+        *idx=ix+iy*ngrid;
+        return true;
+    }
+    
+    return false;
+}
+
 #endif

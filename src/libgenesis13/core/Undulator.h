@@ -179,4 +179,21 @@ inline void Undulator::getChicaneParameters(double* iangle, double* ilb, double*
     }
     return;
 }
+
+// square of the transverse dependence of the undulator field.
+inline double Undulator::faw2(double x, double y) {
+    double dx=x-ax[istepz];
+    double dy=y-ay[istepz];
+    // note kx is scaled as XKX*ku*ku in Lattice.cpp, gradx as ku*GRADX.
+    return (1+kx[istepz]*dx*dx+ky[istepz]*dy*dy+2*(gradx[istepz]*dx+grady[istepz]*dy));
+}
+
+// transverse dependence of the undulator field.
+inline double Undulator::faw(double x, double y) {
+    double dx=x-ax[istepz];
+    double dy=y-ay[istepz];
+    // note kx is scaled as XKX*ku*ku in Lattice.cpp, gradx as ku*GRADX.
+    return (1+0.5*(kx[istepz]*dx*dx+ky[istepz]*dy*dy)+gradx[istepz]*dx+grady[istepz]*dy);
+}
+
 #endif

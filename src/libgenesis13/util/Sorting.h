@@ -21,7 +21,6 @@ private:
 
     void fillPushVectors(vector<vector<Particle>>*);
     void localSort(vector<vector<Particle>>*);
-    int centerShift(vector<vector< Particle>>*);
     void send(int, vector<double>*);
     void recv(int, vector<vector<Particle>>*, vector<double>*);
 

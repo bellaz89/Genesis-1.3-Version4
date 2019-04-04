@@ -3,12 +3,14 @@
 
 #include <vector>
 #include <string>
+#include <complex>
 #include "Field.h"
 #include "Beam.h"
 #include "Undulator.h"
 
 using std::vector;
 using std::string;
+using std::complex;
 
 class Control : public HDF5Base {
 public:
@@ -21,13 +23,11 @@ public:
 
 private:
     bool timerun, scanrun, one4one;
-    int nslice, ntotal, noffset;
+    int nslice, noffset;
     int rank, size;
     double accushift;
     double sample, reflen, slen;
-    int nzout;
-    int nwork;
-    double* work;
+    vector<complex<double>> receive_buffer;
     string root;
 };
 

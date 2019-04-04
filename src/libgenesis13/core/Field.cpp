@@ -61,21 +61,6 @@ void Field::setStepsize(double delz) {
     }
 }
 
-bool Field::getLLGridpoint(double x, double y, double* wx, double* wy, int* idx) {
-    if ((x>-gridmax) && (x < gridmax) && (y>-gridmax) && (y < gridmax)) {
-        *wx = (x+gridmax)/dgrid;
-        *wy = (y+gridmax)/dgrid;
-        int ix= static_cast<int> (floor(*wx));
-        int iy= static_cast<int> (floor(*wy));
-        *wx=1+floor(*wx)-*wx;
-        *wy=1+floor(*wy)-*wy;
-        *idx=ix+iy*ngrid;
-        return true;
-    } else {
-        return false;
-    }
-}
-
 void Field::track(double delz, Beam* beam, Undulator* und) {
 #ifdef VTRACE
     VT_TRACER("Field_Tracking");
