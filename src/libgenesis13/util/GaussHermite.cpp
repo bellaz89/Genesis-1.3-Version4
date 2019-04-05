@@ -27,8 +27,8 @@ void GaussHermite::loadGauss(complex<double>* field, FieldSlice* slice, double d
     // some normalization crap
     // P=|E|^2/Z0 -> u = k (e/mc^2) E
     double unit=sqrt(slice->power*VACUUM_IMPEDANCE)*k/ELECTRON_MASS_EV;
-    double norm=f0/sqrt(M_PI*this->fac(slice->nx)*this->fac(slice->ny)*(1<<
-                        (slice->nx+slice->ny))); // f0/sqrt(pi 2^(nx+ny) nx! ny!)
+    // f0/sqrt(pi 2^(nx+ny) nx! ny!)
+    double norm=f0/sqrt(M_PI*this->fac(slice->nx)*this->fac(slice->ny)*(1 << (slice->nx+slice->ny))); 
     complex<double> zscale=unit*norm*complex<double>(cos(slice->phase),
                            sin(slice->phase));
     double xmid=dgrid+slice->xcen;
