@@ -60,11 +60,9 @@ For the standard C++ version:
     make gencore
 ```
 
-<<<<<<< HEAD
-=======
-To run tests:
+
+To run tests (after cmake is run):
 
 ```bash
     make test
 ```
->>>>>>> development
