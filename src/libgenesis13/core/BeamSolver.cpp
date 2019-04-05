@@ -6,7 +6,6 @@
 void BeamSolver::advance(double delz, Beam* beam, vector< Field*>* field,
         Undulator* und) const {
     // here the harmonics needs to be taken into account
-    vector<int> nfld;
     vector<double> rtmp;
     vector<complex<double>> rpart;
     vector<double> rharm;
@@ -15,7 +14,6 @@ void BeamSolver::advance(double delz, Beam* beam, vector< Field*>* field,
         int harm=field->at(i)->getHarm();
         // fundamental field wavenumber used in ODE below
         xks=field->at(i)->xks/static_cast<double>(harm);
-        nfld.push_back(i);
         rtmp.push_back(und->fc(harm)/field->at(
                     i)->xks);      // here the harmonics have to be taken care
         rpart.push_back(0);
@@ -45,21 +43,20 @@ void BeamSolver::advance(double delz, Beam* beam, vector< Field*>* field,
             const double awloc=und->faw(x, y);
             sim_params.btpar=1+px*px+py*py+aw*aw*awloc*awloc;
             complex<double> cpart=0;
-            for (size_t ifld=0; ifld<nfld.size(); ifld++) {
-                int islice=(is+field->at(nfld[ifld])->first) % field->at(nfld[ifld])->field.size();
+            for (size_t nfld=0; nfld<field->size(); nfld++) {
+                int islice=(is+field->at(nfld)->first) % field->at(nfld)->field.size();
                 int idx;
                 double wx, wy;
                 // check whether particle is on grid
-                if (field->at(nfld[ifld])->getLLGridpoint(x, y, &wx, &wy,
-                            &idx)) {
-                    cpart=field->at(nfld[ifld])->field[islice].at(idx)*wx*wy;
+                if (field->at(nfld)->getLLGridpoint(x, y, &wx, &wy, &idx)) {
+                    cpart=field->at(nfld)->field[islice].at(idx)*wx*wy;
                     idx++;
-                    cpart+=field->at(nfld[ifld])->field[islice].at(idx)*(1-wx)*wy;
-                    idx+=field->at(nfld[ifld])->ngrid-1;
-                    cpart+=field->at(nfld[ifld])->field[islice].at(idx)*wx*(1-wy);
+                    cpart+=field->at(nfld)->field[islice].at(idx)*(1-wx)*wy;
+                    idx+=field->at(nfld)->ngrid-1;
+                    cpart+=field->at(nfld)->field[islice].at(idx)*wx*(1-wy);
                     idx++;
-                    cpart+=field->at(nfld[ifld])->field[islice].at(idx)*(1-wx)*(1-wy);
-                    rpart[ifld]=rtmp[ifld]*awloc*conj(cpart);
+                    cpart+=field->at(nfld)->field[islice].at(idx)*(1-wx)*(1-wy);
+                    rpart[nfld]=rtmp[nfld]*awloc*conj(cpart);
                 }
             }
             this->RungeKutta(delz, sim_params);
