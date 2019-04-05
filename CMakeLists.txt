@@ -1,5 +1,5 @@
 # Compilation script for Genesis 1.3
-cmake_minimum_required(VERSION 3.3)
+cmake_minimum_required(VERSION 3.10)
 
 project(Genesis13 
     VERSION 4.3.0
