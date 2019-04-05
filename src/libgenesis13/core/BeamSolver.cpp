@@ -3,30 +3,21 @@
 #include "Field.h"
 #include "Beam.h"
 
-using namespace std;
-
-BeamSolver::BeamSolver(bool _onlyFundamental) : onlyFundamental(_onlyFundamental),
-    efield(), tracker() {}
-
 void BeamSolver::advance(double delz, Beam* beam, vector< Field*>* field,
-                         Undulator* und) const {
+        Undulator* und) const {
     // here the harmonics needs to be taken into account
-    vector<int> nfld;
     vector<double> rtmp;
     vector<complex<double>> rpart;
     vector<double> rharm;
     double xks=1.0;  // default value in the case that no field is defined
     for (size_t i=0; i < field->size(); i++) {
         int harm=field->at(i)->getHarm();
-        if ((harm==1) || !onlyFundamental) {
-            // fundamental field wavenumber used in ODE below
-            xks=field->at(i)->xks/static_cast<double>(harm);
-            nfld.push_back(i);
-            rtmp.push_back(und->fc(harm)/field->at(
-                               i)->xks);      // here the harmonics have to be taken care
-            rpart.push_back(0);
-            rharm.push_back(static_cast<double>(harm));
-        }
+        // fundamental field wavenumber used in ODE below
+        xks=field->at(i)->xks/static_cast<double>(harm);
+        rtmp.push_back(und->fc(harm)/field->at(
+                    i)->xks);      // here the harmonics have to be taken care
+        rpart.push_back(0);
+        rharm.push_back(static_cast<double>(harm));
     }
     double xku=und->getku();
     // in the case of drifts - the beam stays in phase if it has the reference energy
@@ -52,21 +43,20 @@ void BeamSolver::advance(double delz, Beam* beam, vector< Field*>* field,
             const double awloc=und->faw(x, y);
             sim_params.btpar=1+px*px+py*py+aw*aw*awloc*awloc;
             complex<double> cpart=0;
-            for (size_t ifld=0; ifld<nfld.size(); ifld++) {
-                int islice=(is+field->at(nfld[ifld])->first) % field->at(nfld[ifld])->field.size();
+            for (size_t nfld=0; nfld<field->size(); nfld++) {
+                int islice=(is+field->at(nfld)->first) % field->at(nfld)->field.size();
                 int idx;
                 double wx, wy;
                 // check whether particle is on grid
-                if (field->at(nfld[ifld])->getLLGridpoint(x, y, &wx, &wy,
-                        &idx)) {
-                    cpart=field->at(nfld[ifld])->field[islice].at(idx)*wx*wy;
+                if (field->at(nfld)->getLLGridpoint(x, y, &wx, &wy, &idx)) {
+                    cpart=field->at(nfld)->field[islice].at(idx)*wx*wy;
                     idx++;
-                    cpart+=field->at(nfld[ifld])->field[islice].at(idx)*(1-wx)*wy;
-                    idx+=field->at(nfld[ifld])->ngrid-1;
-                    cpart+=field->at(nfld[ifld])->field[islice].at(idx)*wx*(1-wy);
+                    cpart+=field->at(nfld)->field[islice].at(idx)*(1-wx)*wy;
+                    idx+=field->at(nfld)->ngrid-1;
+                    cpart+=field->at(nfld)->field[islice].at(idx)*wx*(1-wy);
                     idx++;
-                    cpart+=field->at(nfld[ifld])->field[islice].at(idx)*(1-wx)*(1-wy);
-                    rpart[ifld]=rtmp[ifld]*awloc*conj(cpart);
+                    cpart+=field->at(nfld)->field[islice].at(idx)*(1-wx)*(1-wy);
+                    rpart[nfld]=rtmp[nfld]*awloc*conj(cpart);
                 }
             }
             this->RungeKutta(delz, sim_params);
@@ -118,7 +108,7 @@ void BeamSolver::RungeKutta(const double delz, SimulationParams &sim_params) con
 
 
 void BeamSolver::ODE(double &k2gg, double &k2pp,
-                     const SimulationParams &sim_params) const {
+        const SimulationParams &sim_params) const {
     // differential equation for longitudinal motion
     const double ztemp1=-2./sim_params.xks;
     complex<double> ctmp=0;
@@ -128,14 +118,14 @@ void BeamSolver::ODE(double &k2gg, double &k2pp,
     }
     const double btper0=sim_params.btpar+ztemp1*ctmp.real();   //perpendicular velocity
     const double btpar0=sqrt(1.-btper0/
-                             (sim_params.gamma*sim_params.gamma));     //parallel velocity
+            (sim_params.gamma*sim_params.gamma));     //parallel velocity
     k2pp+=sim_params.xks*(1.-1./btpar0)+sim_params.xku;             //dtheta/dz
     k2gg+=ctmp.imag()/btpar0/sim_params.gamma;         //dgamma/dz
     return;
 }
 
 void BeamSolver::initEField(double rmax, int ngrid, int nz, int nphi,
-                            double lambda) {
+        double lambda) {
     efield.init(rmax, ngrid, nz, nphi, lambda);
     return;
 }

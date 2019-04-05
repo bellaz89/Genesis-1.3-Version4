@@ -186,6 +186,5 @@ bool LoadField::init(int rank, int size, map<string, string>* arg,
         }
     }
     delete [] fieldslice;
-    // if (idx<0){fieldin->push_back(field);}
     return true;
 }

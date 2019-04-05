@@ -7,24 +7,21 @@
  *
  */
 
+#include <vector>
+#include <memory>
 #include <libgenesis13/core/Particle.h>
 #include <libgenesis13/util/RandomU.h>
 
 #ifndef __GENESIS_SHOTNOISE__
 #define __GENESIS_SHOTNOISE__
 
-using namespace std;
-
 class ShotNoise  {
 public:
-    ShotNoise();
-    ~ShotNoise();
     void applyShotNoise(Particle* beam, int, int, double);
     void init(int, int);
 private:
-    RandomU* sran;
-    double* work;
-    int nwork;
+    std::unique_ptr<RandomU> sran;
+    std::vector<double> work;
 };
 
 #endif

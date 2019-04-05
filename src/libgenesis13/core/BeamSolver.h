@@ -15,7 +15,6 @@ class Field;
 class BeamSolver {
 public:
 
-    BeamSolver(bool _onlyFundamental = false);
     void initEField(double rmax, int ngrid, int nz, int nphi, double lambda);
     void advance(double, Beam*, vector< Field*>*, Undulator*) const;
     void track(double, Beam*, Undulator*, bool);
@@ -40,7 +39,6 @@ protected:
 
 private:
 
-    const bool onlyFundamental;
     void RungeKutta(const double delz, SimulationParams &sim_params) const;
     void ODE(double &k2gg, double &k2pp, const SimulationParams &sim_params) const;
 

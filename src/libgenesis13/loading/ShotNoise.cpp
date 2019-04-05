@@ -1,15 +1,9 @@
 #include "ShotNoise.h"
 #include <cmath>
+#include <algorithm>
 
-ShotNoise::ShotNoise() {
-    sran=nullptr;
-    nwork=1000;
-    work=new double [nwork];
-}
-
-ShotNoise::~ShotNoise() {
-    delete [] work;
-}
+using std::unique_ptr;
+using std::fill;
 
 void ShotNoise::init(int base, int rank) {
     RandomU rseed(base);
@@ -18,25 +12,19 @@ void ShotNoise::init(int base, int rank) {
         val=rseed.getElement();
     }
     val*=1e9;
-    int locseed=static_cast<int> (round(val));
-    if (sran !=nullptr) {
-        delete sran;
-    }
-    sran  = new RandomU (locseed);
+    int locseed=static_cast<int>(round(val));
+    sran = unique_ptr<RandomU>(new RandomU(locseed));
 }
 
 void ShotNoise::applyShotNoise(Particle* beam, int npart, int nbins, double ne) {
-    if (npart>nwork) {
-        delete [] work;
-        nwork=npart;
-        work = new double [nwork];
-    }
+    
+    work.resize(npart);
+    fill(work.begin(), work.end(), 0.);
+
     int mpart=npart/nbins;
-    double nbl=ne/static_cast<double>
-               (mpart);  // number of simulated electrons per beamlet
-    for (int i=0; i< npart; i++) {
-        work[i]=0;
-    }
+  // number of simulated electrons per beamlet
+    double nbl=ne/static_cast<double>(mpart);
+
     for (int ih=0; ih< (nbins-1)/2; ih++) {
         for (int i1=0; i1<mpart; i1++) {
             double phi=2.*M_PI*sran->getElement();
@@ -47,8 +35,10 @@ void ShotNoise::applyShotNoise(Particle* beam, int npart, int nbins, double ne) 
             }
         }
     }
+   
     for (int i=0; i< npart; i++) {
         beam[i].theta+=work[i];
     }
+   
     return;
 }
